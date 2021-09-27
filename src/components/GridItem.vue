@@ -555,13 +555,13 @@
                     case "resizeend": {
                         //console.log("### resize end => x=" +this.innerX + " y=" + this.innerY + " w=" + this.innerW + " h=" + this.innerH);
                         pos = this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
-                        if(pos.width - pos.height > 50 || pos.height - pos.width > 50) {
-                            newSize.width = this.originalSize.width;
-                            newSize.height = this.originalSize.height;
-                        } else {
+                        // if(pos.width - pos.height > 50 || pos.height - pos.width > 50) {
+                        //     newSize.width = this.originalSize.width;
+                        //     newSize.height = this.originalSize.height;
+                        // } else {
                             newSize.width = pos.width;
                             newSize.height = pos.height;
-                        }
+                        // }
 //                        console.log("### resize end => " + JSON.stringify(newSize));
                         this.resizing = null;
                         this.originalSize = null;
@@ -668,6 +668,7 @@
                     }
                     case "dragmove": {
                         const coreEvent = createCoreData(this.lastX, this.lastY, x, y);
+                        console.log(coreEvent)
 //                        Add rtl support
                         if (this.renderRtl) {
                             newPosition.left = this.dragging.left - coreEvent.deltaX / this.transformScale;

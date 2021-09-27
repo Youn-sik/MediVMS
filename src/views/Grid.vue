@@ -35,18 +35,40 @@
                     :i="item.i"
                     @moved="gridMovedEvent"
                 >
-                    <div class="hoverWrap" style="z-index:100">
-                        <button
-                            @mousedown="()=>{rotationStart(item.i)}"
-                        >
-                            test
-                        </button>
-                        <video v-if="item.mode === 'zoom'" style="z-index:1; height:100%; width:100%; transform: scale( 3,3 )" playsinline autoplay muted loop poster="https://i.pinimg.com/originals/28/6c/00/286c004a0cc4a49a5e6985b0e0812923.gif" id="bgvid">
-                            <source src="http://media6000.dropshots.com/photos/1381926/20170326/005609.mp4" type="video/mp4">
+                    <div :id="item.i" class="hoverWrap" style="z-index:100" @mouseover="(e)=>{girdMouseOverEvent(e,index)}">
+                        <div
+                        v-if="item.mouseover"
+                        style="
+                        position:absolute;
+                        z-index: 1000;
+                        top:0px;
+                        width:100%;
+                        height:20px;
+                        background:rgba(0,0,0,0.5);
+                        display:none
+                        ">
+                        </div>
+                        <video v-if="item.mode === 'zoom'" :ref="'zoomVideo '+ item.parent" style="z-index:1; width:100%; height:100%; transform:scale(2.1,2.1); transform-origin:0px 0px" playsinline autoplay muted loop id="bgvid">
+                            <source src="https://media.w3.org/2010/05/sintel/trailer.webm" type="video/mp4">
                         </video>
-                        <video v-else-if="item.mode === 'standard'" style="z-index:1; height:100%; width:100%;" playsinline autoplay muted loop poster="https://i.pinimg.com/originals/28/6c/00/286c004a0cc4a49a5e6985b0e0812923.gif" id="bgvid">
-                            <source src="http://media6000.dropshots.com/photos/1381926/20170326/005609.mp4" type="video/mp4">
+                        <video v-else-if="item.mode === 'standard'" ref="original" class="original video" style="z-index:1; width:100%; height:100%;" playsinline autoplay muted loop id="bgvid">
+                            <source src="https://media.w3.org/2010/05/sintel/trailer.webm" type="video/mp4">
                         </video>
+                        <button v-if="item.mode === 'standard'"
+                        :ref="'zoom ' + index"
+                        @mousedown="(e)=>{zoomBoxMouseDown(e,item)}"
+                        @mouseup="zoomBoxMouseUp"
+                        @mousemove="(e)=>{zoomBoxMouseMove(e,index,item)}"
+                        style="
+                        width: 158.5px;
+                        height: 92px;
+                        color: white;
+                        z-index: 1;
+                        position: absolute;
+                        top: 0px;
+                        left: 0px;
+                        box-shadow: 0 0 0 3px #409eff inset;
+                        cursor:pointer"></button>
                     </div>
                 </grid-item>
             </grid-layout>
@@ -64,28 +86,28 @@ export default {
     },
     computed: {
         rowHeight() {
-            return window.innerHeight / 12;
+            return window.innerHeight / 20;
         },
         columnWidth() {
             //스크롤이 차지하는 크기를 생각해야함
             return window.innerWidth / 24;
         },
+        videoHeight() {
+            return this.originalVideoHeight
+        }
     },
     mounted() {
         this.gridItems = document.getElementsByClassName("vue-grid-item vue-resizable cssTransforms")
+        setTimeout(() => {
+            this.originalVideoHeight = this.$refs.original[0].offsetHeight
+        },100)
     },
     data() {
         return {
             layout: [
-                {"x":0,"y":0,"w":1,"h":1,"i":"0", static: false, mode:'standard'},
-                {"x":2,"y":0,"w":1,"h":1,"i":"1", static: false, mode:'zoom'},
-                {"x":4,"y":0,"w":4,"h":4,"i":"2", static: false, mode:'none'},
-                // {"x":6,"y":0,"w":4,"h":6,"i":"3", static: false}, x
-                // {"x":8,"y":0,"w":4,"h":6,"i":"4", static: false},
-                // {"x":8,"y":0,"w":4,"h":6,"i":"5", static: false},
-                // {"x":8,"y":0,"w":4,"h":6,"i":"6", static: false},
-                // {"x":8,"y":0,"w":4,"h":6,"i":"7", static: false},
-                // {"x":8,"y":0,"w":4,"h":6,"i":"8", static: false},
+                {"x":0,"y":0,"w":4,"h":4,"i":"0", static: false, mouseover:false, mode:'standard'},
+                {"x":2,"y":0,"w":4,"h":4,"i":"1", static: false, mouseover:false, mode:'zoom', parent:"0"},
+                {"x":4,"y":0,"w":4,"h":4,"i":"2", static: false, mouseover:false, mode:'none'},
             ],
             hlsUrls: [
 
@@ -99,10 +121,91 @@ export default {
             rotationEnable:false,
             targetedGrid:null,
             preTransform:null,
-            lastMouseEvent:null
+            lastMouseEvent:null,
+            originalVideoHeight:0,
+            zoomBoxGrab:false,
+            gapX:null,
+            gapY:null,
+
         }
     },
     methods: {
+        girdMouseOverEvent(e,index) {
+            // this.$set(this.layout,index,{...this.layout[index],mouseover:true});
+            this.$set(this.layout[index],'mouseover',true)
+        },
+        zoomBoxMouseDown(e,gridItem) {
+            console.log(this.layout)
+            this.zoomBoxGrab = true
+
+            const el = e.target;
+
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            const ballPos = el.getBoundingClientRect();
+            console.log(document.getElementById('1').getBoundingClientRect())
+            const ballX = ballPos.x - 58 - (gridItem.x * this.columnWidth);
+            const ballY = ballPos.y - 2 - (gridItem.y * this.rowHeight);
+
+            this.gapX = mouseX - ballX;
+            this.gapY = mouseY - ballY;
+        },
+        zoomBoxMouseMove(e,index,gridItem) {
+            if(this.zoomBoxGrab){
+                const el = e.target;
+                const zoomVideo = this.$refs['zoomVideo ' + index]
+                const mouseX = e.clientX
+                const mouseY = e.clientY
+
+                const videoW = gridItem.w * this.columnWidth
+                const videoH = gridItem.h * this.rowHeight
+
+                // 선택한 공 안에 있는 마우스 커서의 XY좌표
+                const gapX = this.gapX
+                const gapY = this.gapY
+
+                // 마우스 커서의 위치에 따른 공의 XY좌표
+                const ballX = mouseX - gapX
+                const ballY = mouseY - gapY
+
+                let transformOriginX = ballX;
+                let transformOriginY = ballY;
+
+                el.style.left = ballX+"px"
+                el.style.top = ballY+"px"
+
+                if(ballX < 0) {
+                    el.style.left = "0px"
+                    transformOriginX = 0
+                }
+
+                if(ballY < 0) {
+                    el.style.top = "0px"
+                    transformOriginY = 0
+                }
+
+                if(ballX+el.clientWidth > videoW) {
+                    let X = videoW - el.clientWidth
+                    el.style.left = X-3 + "px"
+                    transformOriginX = X-3
+                }
+
+                if(ballY+el.clientHeight > videoH) {
+                    let Y = videoH - el.clientHeight
+                    el.style.top = Y-3 + "px"
+                    transformOriginY = Y-3
+                }
+
+                zoomVideo[0].style.transformOrigin = `${transformOriginX*2}px ${transformOriginY*2}px`
+
+            }
+        },
+        zoomBoxMouseUp() {
+            this.zoomBoxGrab = false
+            this.gapX = null
+            this.gapY = null
+        },
         gridMovedEvent() {
             this.gridLayoutHeight = parseInt(document.getElementById("grid-layout").style.height.replace('px',''))
             this.gridLayoutWidth = parseInt(document.getElementById("grid-layout").style.width.replace('px',''))
@@ -161,7 +264,6 @@ export default {
                 var mouse_y = e.pageY;
                 var radians = Math.atan2(mouse_x - center_x, mouse_y - center_y);
                 var degree = (radians * (180 / Math.PI) * -1) + 100;
-                console.log(radians,degree)
 
                 if(this.rotationEnable){
                     grid.style.transform = this.preTransform
@@ -233,7 +335,7 @@ export default {
 }
 
 .vue-grid-item:not(.vue-grid-placeholder) {
-    background: #ccc;
+    background: black;
     border: 1px solid;
 }
 .vue-grid-item .resizing {

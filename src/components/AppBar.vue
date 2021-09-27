@@ -33,15 +33,15 @@
                 </template>
 
                 <v-list-item
-                    v-for="child in item.child"
-                    :key="child.title"
+                    v-for="child in devices"
+                    :key="child.name"
                     link
                 >
                     <v-list-item-icon :class="mini ? 'ml-0' : 'ml-5'">
-                        <v-icon>{{ child.icon }}</v-icon>
+                        <v-icon>mdi-cctv</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                        <v-list-item-title>{{ child.title }}</v-list-item-title>
+                        <v-list-item-title>{{ child.name }}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list-group>
@@ -50,20 +50,30 @@
 </template>
 
 <script>
-  export default {
+import axios from 'axios';
+export default {
     data () {
-      return {
-        drawer: true,
-        items: [
-          { title: '단말기 목록', icon: 'mdi-server', child:[
-              {
-                  title:'NADA-J',
-                  icon:'mdi-cctv'
-              }
-          ]},
-        ],
-        mini: true,
-      }
+        return {
+            drawer: true,
+            items: [
+                {
+                    title: '단말기 목록',
+                    icon: 'mdi-server',
+                    // child:[
+                    //     {
+                    //         title:'NADA-J',
+                    //         icon:'mdi-cctv'
+                    //     }
+                    // ]
+                },
+            ],
+            mini: true,
+            devices:null,
+        }
     },
-  }
+    async mounted() {
+        let result = await axios.get('http://localhost:3000/getDevices')
+        this.devices = result.data
+    }
+}
 </script>
