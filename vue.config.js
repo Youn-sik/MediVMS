@@ -1,29 +1,49 @@
-// https://medium.com/js-dojo/how-to-reduce-your-vue-js-bundle-size-with-webpack-3145bf5019b7
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const webpack = require('webpack');
-const PACKAGE = require('./package.json');
-
-const banner = PACKAGE.name + ' - ' + PACKAGE.version + ' | ' +
-    '(c) 2015, ' + new Date().getFullYear() + '  ' + PACKAGE.author + ' | ' +
-    PACKAGE.homepage;
+const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
-    configureWebpack: {
-        output: {
-            library: "VueGridLayout",
-            libraryExport: 'default'
-        },
-        plugins: [
-            // new BundleAnalyzerPlugin(),
-            new webpack.BannerPlugin(banner)
+
+  pages: {
+    index: {
+      entry: 'src/index.js',
+      template: 'public/index.html',
+      filename: 'index.html'
+    }
+  },
+  devServer: {
+    clientLogLevel: 'warning',
+    hot: true,
+    contentBase: 'dist',
+    compress: true,
+    open: true,
+    overlay: { warnings: false, errors: true },
+    publicPath: '/',
+    quiet: true,
+    watchOptions: {
+      poll: false,
+      ignored: /node_modules/
+    }
+  },
+
+  chainWebpack: config => {
+    config.plugins.delete('prefetch-index'),
+    config.module
+      .rule('vue')
+        .use('vue-loader')
+          .tap(args => {
+            args.compilerOptions.whitespace = 'preserve'
+          })
+  },
+  productionSourceMap: false,
+  assetsDir: './assets/',
+  configureWebpack: {
+    plugins: [
+      new CopyPlugin({
+        patterns: [
+          { from: 'src/assets/img', to: 'assets/img' },
+          { from: 'src/assets/logos', to: 'assets/logos' },
+          { from: 'src/assets/fonts', to: 'assets/fonts' },
         ],
-    },
-
-    css: {
-        extract: false
-    },
-
-    transpileDependencies: [
-      'vuetify'
+      }),
     ]
+  }
 }
