@@ -52,6 +52,7 @@
     "vuejs-datepicker": "^1.6.2",
     "vuelidate": "^0.7.6",
     "vuetable-2": "^1.7.5",
+    "vuetify": "^2.5.9",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -60,9 +61,11 @@
     "@vue/cli-plugin-vuex": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
     "copy-webpack-plugin": "^6.0.3",
+    "deepmerge": "^4.2.2",
     "node-sass": "^4.14.1",
     "rimraf": "^2.6.2",
-    "sass-loader": "^9.0.2",
+    "sass": "^1.32.13",
+    "sass-loader": "^9.0.3",
     "vue-loader": "^15.9.7",
     "vue-template-compiler": "^2.6.14",
     "webpack-bundle-analyzer": "^3.9.0"

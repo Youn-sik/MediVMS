@@ -17,7 +17,7 @@ const client = mqtt.connect({
 client.on('error',function (err) {
     console.log(err)
 })
-
+cd .
 client.on('connect', function(test) {
     console.log('MQTT connected.')
     client.subscribe([

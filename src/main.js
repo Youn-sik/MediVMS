@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 
+import vuetify from './plugin/vuetify' // path to vuetify export
 // BootstrapVue add
 import BootstrapVue from 'bootstrap-vue'
 // Router & Store add
@@ -54,6 +55,7 @@ Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.config.productionTip = false
 
 export default new Vue({
+  vuetify,
   i18n,
   router,
   store,
