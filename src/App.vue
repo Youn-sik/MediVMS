@@ -33,3 +33,9 @@ export default {
   }
 };
 </script>
+
+<style>
+  button {
+    color : #d0d0d0 !important;
+  }
+</style>

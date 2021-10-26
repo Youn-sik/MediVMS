@@ -7964,6 +7964,10 @@ select:-webkit-autofill:focus {
   background-color:rgba(0,0,0,0) !important;
 }
 
+.v-event-timed {
+  color:white !important;
+}
+
 .v-present .v-btn {
   background-color:#272727 !important;
 }
@@ -8007,6 +8011,17 @@ select:-webkit-autofill:focus {
   margin-left:1px;
 }
 
+.v-menu__content .v-card .v-card__text {
+  background: #303030;
+}
+
+.v-menu__content .v-card .v-card__actions {
+  background: #303030;
+}
+
+.v-toolbar__content button {
+  color:white !important;
+}
 // .v-btn {
 //   background-color:red;
 // }

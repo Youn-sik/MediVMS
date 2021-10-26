@@ -145,7 +145,51 @@ const api = {
                 error => reject(error)
             )
         })
-    }
+    },
+
+    addSchedule(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/schedule',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    getSchedule(params) {
+        return new Promise((resolve, reject) => {
+            axios.get('/schedule',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    patchSchedule(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/schedule',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    deleteSchedule(params) {
+        return new Promise((resolve, reject) => {
+            axios.delete('/schedule',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
 }
 
 export default api

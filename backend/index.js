@@ -165,15 +165,59 @@ app.patch('/pathReserv',(req,res) => {
     })
 })
 
-// app.get('/getDevices',(req,res) => {
-//     onvif.startProbe().then((device_info_list) => {
-//         console.log(device_info_list.length + ' devices were found.');
+app.get('/schedule',(req,res) => {
+    let start = req.query.start
+    let end = req.query.end
+    console.log(`
+    SELECT *
+    FROM schedule
+    WHERE start >= "${start}"
+    AND end <= "${end}"
+`)
+    connection.query(`
+        SELECT *
+        FROM schedule
+        WHERE start >= "${start}"
+        AND end <= "${end}"
+    `, function (err, rows, fields) {
+        if (err) throw err
 
-//         res.send(device_info_list)
-//     }).catch((error) => {
-//         console.error(error);
-//     });
-// })
+        res.send(rows)
+    })
+})
+
+app.post('/schedule',(req,res) => {
+    connection.query(`INSERT INTO schedule VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}")`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.patch('/schedule',(req,res) => {
+    connection.query(`UPDATE schedule
+    SET name = ${req.body.name},
+    start = ${req.body.start},
+    end = ${req.body.end},
+    color = ${req.body.color},
+    note = ${req.body.note},
+    WHERE id = ${req.body.id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.delete('/schedule',(req,res) => {
+    connection.query(`DELETE schedule
+    WHERE id = ${req.body.id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
 
 
 const start = () => {

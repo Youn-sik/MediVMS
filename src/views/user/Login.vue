@@ -14,7 +14,7 @@
                 <router-link to="/">
                     <span class="logo-single" />
                 </router-link>
-                <h2 class="mb-4">{{ $t('user.login-title')}}</h2>
+                <h2 class="mb-4">로그인</h2>
 
                 <b-form @submit.prevent="formSubmit" class="av-tooltip tooltip-label-bottom">
                     <b-form-group label="ID" class="has-float-label mb-4">
@@ -27,7 +27,7 @@
                         <b-form-invalid-feedback v-else-if="!$v.form.password.minLength || !$v.form.password.maxLength">Your password must be between 4 and 16 characters</b-form-invalid-feedback>
                     </b-form-group>
                     <div class="d-flex justify-content-between align-items-center">
-                        <router-link to="/user/forgot-password">{{ $t('user.forgot-password-question')}}</router-link>
+                        <div></div>
                         <b-button type="submit" variant="primary" size="lg" :disabled="processing" :class="{'btn-multiple-state btn-shadow': true,
                     'show-spinner': processing,
                     'show-success': !processing && loginError===false,
@@ -43,7 +43,7 @@
                             <span class="icon fail">
                                 <i class="simple-icon-exclamation"></i>
                             </span>
-                            <span class="label">{{ $t('user.login-button') }}</span>
+                            <span class="label">로그인</span>
                         </b-button>
                     </div>
                 </b-form>
