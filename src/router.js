@@ -73,6 +73,11 @@ const routes = [
                   import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
               },
               {
+                path: "history-list",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
+              },
+              {
                 path: "thumb-list",
                 component: () =>
                   import(/* webpackChunkName: "product" */ "./views/app/pages/product/ThumbList")

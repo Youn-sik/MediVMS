@@ -7972,37 +7972,72 @@ select:-webkit-autofill:focus {
   background-color:#272727 !important;
 }
 
-.cyan {
+.v-calendar .cyan {
   background-color: #00bcd4!important;
   border-color: #00bcd4!important;
 }
 
-.deep-purple {
+.v-calendar .deep-purple {
   background-color: #673ab7!important;
   border-color: #673ab7!important;
 }
 
-.v-application .indigo {
+.v-calendar .indigo {
   background-color: #3f51b5!important;
   border-color: #3f51b5!important;
 }
 
-.orange {
+.v-calendar .orange {
   background-color: #ff9800!important;
   border-color: #ff9800!important;
 }
 
-.blue {
+.v-calendar .blue {
   background-color: #2196f3!important;
   border-color: #2196f3!important;
 }
 
-.green {
+.v-calendar .green {
   background-color: #4caf50!important;
   border-color: #4caf50!important;
 }
 
-.indigo {
+.v-calendar .indigo {
+  background-color: #3F51B5!important;
+  border-color: #3F51B5!important;
+}
+
+.schedule .cyan {
+  background-color: #00bcd4!important;
+  border-color: #00bcd4!important;
+}
+
+.schedule .deep-purple {
+  background-color: #673ab7!important;
+  border-color: #673ab7!important;
+}
+
+.schedule .indigo {
+  background-color: #3f51b5!important;
+  border-color: #3f51b5!important;
+}
+
+.schedule .orange {
+  background-color: #ff9800!important;
+  border-color: #ff9800!important;
+}
+
+.schedule .blue {
+  background-color: #2196f3!important;
+  border-color: #2196f3!important;
+}
+
+.schedule .green {
+  background-color: #4caf50!important;
+  border-color: #4caf50!important;
+}
+
+.schedule .indigo {
   background-color: #3F51B5!important;
   border-color: #3F51B5!important;
 }
@@ -8022,6 +8057,34 @@ select:-webkit-autofill:focus {
 .v-toolbar__content button {
   color:white !important;
 }
-// .v-btn {
-//   background-color:red;
-// }
+
+.theme--dark.v-calendar-weekly .v-calendar-weekly__day {
+  border-right: 1px solid #9e9e9e !important;
+  border-bottom: 1px solid #9e9e9e !important;
+}
+
+.emergency{
+  background:#E02401;
+}
+
+.started{
+  background:#54c147;
+}
+
+.standby{
+  background:#FFB319;
+}
+
+.standard{
+  background:#C8C6C6;
+}
+
+.schedule-list .card-body {
+  padding-bottom: 10px !important;
+  padding-top: 10px !important;
+}
+
+.pagination {
+  margin-bottom: 0px;
+  height: 40px;
+}

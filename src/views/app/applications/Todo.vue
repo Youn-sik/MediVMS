@@ -9,6 +9,7 @@
                 <p>사원 번호 : {{selectedAccount.employee_no}}</p>
                 <p>요청 권한 : {{selectedAccount.req_auth ? selectedAccount.req_auth : '없음'}}</p>
                 <p>권한 선택 :</p>
+
                 <b-form-group label="">
                     <b-form-radio-group
                         v-model="selected"
@@ -19,10 +20,54 @@
                 </b-form-group>
                 <p>수술실 시청 권한 : </p>
                 <!-- <b-form-select v-model="selected" :options="['미지정', ...surgeries]"></b-form-select> -->
-                <b-dropdown id="ddown1" :text="selectedSurgery" variant="outline-secondary">
+                <!-- <b-dropdown id="ddown1" :text="selectedSurgery" variant="outline-secondary">
                     <b-dropdown-item @click="changeSelectedSurgery(item)" v-for="(item,index) in [{surgery_name:'미지정'}, ...surgeries]" :key="index">{{item.surgery_name}}</b-dropdown-item>
-                </b-dropdown>
+                </b-dropdown> -->
+
+
+                <b-form-tags
+                    id="tags-component-select"
+                    v-model="surgeryValue"
+                    size="lg"
+                    class="mb-2"
+                    add-on-change
+                    no-outer-focus
+                >
+                    <template v-slot="{ tags, inputAttrs, disabled, removeTag }">
+                        <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                            <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                                <b-form-tag
+                                    @remove="removeTag(tag)"
+                                    :title="tag"
+                                    :disabled="disabled"
+                                    variant="info"
+                                >{{ titleFromId(tag) }}</b-form-tag>
+                            </li>
+                        </ul>
+                        <b-form-select
+                            class="form-control"
+                            v-bind="inputAttrs"
+                            @change="tagInput"
+                            value-field="surgery_id"
+                            text-field="surgery_name"
+                            :disabled="disabled || availableOptions.length === 0"
+                            :options="availableOptions"
+                        >
+                            <template #first>
+                            <option disabled value="">수술실을 선택해주세요</option>
+                            </template>
+                        </b-form-select>
+                    </template>
+                </b-form-tags>
             </div>
+            <template #modal-footer="{ ok, cancel, hide }">
+                <b-button variant="danger" @click="cancelSaveEvent">
+                    취소
+                </b-button>
+                <b-button @click="saveAuth">
+                    저장
+                </b-button>
+            </template>
         </b-modal>
 
         <!-- 권한 요청 모달 -->
@@ -103,7 +148,7 @@
                 </b-table-simple>
             </b-card>
         </b-colxx>
-        <b-colxx xl="12" lg="12" md="12" class="mb-4">
+        <!-- <b-colxx xl="12" lg="12" md="12" class="mb-4">
             <piaf-breadcrumb :heading="'내 정보'" />
             <div class="separator mb-5"></div>
             <b-card class="mb-4">
@@ -132,7 +177,7 @@
                     </b-tbody>
                 </b-table-simple>
             </b-card>
-        </b-colxx>
+        </b-colxx> -->
     </b-row>
 </template>
 
@@ -149,7 +194,10 @@ export default {
         "product-categories-doughnut": ProductCategoriesDoughnut,
     },
     computed: {
-        ...mapGetters(["currentUser"])
+        ...mapGetters(["currentUser"]),
+        availableOptions() {
+            return this.surgeries.filter(opt => this.surgeryValue.indexOf(opt) === -1)
+        },
     },
     data() {
         return {
@@ -169,6 +217,7 @@ export default {
                 { text: '레지던트', value: '레지던트' },
                 { text: '간호사', value: '간호사' }
             ],
+            surgeryValue: [],
             accounts:[],
             selectedAccount:null,
             filteredList:[],
@@ -178,6 +227,19 @@ export default {
         }
     },
     methods: {
+        cancelSaveEvent() {
+            this.authModal = false;
+            this.surgeryValue = []
+            this.selected = '주치의'
+
+        },
+        titleFromId(id) {
+            let index = this.surgeries.findIndex(i => i.surgery_id === parseInt(id) )
+            return this.surgeries[index].surgery_name
+        },
+        tagInput(i){
+            this.surgeryValue.push(i)
+        },
         changeSearchType(val) {
             this.currentSearchType = val
         },
@@ -204,8 +266,7 @@ export default {
         openAuthModal(val) {
             this.authModal = true
             this.selectedAccount = val
-            console.log(val)
-            // this.selected =
+            this.surgeryValue = val.surgery_room_auth ? JSON.parse(val.surgery_room_auth) : []
         },
         openAuthReqModal() {
             this.authReqModal = true
@@ -215,9 +276,10 @@ export default {
                 auth:this.selected === '주치의' ? 1 :
                 this.selected === '레지던트' ? 2 : 3,
                 account:this.selectedAccount.account,
-                surgeryAuth:this.origianlSelectedSurgery.surgery_name === '미지정' ? null : this.origianlSelectedSurgery.surgery_id
+                surgeryAuth:this.surgeryValue.length ? JSON.stringify(this.surgeryValue) : null
             })
             alert('저장 되었습니다')
+            this.authModal = false
             this.selected = null
         },
         async reqAuth() {

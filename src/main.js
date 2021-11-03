@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 
 import vuetify from './plugin/vuetify' // path to vuetify export
+
 // BootstrapVue add
 import BootstrapVue from 'bootstrap-vue'
 // Router & Store add

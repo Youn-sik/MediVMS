@@ -160,7 +160,7 @@ const api = {
 
     getSchedule(params) {
         return new Promise((resolve, reject) => {
-            axios.get('/schedule',params).then(
+            axios.get(`/schedule?start=${params.start}&end=${params.end}&surgery_id=${params.surgery_id}`,params).then(
                 res => {
                     resolve(res.data)
                 },
@@ -182,7 +182,20 @@ const api = {
 
     deleteSchedule(params) {
         return new Promise((resolve, reject) => {
-            axios.delete('/schedule',params).then(
+            axios.delete('/schedule',{
+                data:params
+            }).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    saveHistory(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/history',params).then(
                 res => {
                     resolve(res.data)
                 },

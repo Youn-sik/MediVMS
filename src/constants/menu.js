@@ -73,6 +73,27 @@ const data = {
   // },
   // ]
 },
+
+{
+  id: "열람 기록",
+  icon: "simple-icon-book-open",
+  label: "열람 기록",
+  to: `${adminRoot}/pages/product/history-list`,
+  // subs: [
+  // {
+  //   id: "pages-grid",
+  //   label: "grid",
+  //   to: `${adminRoot}/pages/grid`,
+  //   subs: [{
+  //     icon: "simple-icon-grid",
+  //     label: "grid",
+  //     to: `${adminRoot}/pages/grid`
+  //   },
+
+  //   ]
+  // },
+  // ]
+},
 {
   id: "applications",
   icon: "iconsminds-firewall",

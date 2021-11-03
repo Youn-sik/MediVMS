@@ -6,7 +6,7 @@
           :data="{
             head: true,
             date: '일시',
-            surgery_name: '수술실 번호',
+            sergery_name: '수술실 번호',
             department: '진료과',
             doctor: '주치의',
             surgery_desc: '수술 내용',

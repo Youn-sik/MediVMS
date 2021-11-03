@@ -1,14 +1,61 @@
 <template>
-  <div v-if="!surgeries.length" data-app>
+  <div v-if="surgeries.length" data-app class="schedule">
         <!-- more 모달 -->
         <b-modal v-model="moreModal" scrollable title="일일 스케쥴">
             <v-calendar
-                ref="calendar"
+                ref="daycalendar"
                 :events="events"
+                category-show-all
                 type="day"
                 :start='startDay'
+                @click:event="showEventFromDay"
                 :dark="true"
             ></v-calendar>
+            <v-menu
+            v-model="selectedOpenFromDay"
+            :close-on-content-click="false"
+            :activator="selectedElement"
+            offset-x
+            >
+                <v-card
+                    color="grey lighten-4"
+                    min-width="350px"
+                    flat
+                >
+                    <v-toolbar
+                    :color="selectedEvent.color"
+                    dark
+                    >
+                        <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="modifySchedule(selectedEvent)" icon>
+                            <v-icon>simple-icon-note</v-icon>
+                        </v-btn>
+                        <v-btn @click="()=>{deleteSchedule(selectedEvent.id)}" icon>
+                            <v-icon>simple-icon-trash</v-icon>
+                        </v-btn>
+                    </v-toolbar>
+
+                    <v-card-text>
+                        <span style="color:white" v-html="selectedEvent.note"></span>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-btn
+                            text
+                            color="secondary"
+                            @click="selectedOpenFromDay = false"
+                        >
+                            닫기
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-menu>
+            <template #modal-footer="{ ok, cancel, hide }">
+                <b-button @click="cancel()">
+                    닫기
+                </b-button>
+            </template>
         </b-modal>
 
         <!-- Add 모달 -->
@@ -51,6 +98,14 @@
                         </template>
                     </vselect>
                 </b-form-group>
+                <b-form-checkbox
+                id="emergency"
+                v-model="newEvent.emergency"
+                name="emergency"
+                >
+                긴급 녹화&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다
+                </b-form-checkbox>
             </b-form>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelSaveEvent">
@@ -67,7 +122,7 @@
             v-model="modModal"
             id="modalright"
             ref="modalright"
-            :title="'일정 추가'"
+            :title="'일정 수정'"
             modal-class="modal-right"
         >
             <b-form>
@@ -102,12 +157,22 @@
                         </template>
                     </vselect>
                 </b-form-group>
+                <b-form-checkbox
+                id="emergency"
+                v-model="newEvent.emergency"
+                :value="1"
+                :unchecked-value="0"
+                name="emergency"
+                >
+                긴급 녹화&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다
+                </b-form-checkbox>
             </b-form>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelSaveEvent">
                     취소
                 </b-button>
-                <b-button @click="saveEvent">
+                <b-button @click="patchSchedule">
                     저장
                 </b-button>
             </template>
@@ -132,7 +197,7 @@
                             icon
                             class="ma-2"
 
-                            @click="$refs.calendar.prev()"
+                            @click="prevMonth"
                         >
                             <!-- <v-icon style="color:white">mdi-chevron-left</v-icon> -->
                             <
@@ -142,7 +207,7 @@
                             icon
                             class="ma-2"
 
-                            @click="$refs.calendar.next()"
+                            @click="nextMonth"
                         >
                             <!-- <v-icon style="color:white">mdi-chevron-right</v-icon> -->
                             >
@@ -157,8 +222,12 @@
                             <!-- <v-icon style="color:white">simple-icon-plus</v-icon> -->
                             일정 추가
                         </b-button>
+                        <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
+                            <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
+                        </b-dropdown>
                     </div>
-                    <v-sheet height="600" :dark="true">
+                    <v-sheet height="700" :dark="true">
+                        {{date}}
                         <v-calendar
                             ref="calendar"
                             v-model="value"
@@ -167,6 +236,7 @@
                             :events="events"
                             :event-overlap-mode="mode"
                             @click:more="viewDay"
+                            @click:date="viewDayFromDate"
                             @click:event="showEvent"
                             :event-overlap-threshold="30"
                             :event-color="getEventColor"
@@ -190,10 +260,10 @@
                                 >
                                     <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
                                     <v-spacer></v-spacer>
-                                    <v-btn icon>
-                                        <v-icon @click="modModal">simple-icon-note</v-icon>
+                                    <v-btn @click="modifySchedule(selectedEvent)" icon>
+                                        <v-icon>simple-icon-note</v-icon>
                                     </v-btn>
-                                    <v-btn icon>
+                                    <v-btn @click="()=>{deleteSchedule(selectedEvent.id)}" icon>
                                         <v-icon>simple-icon-trash</v-icon>
                                     </v-btn>
                                 </v-toolbar>
@@ -232,7 +302,10 @@ import "vue-select/dist/vue-select.css";
 moment.locale("ko");
 export default {
     computed: {
-      ...mapGetters(["currentUser"])
+      ...mapGetters(["currentUser"]),
+      minusMonth() {
+          this.date = moment(this.data).subtract(1,'M').format("YYYY-MM")
+      }
     },
     components: {
         datetime: Datetime,
@@ -240,13 +313,16 @@ export default {
     },
     data() {
         return {
+            date:moment().format("YYYY-MM"),
             addDateTime:'',
+            emergency:false,
             newEvent: {
                 color:'',
                 name:'',
                 timed:true,
                 start:'',
-                end:''
+                end:'',
+                emergency:false,
             },
             addModal:false,
             modModal:false,
@@ -257,6 +333,7 @@ export default {
             selectedEvent: {},
             selectedElement: null,
             selectedOpen: false,
+            selectedOpenFromDay: false,
             surgeries:[],
             type: 'month',
             types: ['month', 'week', 'day', '4day'],
@@ -271,40 +348,43 @@ export default {
             ],
             value: '',
             events: [],
-            dayEvents: [],
             colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange'],
             names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
             startDay: '',
+            // todaySchedules: [],
         }
     },
     methods:{
+        modifySchedule(i) {
+            this.modModal = true
+
+            this.newEvent = {...i, start:moment(i.start).format('YYYY-MM-DDTHH:mm:ssZ'), end:moment(i.end).format('YYYY-MM-DDTHH:mm:ssZ')}
+        },
+        prevMonth() {
+            this.date = moment(this.date).subtract(1,'M').format("YYYY-MM")
+            this.getSchedule()
+            this.$refs.calendar.prev()
+            console.log(this.$refs.calendar.prev())
+        },
+        nextMonth() {
+            this.date = moment(this.date).add(1,'M').format("YYYY-MM")
+            this.getSchedule()
+            this.$refs.calendar.next()
+        },
         cancelSaveEvent() {
             this.newEvent = {
                 color:'',
                 name:'',
                 timed:true,
                 start:'',
-                end:''
+                end:'',
+                emergency:false,
             }
 
-            this.addModal = false;
-        },
-        saveEvent() {
-            this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
-            this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
-            this.events.push(this.newEvent)
-
-            this.newEvent = {
-                color:'',
-                name:'',
-                timed:true,
-                start:'',
-                end:''
-            }
-
-            alert('저장되었습니다.')
+            this.emergency = false;
 
             this.addModal = false;
+            this.modModal = false;
         },
         openAddModal() {
             this.addModal = true;
@@ -326,7 +406,30 @@ export default {
 
             nativeEvent.stopPropagation()
         },
+        showEventFromDay ({ nativeEvent, event }) {
+            console.log(nativeEvent, event)
+            const open = () => {
+            this.selectedEvent = event
+            this.selectedElement = nativeEvent.target
+            requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpenFromDay = true))
+            }
+
+            if (this.selectedOpenFromDay) {
+            this.selectedOpenFromDay = false
+            requestAnimationFrame(() => requestAnimationFrame(() => open()))
+            } else {
+            open()
+            }
+
+            nativeEvent.stopPropagation()
+        },
         viewDay(e) {
+            this.startDay = e.date
+            this.moreModal = true
+        },
+        viewDayFromDate(e) {
+            this.date = moment(e.date).format("YYYY-MM")
+
             this.startDay = e.date
             this.moreModal = true
         },
@@ -339,11 +442,12 @@ export default {
             this.currentSurgery.serial_numbers = this.currentSurgery.serial_numbers.split(',')
             this.currentSurgeryImdex = index
 
-            this.surgeryData = await api.getReserv({surgeryId:this.currentSurgery.surgery_id})
+            this.getSchedule()
         },
         async getSurgery() {
           let result = await api.getSurgery()
           this.surgeries = result
+
           this.changeSurgery(result[this.currentSurgeryImdex])
         },
         getEvents ({ start, end }) {
@@ -380,38 +484,67 @@ export default {
         },
 
         async getSchedule() {
-            this.events = await api.getSchedule()
-            console.log(this.events)
+            let start = moment(this.date).startOf('month').format('YYYY-MM-DD');
+            let end = moment(this.date).endOf('month').format('YYYY-MM-DD');
+            this.events = await api.getSchedule({start,end,surgery_id:this.currentSurgery.surgery_id,alltype:1})
+
+            this.todaySchedules
         },
 
         async addSchedule() {
-            this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
-            this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
-            await api.addSchedule(this.newEvent)
+            if(this.newEvent.emergency) {
+                this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD')
+                this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD')
+            } else {
+                this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
+                this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
+            }
+            await api.addSchedule({...this.newEvent, surgery_id:this.currentSurgery.surgery_id})
 
             alert('저장되었습니다.')
 
             this.getSchedule()
 
             this.addModal = false;
+
+            this.newEvent = {
+                color:'',
+                name:'',
+                timed:true,
+                start:'',
+                end:'',
+                emergency:false
+            }
+
+
+            this.emergency = false;
         },
 
         async patchSchedule(id) {
-            await api.patchSchedule({...this.newEvent, id})
+            if(this.newEvent.emergency) {
+                this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD')
+                this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD')
+            } else {
+                this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
+                this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
+            }
+
+            await api.patchSchedule({...this.newEvent})
 
             this.getSchedule()
+
+            this.modModal = false;
         },
 
         async deleteSchedule(id) {
-            await api.deleteSchedule(id)
-
+            await api.deleteSchedule({id})
             this.getSchedule()
+            this.selectedOpen = false
+            this.selectedOpenFromDay = false
         },
     },
     mounted () {
         this.getSurgery()
-
-        this.getSchedule()
     }
 };
 </script>
