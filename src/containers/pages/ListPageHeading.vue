@@ -179,8 +179,6 @@ export default {
     'currentSearchType',
     "currentProcessingStatus",
     "title",
-    "selectAll",
-    "isSelectedAll",
     "isAnyItemSelected",
     "keymap",
     "displayMode",

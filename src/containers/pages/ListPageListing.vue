@@ -14,18 +14,18 @@
             browseAuth: '열람 가능 여부',
             browse:'열람'
           }"
+          :selectAll="selectAll"
+          :isSelectedAll="isSelectedAll"
           :selected-items="selectedItems"
-          @toggle-item="toggleItem"
-          v-contextmenu:contextmenu
+          :toggleItem="toggleItem"
         />
       </b-colxx>
       <b-colxx xxs="12" class="mb-3" v-for="(item,index) in items" :key="index" :id="item.id">
         <data-list-item
           :key="item.id"
-          :data="item"
+          :data="{...item, head:false}"
           :selected-items="selectedItems"
-          @toggle-item="toggleItem"
-          v-contextmenu:contextmenu
+          :toggleItem="toggleItem"
         />
       </b-colxx>
     </b-row>
@@ -54,21 +54,6 @@
         </b-pagination-nav>
       </b-colxx>
     </b-row>
-
-    <v-contextmenu @contextmenu="handleContextMenu" ref="contextmenu">
-      <v-contextmenu-item @click="onContextMenuAction('copy')">
-        <i class="simple-icon-docs" />
-        <span>Copy</span>
-      </v-contextmenu-item>
-      <v-contextmenu-item @click="onContextMenuAction('move-to-archive')">
-        <i class="simple-icon-drawer" />
-        <span>Move to archive</span>
-      </v-contextmenu-item>
-      <v-contextmenu-item @click="onContextMenuAction('delete')">
-        <i class="simple-icon-trash" />
-        <span>Delete</span>
-      </v-contextmenu-item>
-    </v-contextmenu>
   </div>
 </template>
 <script>
@@ -85,6 +70,8 @@ export default {
     "displayMode",
     "items",
     "selectedItems",
+    "selectAll",
+    "isSelectedAll",
     "toggleItem",
     "lastPage",
     "perPage",

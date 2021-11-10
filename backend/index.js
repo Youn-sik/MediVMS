@@ -4,6 +4,9 @@ const cors = require('cors');
 const app = express()
 const cron = require('node-cron');
 const moment = require('moment');
+const https = require('https');
+const fs = require('fs');
+const mqtt = require('mqtt');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -21,19 +24,105 @@ var connection = mysql.createPool({
 connection.on('error', function(err) {
     console.log(err)
 });
-app.use(cors())
-app.use('/stream',express.static('./record'));
 
-app.get('/getSurgery',(req,res) => {
-    connection.query("SELECT S.*,"+
-    "group_concat(D.device_id) as devices,"+
-    "group_concat(D.device_name) as device_names,"+
-    "group_concat(D.live_url order by D.live_url desc) as live_urls, "+
-    "group_concat(D.isLive) as isLives, "+
-    "group_concat(D.Serial_number) as serial_numbers, "+
-    "count(D.device_id) as numberOfDevices "+
-    "From devices D inner join surgery as S on D.surgery_id =S.surgery_id "+
-    "group by S.surgery_id", function (err, rows, fields) {
+
+var mqttClient = mqtt.connect('localhost',{
+    protocol:"ws",
+    port:8083,
+    keepalive:0,
+    path:'/mqtt',
+    clean: true,
+})
+
+mqttClient.on('connect', (test) => {
+    console.log('MQTT connected.')
+    mqttClient.subscribe([
+        '/nvr/request/stblist',
+    ], (error, result) => {
+        if (error) {
+            console.log('MQTT subscribe error.');
+        } else {
+            console.log('MQTT subscribed.');
+        }
+    });
+})
+
+mqttClient.on('message', (topic, message) => {
+    connection.query(`SELECT * FROM devices`, function (err, rows, fields) {
+        if (err) throw err
+
+        mqttClient.publish(`/nvr/request/stblist/result`,JSON.stringify(rows))
+    })
+})
+
+app.use(cors())
+app.use('/stream',express.static('/var/www/html/VMS/VMS_backend/record'));
+
+app.get('/surgery',(req,res) => {
+    connection.query("SELECT * FROM surgery", function (err, rows, fields) {
+        if (err) throw err
+
+
+        connection.query("SELECT S.*,"+
+        "group_concat(D.device_id) as devices,"+
+        "group_concat(D.device_name) as device_names,"+
+        "group_concat(D.live_url order by D.live_url desc) as live_urls, "+
+        "group_concat(D.isLive) as isLives, "+
+        "group_concat(D.Serial_number) as serial_numbers, "+
+        "count(D.device_id) as numberOfDevices "+
+        "From devices D inner join surgery as S on D.surgery_id =S.surgery_id "+
+        "group by S.surgery_id", function (err, _rows, fields) {
+            if (err) throw err
+
+            if(rows.length === _rows.length)
+                res.send(_rows)
+            else {
+                let temp = []
+                for(let i = rows.length - 1; i > _rows.length - 1; i--){
+                    temp.push(rows[i])
+                }
+                let reversed = temp.reverse()
+
+                res.send([..._rows,...reversed])
+            }
+
+
+            // res.send([...rows, ..._rows])
+        })
+    })
+})
+
+app.delete('/surgery',(req,res) => {
+    req.body.surgeries.forEach(async e => {
+        let query = `
+        DELETE FROM surgery
+        WHERE surgery_id=${e.surgery_id};
+        `
+
+
+        await connection.query(query)
+    });
+
+    res.send({result:true})
+})
+
+app.patch('/surgery',(req,res) => {
+    connection.query(`UPDATE surgery
+    SET
+    surgery_name = "${req.body.surgery_name}",
+    note = "${req.body.note}"
+    WHERE surgery_id = ${req.body.surgery_id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.post('/surgery',(req,res) => {
+    connection.query("INSERT INTO VMS.surgery"+
+    "(surgery_name, note)"+
+    `VALUES("${req.body.surgery_name}", "${req.body.note}");`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -59,6 +148,7 @@ app.post('/login',(req,res) => {
         if(rows.length === 0)
             res.status(401)
 
+        // console.log(rows[0].surgery_room_auth)
         rows[0].surgery_room_auth = JSON.parse(rows[0].surgery_room_auth)
         res.send(rows)
     })
@@ -110,8 +200,8 @@ app.patch('/recordStop',(req,res) => {
 
 app.post('/saveRecord', (req,res) => {
 
-    connection.query("INSERT INTO VMS.records (sergery_name, department, doctor, surgery_desc, patient_status, video_link, `date`, patient_name)"+
-    `VALUES('${req.body.sergery_name}', '${req.body.department}', '${req.body.doctor}', '${req.body.surgery_desc}', '${req.body.patient_status}', '${req.body.video_link}', '${req.body.date}', '${req.body.patient_name}',0);`,
+    connection.query("INSERT INTO VMS.records (sergery_name, department, doctor, surgery_desc, patient_status, video_link, `date`, patient_name, devices, expiration)"+
+    `VALUES('${req.body.sergery_name}', '${req.body.department}', '${req.body.doctor}', '${req.body.surgery_desc}', '${req.body.patient_status}', '${req.body.video_link}', '${req.body.date}', '${req.body.patient_name}','${req.body.devices}',0);`,
     function (err, rows, fields) {
         if (err) throw err
 
@@ -166,6 +256,71 @@ app.patch('/pathReserv',(req,res) => {
 
             res.send(rows)
         })
+    })
+})
+
+app.get('/getDevices',(req,res) => {
+    let surgery_id = req.query.surgery_id
+    let subQuery = ''
+    let subQuery2 = 'JOIN surgery ON devices.surgery_id = surgery.surgery_id '
+    if(surgery_id)
+        subQuery = 'WHERE devices.surgery_id = ' + surgery_id
+    connection.query(`SELECT * FROM devices `+ subQuery2 + subQuery, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.post('/deleteDevice',(req,res) => {
+    req.body.devices.forEach(async e => {
+        let query = `
+        DELETE FROM devices
+        WHERE device_id=${e.device_id};
+        `
+
+
+        await connection.query(query)
+    });
+
+    res.send({result:true})
+})
+
+app.patch('/updateDevice',(req,res) => {
+    connection.query(`UPDATE devices
+    SET
+    device_name = "${req.body.device_name}",
+    live_url = "${req.body.live_url}",
+    Serial_number = "${req.body.Serial_number}",
+    surgery_id = ${req.body.surgery_id},
+    note = "${req.body.note}"
+    WHERE device_id = ${req.body.device_id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.post('/addDevice',(req,res) => {
+    connection.query("INSERT INTO VMS.devices"+
+    "(device_name, live_url, Serial_number, surgery_id, note)"+
+    `VALUES("${req.body.device_name}", "${req.body.live_url}", "${req.body.Serial_number}", ${req.body.surgery_id}, "${req.body.note}");`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.patch('/controlDevice',(req,res) => {
+    connection.query(`UPDATE devices
+    SET
+    target_name = "${req.body.target}"
+    WHERE device_id = ${req.body.device_id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
     })
 })
 
@@ -278,7 +433,17 @@ cron.schedule('0 4 * * *', () => {
     }
 );
 
-const start = () => {
-    app.listen(3000,'0.0.0.0')
+// const start = () => {
+//     app.listen(3000,'0.0.0.0')
+// }
+
+// start()
+
+
+
+const sslOptions = {
+    key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
+    cert: fs.readFileSync('/etc/nginx/ssl/nginx-certificate.crt'),
 }
-start()
+
+https.createServer(sslOptions,app).listen(3000);

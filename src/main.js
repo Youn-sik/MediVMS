@@ -32,6 +32,10 @@ import { getCurrentLanguage } from './utils'
 
 import { Datetime } from 'vue-datetime'
 import 'vue-datetime/dist/vue-datetime.css'
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
+Vue.use(Toast,{})
 
 Vue.use(Datetime)
 Vue.use(BootstrapVue);

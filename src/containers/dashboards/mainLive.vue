@@ -9,6 +9,8 @@
             />
             <VideoPlayer
                 v-else
+                :isHistory="false"
+                license-server="https://widevine-proxy.appspot.com/proxy"
                 :manifest-url="mainlive.live_urls[0]"
                 style="height:460px; background:black;"
             />
@@ -28,6 +30,8 @@
                 />
                 <VideoPlayer
                     v-else
+                    :isHistory="false"
+                    license-server="https://widevine-proxy.appspot.com/proxy"
                     :manifest-url="item"
                     style="height:92px; background:black;"
                 />

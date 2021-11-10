@@ -29,7 +29,7 @@
 <script>
 import Vuetable from 'vuetable-2/src/components/Vuetable'
 import VuetablePaginationBootstrap from '../../../../components/Common/VuetablePaginationBootstrap'
-
+import {base_url} from "../../../../server.json"
 export default {
   components: {
     'vuetable' : Vuetable,
@@ -38,7 +38,7 @@ export default {
   data () {
     return {
       vuetableItems: {
-        apiUrl: 'http://localhost:3000/history',
+        apiUrl: `https://${base_url}:3000/history`,
         fields: [
           {
             name: 'created_at',

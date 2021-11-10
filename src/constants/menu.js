@@ -45,13 +45,33 @@ const data = {
   id: "surgries",
   icon: "iconsminds-first-aid",
   label: "수술실",
-  to: `${adminRoot}/pages/product/surgeries`
-},
-{
-  id: "sergery-reserv",
-  icon: "simple-icon-calendar",
-  label: "수술실 예약",
-  to: `${adminRoot}/pages/product/sergery-reserv`
+  to: `${adminRoot}/pages/product/surgeries`,
+  subs: [
+    {
+      id: "surgries_monitor",
+      icon: "",
+      label: "모니터링",
+      to: `${adminRoot}/pages/product/surgeries`,
+    },
+    {
+      id: "surgries_manage",
+      icon: "",
+      label: "수술실 관리",
+      to: `${adminRoot}/pages/product/surgery-manage`,
+    },
+    {
+      id: "sergery-reserv",
+      icon: "",
+      label: "수술 일정 예약",
+      to: `${adminRoot}/pages/product/sergery-reserv`
+    },
+    {
+      id: "단말 관리",
+      icon: "",
+      label: "단말 관리",
+      to: `${adminRoot}/pages/product/devices`,
+    },
+  ]
 },
 {
   id: "데이터 열람",
@@ -120,23 +140,7 @@ const data = {
   id: "설정",
   icon: "simple-icon-settings",
   label: "설정",
-  to: `${adminRoot}/applications`,
-  // subs: [{
-  //   icon: "simple-icon-check",
-  //   label: "menu.todo",
-  //   to: `${adminRoot}/applications/todo`
-  // },
-  // {
-  //   icon: "simple-icon-calculator",
-  //   label: "menu.survey",
-  //   to: `${adminRoot}/applications/survey`
-  // },
-  // {
-  //   icon: "simple-icon-bubbles",
-  //   label: "menu.chat",
-  //   to: `${adminRoot}/applications/chat`
-  // }
-  // ]
+  to: `${adminRoot}/pages/product/settings`,
 },
 // {
 //   id: "ui",

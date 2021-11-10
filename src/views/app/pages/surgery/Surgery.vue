@@ -211,6 +211,7 @@
                       />
                       <VideoPlayer
                           v-else
+                          :isHistory="false"
                           :manifest-url="url"
                           style="height:100%;"
                       />
@@ -459,7 +460,6 @@ export default {
             this.getSchedule()
         },
 
-        //
         async changeSurgery(val,index) {
             this.currentSurgery = JSON.parse(JSON.stringify(val))
             this.currentSurgery.live_urls = this.currentSurgery.live_urls.split(',')
@@ -505,6 +505,7 @@ export default {
             patient_name : '임시 정보',
             surgery_desc : '임시 정보',
             patient_status : "수술 완료",
+            devices:this.currentSurgery.serial_numbers.join(','),
             date : moment().format('YYYY-MM-DD HH:mm:ss'),
             video_link : `http://172.16.41.105:3000/stream/${currentSerial}_${startTime}.mp4`
           })
@@ -568,17 +569,21 @@ export default {
 
         this.mqttClient.on('connect', (test) => {
           console.log('MQTT connected.')
-          // this.mqttClient.subscribe([
-          //   '/control/mosaic/result/+',
-          //   '/login/+',
-          //   '/logout/+',
-          // ], (error, result) => {
-          //   if (error) {
-          //     console.log('MQTT subscribe error.');
-          //   } else {
-          //     console.log('MQTT subscribed.');
-          //   }
-          // });
+          this.mqttClient.subscribe([
+            '/detect/emergancy/+',
+          ], (error, result) => {
+            if (error) {
+              console.log('MQTT subscribe error.');
+            } else {
+              console.log('MQTT subscribed.');
+            }
+          });
+        })
+
+        this.mqttClient.on('message', (topic, message) => {
+          if(topic === '/detect/emergancy/'){
+            this.getSchedule()
+          }
         })
     },
     destroyed() {

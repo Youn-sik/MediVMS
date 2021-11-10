@@ -1,12 +1,46 @@
 import axios from 'axios';
 import moment from 'moment';
 import {base_url} from './server.json'
-axios.defaults.baseURL = `http://${base_url}:3000`
+axios.defaults.baseURL = `https://${base_url}:3000`
 
 const api = {
     getSurgery(params) {
         return new Promise((resolve, reject) => {
-            axios.get('/getSurgery').then(
+            axios.get('/surgery').then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+    addSurgery(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/surgery',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+    updateSurgery(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/surgery',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+    deleteSurgery(params) {
+        return new Promise((resolve, reject) => {
+            axios.delete('/surgery',{
+                data:{
+                    surgeries:params
+                }
+            }).then(
                 res => {
                     resolve(res.data)
                 },
@@ -203,6 +237,61 @@ const api = {
             )
         })
     },
+
+    getDevices(params) {
+        return new Promise((resolve, reject) => {
+            axios.get('/getDevices?surgery_id='+params.surgery_id).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    addDevice(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/addDevice',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    updateDevice(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/updateDevice',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    deleteDevice(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/deleteDevice',{devices:params}).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    controlDevice(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/controlDevice',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    }
 }
 
 export default api

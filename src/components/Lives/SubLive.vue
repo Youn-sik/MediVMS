@@ -2,15 +2,16 @@
     <div v-if="live">
         <p style="text-align:center; margin-bottom:3px;">[{{live.surgery_name}}]&nbsp;&nbsp;&nbsp;</p>
         <WebRtcPlayer
-            v-if="parseInt(live.isLives.split(',')[currentVideoNumber])"
-            :liveurl="live.live_urls.split(',')[currentVideoNumber]"
+            v-if="parseInt(live.isLives)"
+            :liveurl="live.live_urls"
             id='main'
         />
         <VideoPlayer
             v-else
             license-server="https://widevine-proxy.appspot.com/proxy"
-            :manifest-url="live.live_urls.split(',')[currentVideoNumber]"
+            :manifest-url="live.live_urls"
             style="height:221px; background:black;"
+            :isHistory="false"
         />
         <b-form-group v-slot="{ ariaDescribedby }" class="mt-3">
             <b-form-radio-group

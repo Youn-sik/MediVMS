@@ -106,6 +106,21 @@ const routes = [
                 path: "sergery-reserv",
                 component: () =>
                   import(/* webpackChunkName: "product" */ "./views/app/pages/surgery/SergerReserv")
+              },
+              {
+                path: "devices",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/devices/Devices")
+              },
+              {
+                path: "surgery-manage",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/surgery/Surgery_manage")
+              },
+              {
+                path: "settings",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/settings/Settings")
               }
             ]
           },

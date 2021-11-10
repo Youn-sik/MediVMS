@@ -3,8 +3,6 @@
     <b-colxx class="disable-text-selection">
       <list-page-heading
         :title="$t('menu.data-list')"
-        :selectAll="selectAll"
-        :isSelectedAll="isSelectedAll"
         :isAnyItemSelected="isAnyItemSelected"
         :keymap="keymap"
         :displayMode="displayMode"
@@ -34,6 +32,8 @@
       <template v-if="isLoad">
         <list-page-listing
           :displayMode="displayMode"
+          :selectAll="selectAll"
+          :isSelectedAll="isSelectedAll"
           :items="filteredItems"
           :selectedItems="selectedItems"
           :toggleItem="toggleItem"
@@ -150,10 +150,10 @@ export default {
     },
 
     selectAll(isToggle) {
-      if (this.selectedItems.length >= this.items.length) {
+      if (this.selectedItems.length >= this.filteredItems.length) {
         if (isToggle) this.selectedItems = [];
       } else {
-        this.selectedItems = this.items.map(x => x.id);
+        this.selectedItems = this.filteredItems.map(x => x.id);
       }
     },
     keymap(event) {
@@ -176,7 +176,7 @@ export default {
     },
     toggleItem(event, itemId) {
       if (event.shiftKey && this.selectedItems.length > 0) {
-        let itemsForToggle = this.items;
+        let itemsForToggle = this.filteredItems;
         var start = this.getIndex(itemId, itemsForToggle, "id");
         var end = this.getIndex(
           this.selectedItems[this.selectedItems.length - 1],
@@ -284,12 +284,13 @@ export default {
   },
   computed: {
     isSelectedAll() {
-      return this.selectedItems.length >= this.items.length;
+      console.log(this.selectedItems.length >= this.filteredItems.length)
+      return this.selectedItems.length >= this.filteredItems.length;
     },
     isAnyItemSelected() {
       return (
         this.selectedItems.length > 0 &&
-        this.selectedItems.length < this.items.length
+        this.selectedItems.length < this.filteredItems.length
       );
     },
   },
@@ -302,6 +303,7 @@ export default {
     this.loadItems();
     this.items = await api.getRecords()
     this.filteredItems = this.items
+    console.log(this.filteredItems)
   }
 };
 </script>

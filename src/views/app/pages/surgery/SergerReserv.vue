@@ -298,6 +298,8 @@ import {
 import moment from 'moment'
 import { Datetime } from 'vue-datetime';
 import vSelect from "vue-select";
+import {mqtt_url} from '../../../../server.json'
+import mqtt from 'mqtt';
 import "vue-select/dist/vue-select.css";
 moment.locale("ko");
 export default {
@@ -328,6 +330,7 @@ export default {
             modModal:false,
             moreModal:false,
             surgeryData:null,
+            mqttClient:null,
             currentSurgery:null,
             currentSurgeryImdex:0,
             selectedEvent: {},
@@ -518,6 +521,10 @@ export default {
 
 
             this.emergency = false;
+
+            this.mqttClient.publish(`/detect/emergancy/`, JSON.stringify({
+                surgery_name:this.currentSurgery.surgery_name
+            }))
         },
 
         async patchSchedule(id) {
@@ -545,6 +552,21 @@ export default {
     },
     mounted () {
         this.getSurgery()
+
+        this.mqttClient = mqtt.connect(mqtt_url,{
+          protocol:"ws",
+          port:8083,
+          keepalive:0,
+          path:'/mqtt',
+          clean: true,
+        })
+
+        this.mqttClient.on('error',function (err) {
+          console.log(err)
+        })
+    },
+    destroyed() {
+      this.mqttClient.end(true);
     }
 };
 </script>

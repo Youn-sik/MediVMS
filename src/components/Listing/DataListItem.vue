@@ -1,7 +1,7 @@
 <template>
-<b-card :class="{'d-flex flex-row':true,'active' : selectedItems.includes(data.id)}" no-body>
+<b-card v-if="videoData" :class="{'d-flex flex-row':true,'active' : selectedItems.includes(data.id)}" no-body>
     <!-- 열람 modal -->
-    <b-modal size="lg" v-model="modalShow" title="데이터 열람">
+    <b-modal v-if="!videoData.head" size="lg" v-model="modalShow" title="데이터 열람">
          <b-table-simple>
             <b-tbody striped>
                 <b-tr>
@@ -24,6 +24,7 @@
         </b-table-simple>
         <div style="width:744px; height:415px;">
             <VideoPlayer
+                :isHistory="true"
                 :manifest-url="videoLink"
             ></VideoPlayer>
         </div>
@@ -36,7 +37,8 @@
 
     <div class="pl-2 d-flex flex-grow-1 min-width-zero">
         <div class="custom-control custom-checkbox pl-1 align-self-center pr-4">
-            <b-form-checkbox :checked="selectedItems.includes(videoData.id)" class="itemCheck mb-0" />
+            <b-form-checkbox v-if="videoData.head" :checked="isSelectedAll" @change="selectAll(true)" class="itemCheck mb-0" />
+            <b-form-checkbox v-else :checked="selectedItems.includes(videoData.id)" @change="toggleItem(videoData.id)" class="itemCheck mb-0" />
         </div>
         <div class="card-body align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero align-items-lg-center">
             <p class="mb-0 w-15 w-sm-100">{{videoData.date}}</p>
@@ -51,10 +53,6 @@
             <p v-else class="mb-0 w-15 w-sm-100">
                 <b-button :disabled="currentUser.authority >= 2" @click="openModal(videoData)" variant="primary">열람</b-button>
             </p>
-            <!-- <p v-else class="mb-0 w-15 w-sm-100">{{data.browseAuth}}</p> -->
-            <!-- <div class="w-15 w-sm-100">
-                <b-badge pill :variant="data.statusColor">{{ data.status }}</b-badge>
-            </div> -->
         </div>
     </div>
 </b-card>
@@ -62,6 +60,7 @@
 
 <script>
 import VideoPlayer from '../../components/Shaka/VideoPlayer.vue'
+import {base_url} from "../../server.json"
 import api from "../../api"
 import {
     mapGetters
@@ -69,7 +68,11 @@ import {
 import moment from 'moment'
 moment.locale("ko");
 export default {
-    props: ['data', 'selectedItems'],
+    props: ['data',
+    'selectedItems',
+    "selectAll",
+    "toggleItem",
+    "isSelectedAll",],
     components: {
         VideoPlayer
     },
@@ -92,9 +95,8 @@ export default {
                 account_id:this.currentUser.id,
                 created_at:moment().format('YYYY-MM-DD HH:mm:ss')
             })
-        },
-        toggleItem(event, itemId) {
-            this.$emit('toggle-item', event, itemId)
+
+            console.log(data)
         },
         openModal(data) {
             this.modalShow = true;
@@ -104,26 +106,32 @@ export default {
         prevSurgery() {
             this.currentSurgery--
 
-            this.videoLink = `http://172.16.41.105:3000/stream/${this.currentSurgery}_${this.date}`
+            this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}`
         },
         nextSurgery() {
             this.currentSurgery++
 
-            if(this.currentSurgery === 3) {
-                this.videoLink = 'http://172.16.41.105:3000/stream/vital.webm'
-            } else {
-                this.videoLink = `http://172.16.41.105:3000/stream/${this.currentSurgery}_${this.date}`
-            }
+            // if(this.currentSurgery === 3) {
+            //     this.videoLink = 'https://${base_url}:3000/stream/vital.webm'
+            // } else {
+                this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}`
+            // }
         },
         currentVideo() {
-            this.videoLink = `http://172.16.41.105:3000/stream/${0}_${this.date}`
+            this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}`
         }
     },
     mounted() {
         this.videoData = this.data
-        // this.videoData[3].videoLink = 'http://172.16.41.105:3000/stream/vital.webm'
-        this.videoLink=this.data.video_link
-        this.date = this.videoLink.split('_')[1]
+
+        this.date = moment(this.videoData.date).format('YYYYMMDDHHmmss')
+
+        this.devices = this.videoData.devices.split(',')
+
+        if(this.data.video_link) {
+            this.videoLink=this.data.video_link
+            this.date = this.videoLink.split('_')[1]
+        }
         this.currentVideo()
     }
 }
