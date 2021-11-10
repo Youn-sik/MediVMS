@@ -403,8 +403,8 @@ export default {
                 color:'',
                 name:'',
                 timed:true,
-                start:'',
-                end:'',
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 emergency:false,
             },
             colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange'],
@@ -423,8 +423,8 @@ export default {
                 color:'',
                 name:'',
                 timed:true,
-                start:'',
-                end:'',
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 emergency:false,
             }
 
@@ -450,8 +450,8 @@ export default {
                 color:'',
                 name:'',
                 timed:true,
-                start:'',
-                end:'',
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 emergency:false
             }
         },
@@ -511,7 +511,7 @@ export default {
           })
         },
         async recordStop(skip = false) {
-          if(skip || confirm('녹화를 종료하시겠습니까?')) {
+          // if(skip || confirm('녹화를 종료하시겠습니까?')) {
             await api.recordStop({
               id:this.currentSurgery.surgery_id
             })
@@ -522,7 +522,7 @@ export default {
                 end_time:moment().format('YYYY-MM-DD HH:mm:ss')
               }))
             });
-          }
+          // }
         },
         async getSchedule() {
           let start = moment().format("YYYY-MM-DD")
@@ -548,6 +548,14 @@ export default {
         async endSchedule(schedule) {
             await api.patchSchedule({...schedule, is_record:0,is_over:1});
 
+            this.currentSurgery.serial_numbers.forEach(e => {
+              this.mqttClient.publish(`/record/stop/${e}`, JSON.stringify({
+                serial_number:`${e}`,
+                status:true,
+                end_time:moment().format('YYYY-MM-DD HH:mm:ss')
+              }))
+            });
+
             this.getSchedule()
         }
     },
@@ -555,8 +563,8 @@ export default {
         await this.getSurgery()
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"ws",
-          port:8083,
+          protocol:"wss",
+          port:8084,
           keepalive:0,
           path:'/mqtt',
           clean: true,

@@ -25,9 +25,15 @@ import mqtt from "mqtt"
 import { getDirection } from "./utils";
 import {mqtt_url} from './server.json';
 import moment from 'moment';
+import {
+    mapGetters
+} from "vuex";
 moment.locale("ko");
 
 export default {
+  computed: {
+    ...mapGetters(["currentUser"]),
+  },
   components: {
     "color-switcher": ColorSwitcher
   },
@@ -52,10 +58,10 @@ export default {
     }
   },
   mounted() {
-
+    console.log(this.currentUser)
     this.mqttClient = mqtt.connect(mqtt_url,{
-      protocol:"ws",
-      port:8083,
+      protocol:"wss",
+      port:8084,
       keepalive:0,
       path:'/mqtt',
       clean: true,
@@ -83,7 +89,7 @@ export default {
     this.mqttClient.on('message', (topic, message) => {
       let data = JSON.parse(message.toString())
       let msg = '';
-      if(topic === '/detect/emergancy/'){
+      if(topic === '/detect/emergancy/' && this.currentUser.account !== data.account){
         msg = `${moment().format('yyyy년 MM월 DD일 HH시 mm분 긴급 수술 알림')}
 ${data.surgery_name} 수술실 에서 긴급 수술이 발생 하였습니다.`
         this.$toast.error(msg, {

@@ -433,17 +433,17 @@ cron.schedule('0 4 * * *', () => {
     }
 );
 
-// const start = () => {
-//     app.listen(3000,'0.0.0.0')
-// }
-
-// start()
-
-
-
-const sslOptions = {
-    key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
-    cert: fs.readFileSync('/etc/nginx/ssl/nginx-certificate.crt'),
+const start = () => {
+    app.listen(3000,'0.0.0.0')
 }
 
-https.createServer(sslOptions,app).listen(3000);
+start()
+
+
+
+// const sslOptions = {
+//     key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
+//     cert: fs.readFileSync('/etc/nginx/ssl/nginx-certificate.crt'),
+// }
+
+// https.createServer(sslOptions,app).listen(3000);

@@ -303,7 +303,6 @@ export default {
     this.loadItems();
     this.items = await api.getRecords()
     this.filteredItems = this.items
-    console.log(this.filteredItems)
   }
 };
 </script>

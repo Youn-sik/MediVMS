@@ -28,7 +28,7 @@
                 :manifest-url="videoLink"
             ></VideoPlayer>
         </div>
-        <div class="move-video-buttons">
+        <div class="move-video-buttons mt-5">
           <b-button :disabled="currentSurgery === 0" class="mb-1" @click="prevSurgery" variant="primary"><</b-button>
           <h2 style="display:inline"><b-badge class="mb-1" pill variant="primary">[ {{ currentSurgery+1 }}번 카메라 ]</b-badge></h2>
           <b-button :disabled="currentSurgery === 3" @click="nextSurgery" class="mb-1" variant="primary">></b-button>
@@ -106,7 +106,7 @@ export default {
         prevSurgery() {
             this.currentSurgery--
 
-            this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}`
+            this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}/${this.devices[this.currentSurgery]}_${this.date}.mpd`
         },
         nextSurgery() {
             this.currentSurgery++
@@ -114,11 +114,11 @@ export default {
             // if(this.currentSurgery === 3) {
             //     this.videoLink = 'https://${base_url}:3000/stream/vital.webm'
             // } else {
-                this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}`
+                this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}/${this.devices[this.currentSurgery]}_${this.date}.mpd`
             // }
         },
         currentVideo() {
-            this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}`
+            this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
         }
     },
     mounted() {
@@ -131,6 +131,7 @@ export default {
         if(this.data.video_link) {
             this.videoLink=this.data.video_link
             this.date = this.videoLink.split('_')[1]
+            this.date = this.date.replace('.mp4','')
         }
         this.currentVideo()
     }

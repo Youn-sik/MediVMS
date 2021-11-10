@@ -640,8 +640,8 @@ export default {
         },1000 * 2)
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"ws",
-          port:8083,
+          protocol:"wss",
+          port:8084,
           keepalive:0,
           path:'/mqtt',
           clean: true,

@@ -322,8 +322,8 @@ export default {
                 color:'',
                 name:'',
                 timed:true,
-                start:'',
-                end:'',
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 emergency:false,
             },
             addModal:false,
@@ -379,8 +379,8 @@ export default {
                 color:'',
                 name:'',
                 timed:true,
-                start:'',
-                end:'',
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 emergency:false,
             }
 
@@ -514,8 +514,8 @@ export default {
                 color:'',
                 name:'',
                 timed:true,
-                start:'',
-                end:'',
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 emergency:false
             }
 
@@ -523,7 +523,8 @@ export default {
             this.emergency = false;
 
             this.mqttClient.publish(`/detect/emergancy/`, JSON.stringify({
-                surgery_name:this.currentSurgery.surgery_name
+                surgery_name:this.currentSurgery.surgery_name,
+                account:this.currentUser.account
             }))
         },
 
@@ -554,8 +555,8 @@ export default {
         this.getSurgery()
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"ws",
-          port:8083,
+          protocol:"wss",
+          port:8084,
           keepalive:0,
           path:'/mqtt',
           clean: true,
