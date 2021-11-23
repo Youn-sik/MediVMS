@@ -1,64 +1,44 @@
 <template>
     <b-row>
         <!-- 권한 승인 모달 -->
-        <b-modal v-model="authModal" @ok="saveAuth" title="권한 부여">
+        <b-modal v-model="authModal" @ok="saveAuth" title="권한 부여" size="lg">
             <div style="text-align:center; color:white" v-if="selectedAccount">
-                <img style="width:35%;" class="mb-3" src="./F2002090001_전준희M_1_36.3_20210913134252.png">
-                <p>이름 : {{selectedAccount.name}}</p>
-                <p>부서 : {{selectedAccount.department}}</p>
-                <p>사원 번호 : {{selectedAccount.employee_no}}</p>
-                <p>요청 권한 : {{selectedAccount.req_auth ? selectedAccount.req_auth : '없음'}}</p>
-                <p>권한 선택 :</p>
-
-                <b-form-group label="">
-                    <b-form-radio-group
-                        v-model="selected"
-                        :options="options"
-                        name="radios-stacked"
-                        stacked
-                    ></b-form-radio-group>
-                </b-form-group>
-                <p>수술실 시청 권한 : </p>
-                <!-- <b-form-select v-model="selected" :options="['미지정', ...surgeries]"></b-form-select> -->
-                <!-- <b-dropdown id="ddown1" :text="selectedSurgery" variant="outline-secondary">
-                    <b-dropdown-item @click="changeSelectedSurgery(item)" v-for="(item,index) in [{surgery_name:'미지정'}, ...surgeries]" :key="index">{{item.surgery_name}}</b-dropdown-item>
-                </b-dropdown> -->
-
-
-                <b-form-tags
-                    id="tags-component-select"
-                    v-model="surgeryValue"
-                    size="lg"
-                    class="mb-2"
-                    add-on-change
-                    no-outer-focus
-                >
-                    <template v-slot="{ tags, inputAttrs, disabled, removeTag }">
-                        <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                            <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                                <b-form-tag
-                                    @remove="removeTag(tag)"
-                                    :title="tag"
-                                    :disabled="disabled"
-                                    variant="info"
-                                >{{ titleFromId(tag) }}</b-form-tag>
-                            </li>
-                        </ul>
-                        <b-form-select
-                            class="form-control"
-                            v-bind="inputAttrs"
-                            @change="tagInput"
-                            value-field="surgery_id"
-                            text-field="surgery_name"
-                            :disabled="disabled || availableOptions.length === 0"
-                            :options="availableOptions"
-                        >
-                            <template #first>
-                            <option disabled value="">수술실을 선택해주세요</option>
-                            </template>
-                        </b-form-select>
-                    </template>
-                </b-form-tags>
+                <b-table-simple>
+                    <b-tbody striped>
+                        <b-tr>
+                            <b-td>대시보드</b-td>
+                            <b-td>수술실 모니터링</b-td>
+                            <b-td>일정 예약</b-td>
+                            <b-td>데이터 열람</b-td>
+                            <b-td>열람 기록</b-td>
+                            <b-td>권한 관리</b-td>
+                            <b-td>설정</b-td>
+                        </b-tr>
+                        <b-tr>
+                            <b-td>
+                                <b-form-checkbox v-model="form.dashboard" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                            <b-td>
+                                <b-form-checkbox v-model="form.surgery" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                            <b-td>
+                                <b-form-checkbox v-model="form.schedule" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                            <b-td>
+                                <b-form-checkbox v-model="form.browse" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                            <b-td>
+                                <b-form-checkbox v-model="form.history" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                            <b-td>
+                                <b-form-checkbox v-model="form.admin" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                            <b-td>
+                                <b-form-checkbox v-model="form.setting" name="check-button" switch></b-form-checkbox>
+                            </b-td>
+                        </b-tr>
+                    </b-tbody>
+                </b-table-simple>
             </div>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelSaveEvent">
@@ -92,10 +72,10 @@
         </b-modal>
 
         <b-colxx xl="5" lg="6" md="12" class="mb-4">
-            <product-categories-doughnut></product-categories-doughnut>
+            <!-- <product-categories-doughnut></product-categories-doughnut> -->
         </b-colxx>
         <b-colxx xl="7" lg="6" md="12" class="mb-4">
-            <profile-statuses></profile-statuses>
+            <!-- <profile-statuses></profile-statuses> -->
         </b-colxx>
         <b-colxx xl="12" lg="12" md="12" class="mb-4" v-if="currentUser.authority <= 1">
             <piaf-breadcrumb :heading="'권한 부여'" />
@@ -207,6 +187,7 @@ export default {
                 '사원번호'
             ],
             currentSearchType:'이름',
+            test:1,
             searchKeyword:null,
             authModal:false,
             authReqModal:false,
@@ -224,6 +205,15 @@ export default {
             surgeries:[],
             selectedSurgery:'미지정',
             origianlSelectedSurgery:null,
+            // form:{
+            //     dashboard:0,
+            //     surgery:0,
+            //     schedule:0,
+            //     browse:0,
+            //     history:0,
+            //     admin:0,
+            //     setting:0
+            // }
         }
     },
     methods: {
@@ -266,19 +256,36 @@ export default {
         openAuthModal(val) {
             this.authModal = true
             this.selectedAccount = val
+            this.form = {
+                dashboard:val.dashboard ? true : false,
+                surgery:val.surgery ? true : false,
+                schedule:val.schedule ? true : false,
+                browse:val.browse ? true : false,
+                history:val.history ? true : false,
+                admin:val.admin ? true : false,
+                setting:val.setting ? true : false,
+            }
             this.surgeryValue = val.surgery_room_auth ? JSON.parse(val.surgery_room_auth) : []
         },
         openAuthReqModal() {
             this.authReqModal = true
         },
         async saveAuth() {
-            api.setAuth({
-                auth:this.selected === '주치의' ? 1 :
-                this.selected === '레지던트' ? 2 : 3,
+            await api.setAuth({
                 account:this.selectedAccount.account,
-                surgeryAuth:this.surgeryValue.length ? JSON.stringify(this.surgeryValue) : null
+                surgeryAuth:this.surgeryValue.length ? JSON.stringify(this.surgeryValue) : null,
+                dashboard:this.form.dashboard ? 1 : 0,
+                surgery:this.form.surgery ? 1 : 0,
+                schedule:this.form.schedule ? 1 : 0,
+                browse:this.form.browse ? 1 : 0,
+                history:this.form.history ? 1 : 0,
+                admin:this.form.admin ? 1 : 0,
+                setting:this.form.setting ? 1 : 0,
             })
-            alert('저장 되었습니다')
+
+            this.accounts = await api.getAccounts()
+            this.filteredList = this.accounts
+
             this.authModal = false
             this.selected = null
         },
@@ -287,7 +294,7 @@ export default {
                 reqAuth:this.reqSelected,
                 account:this.currentUser.account
             })
-            alert('요청이 완료 되었습니다')
+
             this.reqSelected = null
         }
     },

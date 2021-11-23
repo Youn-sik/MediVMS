@@ -1,9 +1,20 @@
 import axios from 'axios';
 import moment from 'moment';
 import {base_url} from './server.json'
-axios.defaults.baseURL = `https://${base_url}:3000`
+axios.defaults.baseURL = `http://${base_url}:3000`
 
 const api = {
+    getConnectecDevices(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/mqttapi`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
     getSurgery(params) {
         return new Promise((resolve, reject) => {
             axios.get('/surgery').then(
@@ -87,9 +98,7 @@ const api = {
     setAuth(params) {
         return new Promise((resolve, reject) => {
             axios.patch('/setAuth',{
-                auth:params.auth,
-                account:params.account,
-                surgery_room_auth:params.surgeryAuth
+                ...params
             }).then(
                 res => {
                     resolve(res.data)
@@ -194,7 +203,7 @@ const api = {
 
     getSchedule(params) {
         return new Promise((resolve, reject) => {
-            axios.get(`/schedule?start=${params.start}&end=${params.end}&surgery_id=${params.surgery_id}`,params).then(
+            axios.get(`/schedule?start=${params.start}&end=${params.end}&surgery_id=${params.surgery_id}&alltype=${params.alltype}&searchType=${params.searchType}&search=${params.search}`,params).then(
                 res => {
                     resolve(res.data)
                 },

@@ -51,6 +51,7 @@ export default {
 
     if(this.isHistory){
       this.player.configure({
+          controlPanelElements : ['fast_forward', 'rewind'],
           drm: {
               clearKeys: {
                   // replace keyid and key  with those used during video encryption
@@ -69,6 +70,8 @@ export default {
         console.log('The video has now been loaded!');
       })
       .catch(this.onError); // onError is executed if the asynchronous load fails.
+
+      this.player.trickPlay(-2)
   },
   methods: {
     onError(error) {

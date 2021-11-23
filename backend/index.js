@@ -5,6 +5,8 @@ const app = express()
 const cron = require('node-cron');
 const moment = require('moment');
 const https = require('https');
+const http = require('http');
+const request = require('request');
 const fs = require('fs');
 const mqtt = require('mqtt');
 app.use(express.urlencoded({ extended: true }));
@@ -31,6 +33,7 @@ var mqttClient = mqtt.connect('localhost',{
     port:8083,
     keepalive:0,
     path:'/mqtt',
+    clientId: 'server_' + Math.random().toString(16).substr(2, 8),
     clean: true,
 })
 
@@ -130,7 +133,7 @@ app.post('/surgery',(req,res) => {
 })
 
 app.get('/getAccounts', (req,res) => {
-    connection.query("SELECT * FROM accounts WHERE authority > 0", function (err, rows, fields) {
+    connection.query("SELECT * FROM accounts", function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -167,7 +170,14 @@ app.patch('/authReq',(req,res) => {
 
 app.patch('/setAuth',(req,res) => {
     connection.query(`UPDATE accounts
-    SET authority = "${req.body.auth}", req_auth = NULL, surgery_room_auth = "${req.body.surgery_room_auth}"
+    SET
+    dashboard = ${req.body.dashboard},
+    surgery = ${req.body.surgery},
+    schedule = ${req.body.schedule},
+    browse = ${req.body.browse},
+    history = ${req.body.history},
+    admin = ${req.body.admin},
+    setting = ${req.body.setting}
     WHERE account = "${req.body.account}"`,
     function (err, rows, fields) {
         if (err) throw err
@@ -329,10 +339,15 @@ app.get('/schedule',(req,res) => {
     SELECT *
     FROM schedule
     WHERE start >= "${req.query.start}"
-    ${req.body.alltype ? null : `AND is_over = 0`}
     AND end <= "${req.query.end}"
+    ${parseInt(req.query.alltype) === 1? '' : `AND is_over = 0`}
     AND surgery_id = ${req.query.surgery_id}
-    ORDER BY is_record DESC, emergency DESC, start
+    ${req.query.search !== '' ? req.query.searchType === 'patient' ?
+    "AND patient LIKE '%" + req.query.search + "%'" :
+    "AND doctor LIKE '%" + req.query.search + "%'"
+    : ""}
+    OR is_record = 1
+    ORDER BY is_record DESC, emergency DESC, start;
     `, function (err, rows, fields) {
         if (err) throw err
 
@@ -342,7 +357,7 @@ app.get('/schedule',(req,res) => {
 
 app.post('/schedule',(req,res) => {
     connection.query(`INSERT INTO schedule
-    VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}",${req.body.emergency},${req.body.surgery_id},0,0)`, function (err, rows, fields) {
+    VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}",${req.body.emergency},${req.body.surgery_id},0,0,"${req.body.patient}","${req.body.doctor}")`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -357,7 +372,9 @@ app.patch('/schedule',(req,res) => {
     color = "${req.body.color}",
     note = "${req.body.note}",
     is_record = ${req.body.is_record},
-    is_over = ${req.body.is_over}
+    is_over = ${req.body.is_over},
+    patient = "${req.body.patient}",
+    doctor = "${req.body.doctor}"
     WHERE id = ${req.body.id}`,
     function (err, rows, fields) {
         if (err) throw err
@@ -418,6 +435,20 @@ app.get('/history',(req,res) => {
                 data:rows
             })
         })
+    })
+})
+
+app.get("/mqttapi",(req,res) => {
+    var options = {
+        url: 'http://localhost:18083/api/v4/clients/',
+        auth: {
+            user: "admin",
+            password: "public"
+        }
+      };
+
+    request(options,(err,_res, body) => {
+        res.send(body)
     })
 })
 

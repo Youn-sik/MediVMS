@@ -119,11 +119,19 @@ export default {
     };
   },
   created() {
-    if(this.currentUser.authority === '0') {
       this.menuItems = menuItems.admin
-    } else {
-      this.menuItems = menuItems.user
-    }
+      let navs = [parseInt(this.currentUser.dashboard),
+      parseInt(this.currentUser.surgery),
+      parseInt(this.currentUser.schedule),
+      parseInt(this.currentUser.browse),
+      parseInt(this.currentUser.history),
+      parseInt(this.currentUser.admin),
+      parseInt(this.currentUser.setting)]
+
+      this.menuItems = menuItems.admin.filter((item,index) => {
+        if(navs[index])
+          return item
+      })
   },
   mounted() {
     this.selectMenu();

@@ -2,7 +2,6 @@
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
       <a
-        v-if="currentUser.authority <= 0"
         href="#"
         class="menu-button d-none d-md-block"
         @click.prevent.stop="changeSideMenuStatus({step :menuClickCount+1,classNames:menuType,selectedMenuHasSubItems})"
@@ -16,11 +15,7 @@
       >
         <mobile-menu-icon />
       </a>
-      <router-link v-if="currentUser.authority > 0" class="navbar-koolsign-logo ml-5" :to="adminRoot">
-        <span class="logo d-none d-xs-block"></span>
-        <span class="logo-mobile d-block d-xs-none"></span>
-      </router-link>
-      <router-link v-else class="navbar-koolsign-logo" :to="adminRoot">
+      <router-link class="navbar-koolsign-logo" :to="adminRoot">
         <span class="logo d-none d-xs-block"></span>
         <span class="logo-mobile d-block d-xs-none"></span>
       </router-link>
@@ -78,20 +73,44 @@ export default {
       localeOptions,
       buyUrl,
       notifications,
-      isDarkActive: false
+      isDarkActive: false,
+      navCount:0,
     };
   },
   mounted() {
-    console.log(this.currentUser.authority)
-    if(this.currentUser.authority > 0){
-      setTimeout(() => {
-        this.changeSideMenuStatus({classNames: "menu-sub-hidden",
-        selectedMenuHasSubItems: false,
-        step: 1})
-      },0)
-    }
+      if(parseInt(this.currentUser.dashboard) === 1)
+        this.navCount++
 
-    // if(this.currentUser.authority <=0 )
+      if(parseInt(this.currentUser.surgery) === 1)
+        this.navCount++
+
+      if(parseInt(this.currentUser.schedule) === 1)
+        this.navCount++
+
+      if(parseInt(this.currentUser.browse) === 1)
+        this.navCount++
+
+      if(parseInt(this.currentUser.history) === 1)
+        this.navCount++
+
+      if(parseInt(this.currentUser.admin) === 1)
+        this.navCount++
+
+      if(parseInt(this.currentUser.setting) === 1)
+        this.navCount++
+
+      if(this.navCount === 1)
+        this.changeSideMenuStatus({step :1,classNames: "menu-hidden",selectedMenuHasSubItems: false,})
+      else
+        this.changeSideMenuStatus({step :1,classNames: "menu-default",selectedMenuHasSubItems: false,})
+
+    // if(this.currentUser.authority > 0){
+    //   setTimeout(() => {
+    //     this.changeSideMenuStatus({classNames: "menu-sub-hidden",
+    //     selectedMenuHasSubItems: false,
+    //     step: 1})
+    //   },0)
+    // }
 
 
   },

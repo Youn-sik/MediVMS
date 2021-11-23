@@ -1,7 +1,7 @@
 <template>
   <div id="app-container" :class="getMenuType">
     <topnav />
-    <sidebar v-if="currentUser.authority <= 0" />
+    <sidebar />
     <!-- <main style="">
       <div v-if="hrefCheck" class="container-fluid">
         <slot></slot>
@@ -35,9 +35,9 @@ export default {
   },
   computed: {
     ...mapGetters(["getMenuType","currentUser"]),
-    hrefCheck: () => {
-      return window.location.href.indexOf('grid') > -1
-    }
+    // hrefCheck: () => {
+    //   return window.location.href.indexOf('grid') > -1
+    // }
 
   },
   mounted() {

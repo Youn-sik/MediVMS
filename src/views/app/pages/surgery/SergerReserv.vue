@@ -84,6 +84,12 @@
                     placeholder="날짜를 선택해주세요"
                     input-class="form-control"></datetime>
                 </b-form-group>
+                <b-form-group label="환자 이름">
+                    <b-form-input v-model="newEvent.patient" />
+                </b-form-group>
+                <b-form-group label="담당의 이름">
+                    <b-form-input v-model="newEvent.doctor" />
+                </b-form-group>
                 <b-form-group label="비고">
                     <b-form-input v-model="newEvent.note" />
                 </b-form-group>
@@ -143,6 +149,12 @@
                     placeholder="날짜를 선택해주세요"
                     input-class="form-control"></datetime>
                 </b-form-group>
+                <b-form-group label="환자 이름">
+                    <b-form-input v-model="newEvent.patient" />
+                </b-form-group>
+                <b-form-group label="담당의 이름">
+                    <b-form-input v-model="newEvent.doctor" />
+                </b-form-group>
                 <b-form-group label="비고">
                     <b-form-input v-model="newEvent.note" />
                 </b-form-group>
@@ -179,60 +191,86 @@
         </b-modal>
 
     <b-row>
-        <!-- <b-colxx xl="12" lg="12" class="mb-4">
-          <piaf-breadcrumb :heading="'정보'" />
-          <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
-              <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
-          </b-dropdown>
-          <b-button v-if="currentUser.authority <= 0" class="mb-1 mr-3" style="float:right" variant="outline-secondary" @click="()=>{reservModal=true}">수술실 예약</b-button>
-          <p v-if="currentSurgery.record" style="float:right; margin-top:8px">녹화 시작 시간 : {{currentSurgery.record_time}}</p>
-          <div class="separator mb-5"></div>
-        </b-colxx> -->
         <b-colxx xl="12" lg="12" class="mb-4">
             <b-card>
                 <div style="width:80%; text-aligm:center; margin: 0 auto;">
-                    <div style="text-aligm:center; margin: 0 auto;">
-                        <b-button
-                            variant="outline-primary"
-                            icon
-                            class="ma-2"
 
-                            @click="prevMonth"
+                    <b-input-group class="mb-1">
+                        <b-input-group-prepend>
+                            <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
+                                <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
+                            </b-dropdown>
+                        </b-input-group-prepend>
+                        <!-- <b-form-input/> -->
+                        <div
+                        class="search"
+                        ref="searchContainer"
                         >
-                            <!-- <v-icon style="color:white">mdi-chevron-left</v-icon> -->
-                            <
-                        </b-button>
-                        <b-button
-                            variant="outline-primary"
-                            icon
-                            class="ma-2"
+                            <b-input
+                                placeholder="검색"
+                                @keypress.native.enter="searchClick"
+                                v-model="searchKeyword"
+                            />
+                            <span class="search-icon" @click="searchClick">
+                                <i class="simple-icon-magnifier"></i>
+                            </span>
+                        </div>
 
-                            @click="nextMonth"
-                        >
-                            <!-- <v-icon style="color:white">mdi-chevron-right</v-icon> -->
+                        <div style="text-aligm:center; margin: 0 auto; padding-left:28px;">
+                            <b-button
+                                variant="outline-primary"
+                                icon
+                                class="ma-2"
+
+                                @click="prevDate"
                             >
-                        </b-button>
-                        <b-button
-                            variant="outline-primary"
-                            icon
-                            class="ma-2"
+                                <
+                            </b-button>
+                            <b-button
+                                variant="outline-primary"
+                                icon
+                                v-if="$refs.calendar"
+                                class="ma-2"
+                            >
+                                {{$refs.calendar.title}}
+                            </b-button>
+                            <b-button
+                                variant="outline-primary"
+                                icon
+                                class="ma-2"
 
-                            @click="openAddModal"
-                        >
-                            <!-- <v-icon style="color:white">simple-icon-plus</v-icon> -->
-                            일정 추가
-                        </b-button>
-                        <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
-                            <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
-                        </b-dropdown>
-                    </div>
+                                @click="nextDate"
+                            >
+                                >
+                            </b-button>
+                        </div>
+
+                        <div style="text-aligm:center;">
+                            <b-button
+                                variant="outline-primary"
+                                icon
+                                class="ma-2"
+
+                                @click="openAddModal"
+                            >
+                                일정 추가
+                            </b-button>
+                            <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
+                                <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
+                            </b-dropdown>
+                            <b-dropdown id="surgeriesDropdown" :text="calendarType" variant="outline-secondary">
+                                <b-dropdown-item @click="changeCalendarType(type,index)" v-for="(type,index) in calendarTypes" :key="index">{{ type }}</b-dropdown-item>
+                            </b-dropdown>
+                        </div>
+                    </b-input-group>
+
                     <v-sheet height="700" :dark="true">
-                        {{date}}
                         <v-calendar
                             ref="calendar"
                             v-model="value"
                             :weekdays="weekday"
-                            :type="type"
+                            :type="calendarType === '월간' ? 'month' :
+                            calendarType === '주간' ? 'week' : 'day'"
                             :events="events"
                             :event-overlap-mode="mode"
                             @click:more="viewDay"
@@ -324,6 +362,8 @@ export default {
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                patient:'',
+                doctor:'',
                 emergency:false,
             },
             addModal:false,
@@ -354,6 +394,15 @@ export default {
             colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange'],
             names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
             startDay: '',
+            currentSearchType: "주치의",
+            searchItems: [
+                '주치의',
+                '환자명',
+            ],
+            searchKeyword:'',
+            commitedSearchKeyword:'',
+            calendarType:"월간",
+            calendarTypes:["월간","주간","일간"]
             // todaySchedules: [],
         }
     },
@@ -363,14 +412,25 @@ export default {
 
             this.newEvent = {...i, start:moment(i.start).format('YYYY-MM-DDTHH:mm:ssZ'), end:moment(i.end).format('YYYY-MM-DDTHH:mm:ssZ')}
         },
-        prevMonth() {
-            this.date = moment(this.date).subtract(1,'M').format("YYYY-MM")
+        prevDate() {
+            // if(this.calendarType === '월간'){
+            //     this.date = moment(this.date).subtract(1,'M').format("YYYY-MM")
+            // } else if(this.calendarType === '주간'){
+            //     this.date = moment(this.date).subtract(7,'days').format("YYYY-MM-DD")
+            // } else {
+            //     this.date = moment(this.date).subtract(1,'days').format("YYYY-MM-DD")
+            // }
             this.getSchedule()
             this.$refs.calendar.prev()
-            console.log(this.$refs.calendar.prev())
         },
-        nextMonth() {
-            this.date = moment(this.date).add(1,'M').format("YYYY-MM")
+        nextDate() {
+            // if(this.calendarType === '월간'){
+            //     this.date = moment(this.date).add(1,'M').format("YYYY-MM")
+            // } else if(this.calendarType === '주간'){
+            //     this.date = moment(this.date).add(7,'days').format("YYYY-MM-DD")
+            // } else {
+            //     this.date = moment(this.date).add(1,'days').format("YYYY-MM-DD")
+            // }
             this.getSchedule()
             this.$refs.calendar.next()
         },
@@ -381,6 +441,8 @@ export default {
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                patient:'',
+                doctor:'',
                 emergency:false,
             }
 
@@ -447,6 +509,9 @@ export default {
 
             this.getSchedule()
         },
+        changeCalendarType(val,index) {
+            this.calendarType = val
+        },
         async getSurgery() {
           let result = await api.getSurgery()
           this.surgeries = result
@@ -489,7 +554,8 @@ export default {
         async getSchedule() {
             let start = moment(this.date).startOf('month').format('YYYY-MM-DD');
             let end = moment(this.date).endOf('month').format('YYYY-MM-DD');
-            this.events = await api.getSchedule({start,end,surgery_id:this.currentSurgery.surgery_id,alltype:1})
+            this.events = []
+            this.events = await api.getSchedule({start,end,surgery_id:this.currentSurgery.surgery_id,alltype:1,searchType:this.currentSearchType, search:this.commitedSearchKeyword})
 
             this.todaySchedules
         },
@@ -502,13 +568,62 @@ export default {
                 this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
                 this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
             }
+
+            let startSchedule = false
+            let newEvent = null
+
+            if((!this.events.length || !this.events[0].is_record) && this.newEvent.emergency ) {
+                startSchedule = true
+            }
+
             await api.addSchedule({...this.newEvent, surgery_id:this.currentSurgery.surgery_id})
 
-            alert('저장되었습니다.')
+            await this.getSchedule()
 
-            this.getSchedule()
+            if(startSchedule) {
+                this.events.forEach((item) => {
+                    console.log(item,this.newEvent)
+                    if(item.name === this.newEvent.name && item.doctor === this.newEvent.doctor && item.patient === this.newEvent.patient) {
+                        newEvent = item
+                    }
+                })
+            }
+
+            if(newEvent) {
+                await api.patchSchedule({...newEvent, is_record:1});
+
+                this.recordStart()
+            }
 
             this.addModal = false;
+
+            this.emergency = false;
+
+            // let firstEvent = true
+            // let now = moment().format("YYYY-MM-DD")
+
+            // this.events.forEach((item) => {
+            //     if(moment(item.start).format("YYYY-MM-DD") === now && item.is_record) {
+            //         return 0;
+            //     }
+            // })
+            if(newEvent) {
+                this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                    type:"start"
+                }))
+
+                newEvent = null
+                this.getSchedule()
+            } else if(this.newEvent.emergency) {
+                this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                    type:"emergancy"
+                }))
+            } else {
+                this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                    type:"add"
+                }))
+            }
+
 
             this.newEvent = {
                 color:'',
@@ -516,16 +631,40 @@ export default {
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                patient:'',
+                doctor:'',
                 emergency:false
             }
+        },
 
+        async recordStart() {
+          let startTime = moment().format('YYYYMMDDHHmmss')
 
-            this.emergency = false;
+          await api.recordStart({
+            id:this.currentSurgery.surgery_id
+          })
 
-            this.mqttClient.publish(`/detect/emergancy/`, JSON.stringify({
-                surgery_name:this.currentSurgery.surgery_name,
-                account:this.currentUser.account
+          let currentSerial = null
+          this.currentSurgery.serial_numbers.forEach(e => {
+            currentSerial = e
+            this.mqttClient.publish(`/record/start/${e}`, JSON.stringify({
+              serial_number:`${e}`,
+              status:true,
+              start_time:startTime
             }))
+          });
+
+          await api.saveRecord({
+            sergery_name : this.currentSurgery.surgery_name,
+            department : '임시 정보',
+            doctor : '임시 정보',
+            patient_name : '임시 정보',
+            surgery_desc : '임시 정보',
+            patient_status : "수술 완료",
+            devices:this.currentSurgery.serial_numbers.join(','),
+            date : moment().format('YYYY-MM-DD HH:mm:ss'),
+            video_link : `http://172.16.41.105:3000/stream/${currentSerial}_${startTime}.mp4`
+          })
         },
 
         async patchSchedule(id) {
@@ -542,6 +681,10 @@ export default {
             this.getSchedule()
 
             this.modModal = false;
+
+            this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                type:"patch"
+            }))
         },
 
         async deleteSchedule(id) {
@@ -549,16 +692,31 @@ export default {
             this.getSchedule()
             this.selectedOpen = false
             this.selectedOpenFromDay = false
+
+            this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                type:"delete"
+            }))
         },
+
+        changeSearchType(item) {
+            this.currentSearchType = item
+        },
+
+        searchClick() {
+            this.commitedSearchKeyword = this.searchKeyword
+
+            this.getSchedule()
+        }
     },
     mounted () {
         this.getSurgery()
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"wss",
-          port:8084,
+          protocol:"ws",
+          port:8083,
           keepalive:0,
           path:'/mqtt',
+          clientId: 'server_' + Math.random().toString(16).substr(2, 8),
           clean: true,
         })
 

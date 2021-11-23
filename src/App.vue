@@ -60,10 +60,11 @@ export default {
   mounted() {
     console.log(this.currentUser)
     this.mqttClient = mqtt.connect(mqtt_url,{
-      protocol:"wss",
-      port:8084,
+      protocol:"ws",
+      port:8083,
       keepalive:0,
       path:'/mqtt',
+      clientId: 'server_' + Math.random().toString(16).substr(2, 8),
       clean: true,
     })
 
@@ -86,28 +87,28 @@ export default {
     })
 
 
-    this.mqttClient.on('message', (topic, message) => {
-      let data = JSON.parse(message.toString())
-      let msg = '';
-      if(topic === '/detect/emergancy/' && this.currentUser.account !== data.account){
-        msg = `${moment().format('yyyy년 MM월 DD일 HH시 mm분 긴급 수술 알림')}
-${data.surgery_name} 수술실 에서 긴급 수술이 발생 하였습니다.`
-        this.$toast.error(msg, {
-            position: "top-right",
-            timeout: 5000,
-            closeOnClick: true,
-            pauseOnFocusLoss: true,
-            pauseOnHover: true,
-            draggable: true,
-            draggablePercent: 0.6,
-            showCloseButtonOnHover: false,
-            hideProgressBar: true,
-            closeButton: "button",
-            icon: true,
-            rtl: false
-          });
-      }
-    })
+//     this.mqttClient.on('message', (topic, message) => {
+//       let data = JSON.parse(message.toString())
+//       let msg = '';
+//       if(topic === '/detect/emergancy/' && this.currentUser.account !== data.account){
+//         msg = `${moment().format('yyyy년 MM월 DD일 HH시 mm분 긴급 수술 알림')}
+// ${data.surgery_name} 수술실 에서 긴급 수술이 발생 하였습니다.`
+//         this.$toast.error(msg, {
+//             position: "top-right",
+//             timeout: 5000,
+//             closeOnClick: true,
+//             pauseOnFocusLoss: true,
+//             pauseOnHover: true,
+//             draggable: true,
+//             draggablePercent: 0.6,
+//             showCloseButtonOnHover: false,
+//             hideProgressBar: true,
+//             closeButton: "button",
+//             icon: true,
+//             rtl: false
+//           });
+//       }
+//     })
   },
   data() {
     return {

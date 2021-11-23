@@ -115,10 +115,20 @@ export default {
         currentUser(val) {
             if (val && val.account) {
                 // setTimeout(() => {
-                    if(val.authority === '0')
+                    if(parseInt(val.dashboard))
                         this.$router.push(adminRoot);
-                    else
+                    else if(parseInt(val.surgery))
                         this.$router.push('/app/pages/product/surgeries');
+                    else if(parseInt(val.schedule))
+                        this.$router.push('/app/pages/product/sergery-reserv');
+                    else if(parseInt(val.browse))
+                        this.$router.push('/app/pages/product/data-list');
+                    else if(parseInt(val.history))
+                        this.$router.push('/app/pages/product/history-list');
+                    else if(parseInt(val.admin))
+                        this.$router.push('/app/applications/todo');
+                    else if(parseInt(val.admin))
+                        this.$router.push('/app/pages/product/settings');
                 // }, 0);
             }
         },

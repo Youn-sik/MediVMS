@@ -1,5 +1,5 @@
 <template>
-    <video style="width:98.5%; height:100%;" :id="'video'+id" class="webRtc" muted playsinline controls></video>
+    <video style="width:100%; height:100%;" :id="'video'+id" class="webRtc" muted playsinline controls></video>
 </template>
 
 <script>

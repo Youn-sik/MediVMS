@@ -50,11 +50,11 @@ export const centerTextPlugin = {
         : activePercentage
     }
 
-    ctx.font = '36px Nunito, sans-serif'
+    ctx.font = '30px Nunito, sans-serif'
     ctx.fillStyle = colors.primaryColor
     ctx.textBaseline = 'middle'
 
-    var text = activePercentage + '%'
+    var text = activeValue +  "/" + total
     var textX = Math.round((width - ctx.measureText(text).width) / 2)
     var textY = height / 2
     ctx.fillText(text, textX, textY)

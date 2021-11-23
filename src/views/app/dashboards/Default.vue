@@ -1,28 +1,85 @@
 <template>
   <div>
     <b-row>
-      <b-colxx xxs="12">
-        <piaf-breadcrumb :heading="'전체'" />
-        <!-- <b-form-checkbox @change="mosaicToggle" style="float:right; margin-top:10px;" v-model="mosaicChecked" name="check-button" switch>
-          모자이크
-        </b-form-checkbox> -->
-        <div class="separator mb-5"></div>
+      <b-colxx xl="4" lg="12">
+        <b-card style="height:286px;" title="단말 현황">
+          <doughnut-chart v-if="deviceChartData" :data="deviceChartData" shadow />
+        </b-card>
+      </b-colxx>
+      <b-colxx xl="4" lg="12">
+        <b-card style="height:286px;" title="수술 현황">
+          <doughnut-chart v-if="surgeryChartData" :data="surgeryChartData" shadow />
+        </b-card>
+      </b-colxx>
+      <b-colxx xl="4" lg="12">
+        <b-card style="height:286px;" title="오늘 일정">
+          <doughnut-chart v-if="eventsChartData" :data="eventsChartData" shadow />
+        </b-card>
       </b-colxx>
     </b-row>
     <b-row>
-      <b-colxx xl="6" lg="12">
-        <icon-cards-carousel></icon-cards-carousel>
-        <b-row>
-          <b-colxx md="12" class="mb-4">
-            <main-live :mainlive="main" :current-user="currentUser"></main-live>
+      <b-colxx sm="12" xl="7" lg="7">
+        <!-- 수술실 목록 -->
+        <b-card>
+          <b-table-simple>
+            <b-tr>
+              <b-th class="text-center">
+                수술실
+              </b-th>
+              <b-th class="text-center">
+                수술실 상황
+              </b-th>
+              <b-th class="text-center">
+                수술실 시작 시간
+              </b-th>
+              <b-th class="text-center">
+                비고
+              </b-th>
+              <b-th class="text-center">
+                송출
+              </b-th>
+            </b-tr>
+            <b-tr v-for="(surgery,index) in surgeries" :key="index">
+              <b-td class="text-center">
+                {{surgery.surgery_name}}
+              </b-td>
+              <b-td class="text-center">
+                {{surgery.record === 1 ? "수술중" : "대기중"}}
+              </b-td>
+              <b-td class="text-center">
+                {{surgery.record_time}}
+              </b-td>
+              <b-td class="text-center">
+                {{surgery.note}}
+              </b-td>
+              <b-td class="text-center">
+                <b-button
+                  v-if="currentSurgery !== index"
+                  variant="outline-primary"
+                  icon
+                  class="ma-2"
+                  @click="clickBroad(index)"
+                >
+                  송출
+                </b-button>
+                <div style="padding:9px 0 9px 0" v-else>
+                  송출중...
+                </div>
+              </b-td>
+            </b-tr>
+          </b-table-simple>
+        </b-card>
+      </b-colxx>
+      <b-colxx sm="12" xl="5" lg="5">
+        <!-- 카메라 -->
+        <b-row v-if="main">
+          <b-colxx :class="currentSize" v-for="(video,index) in main.live_urls" :key="index">
+              <WebRtcPlayer></WebRtcPlayer>
           </b-colxx>
         </b-row>
       </b-colxx>
-      <b-colxx lg="12" xl="6" class="mb-0">
-        <sub-lives :sub="sub" :current-surgery="currentSurgery" :current-user="currentUser"></sub-lives>
-      </b-colxx>
     </b-row>
-    <b-row>
+    <!-- <b-row>
       <b-colxx xxs="12">
         <div class="move-video-buttons" v-if="main">
           <b-button :disabled="currentSurgery === 0" class="mb-1" @click="prevSurgery" variant="primary"><</b-button>
@@ -30,141 +87,41 @@
           <b-button :disabled="currentSurgery === surgeries.length-1" @click="nextSurgery" class="mb-1" variant="primary">></b-button>
         </div>
       </b-colxx>
-    </b-row>
-    <!-- <b-row>
-      <b-colxx xxs="12">
-        <piaf-breadcrumb :heading="'수술실 정보'" />
-        <div class="separator mb-5"></div>
-      </b-colxx>
-    </b-row>
-    <b-row>
-      <b-colxx lg="12" md="12" class="mb-5">
-        <b-card class="mb-5">
-          <p>수술실 정보</p>
-          <b-table-simple>
-            <b-tbody striped>
-                <b-tr>
-                  <b-th rowspan="1" style="width:20%">수술실</b-th>
-                  <b-th rowspan="1" style="width:20%">시작 시간</b-th>
-                  <b-th rowspan="1" style="width:20%">온도</b-th>
-                  <b-th rowspan="1" style="width:20%">습도</b-th>
-                  <b-th rowspan="1" style="width:20%">수술 시간</b-th>
-                </b-tr>
-                <b-tr>
-                  <b-td rowspan="1">수술실 #1</b-td>
-                  <b-td rowspan="1">2021-09-13 11:17:55</b-td>
-                  <b-td rowspan="1">27℃</b-td>
-                  <b-td rowspan="1">40%</b-td>
-                  <b-td rowspan="1">04:00</b-td>
-                </b-tr>
-            </b-tbody>
-          </b-table-simple>
-        </b-card>
-
-        <b-card>
-          <p>환자 정보</p>
-          <b-table-simple>
-            <b-tbody striped>
-                <b-tr>
-                  <b-th rowspan="1" style="width:20%">진료 번호</b-th>
-                  <b-th rowspan="1" style="width:20%">이름</b-th>
-                  <b-th rowspan="1" style="width:20%">성별</b-th>
-                  <b-th rowspan="1" style="width:20%">나이</b-th>
-                  <b-th rowspan="1" style="width:20%">진단명</b-th>
-                </b-tr>
-                <b-tr>
-                  <b-td rowspan="1">1</b-td>
-                  <b-td rowspan="1">유한나</b-td>
-                  <b-td rowspan="1">여</b-td>
-                  <b-td rowspan="1">42</b-td>
-                  <b-td rowspan="1">골절</b-td>
-                </b-tr>
-            </b-tbody>
-          </b-table-simple>
-        </b-card>
-      </b-colxx>
-    </b-row>
-    <b-row>
-      <b-colxx xl="6" lg="12" class="mb-4">
-        <piaf-breadcrumb :heading="'수술 화면'" />
-        <div class="separator mb-5"></div>
-        <VideoPlayer
-          v-if="currentUser.authority <= 1"
-          license-server="https://widevine-proxy.appspot.com/proxy"
-          :manifest-url="'https://st2.depositphotos.com/8810948/12391/v/600/depositphotos_123919252-stock-video-hands-beautician-makes-procedure-patient.mp4'"
-          poster-url=""
-        />
-        <div v-else style="width:100%; height:100%; text-align:center; line-height:544px;">
-            시청 권한이 없습니다.
-        </div>
-      </b-colxx>
-      <b-colxx xl="6" lg="12" class="mb-4">
-        <piaf-breadcrumb :heading="'Vital Sign'" />
-        <div class="separator mb-5"></div>
-        <VideoPlayer
-          v-if="currentUser.authority <= 1"
-          license-server="https://widevine-proxy.appspot.com/proxy"
-          :manifest-url="'https://ak.picdn.net/shutterstock/videos/20286253/preview/stock-footage-monitoring-of-patient-s-condition-vital-signs-on-icu-monitor-in-hospital-medical-icu-monitor-with.webm'"
-          poster-url=""
-        />
-        <div v-else style="width:100%; height:100%; text-align:center; line-height:544px;">
-            시청 권한이 없습니다.
-        </div>
-      </b-colxx>
     </b-row> -->
   </div>
 </template>
 
 <script>
-import GradientCard from "../../../components/Cards/GradientCard";
-import GradientWithRadialProgressCard from "../../../components/Cards/GradientWithRadialProgressCard";
-import AdvancedSearch from "../../../containers/dashboards/AdvancedSearch";
-import BestSellers from "../../../containers/dashboards/BestSellers";
-import Cakes from "../../../containers/dashboards/Cakes";
-import Calendar from "../../../containers/dashboards/Calendar";
-import ConversionRatesChartCard from "../../../containers/dashboards/ConversionRatesChartCard";
 import IconCardsCarousel from "../../../containers/dashboards/IconCardsCarousel";
-import Logs from "../../../containers/dashboards/Logs";
-import Tickets from "../../../containers/dashboards/Tickets";
-import ProductCategoriesPolarArea from "../../../containers/dashboards/ProductCategoriesPolarArea";
-import ProfileStatuses from "../../../containers/dashboards/ProfileStatuses";
 import subLives from "../../../containers/dashboards/subLives";
-import SalesChartCard from "../../../containers/dashboards/SalesChartCard";
-import SmallLineCharts from "../../../containers/dashboards/SmallLineCharts";
-import SortableStaticticsRow from "../../../containers/dashboards/SortableStaticticsRow";
-import TopRatedItems from "../../../containers/dashboards/TopRatedItems";
-import WebsiteVisitsChartCard from "../../../containers/dashboards/WebsiteVisitsChartCard";
 import mainLive from "../../../containers/dashboards/mainLive";
 import api from "../../../api"
 import VideoPlayer from '../../../components/Shaka/VideoPlayer.vue'
+import WebRtcPlayer from '../../../components/WebRTC/WebRTC.vue'
+import DoughnutChart from "../../../components/Charts/Doughnut.vue"
+import IconCard from "../../../components/Cards/IconCard";
 import {
     mapGetters
 } from "vuex";
+import { ThemeColors } from '../../../utils'
+import moment from 'moment'
+const colors = ThemeColors()
+
 export default {
   components: {
     VideoPlayer,
-    "advanced-search": AdvancedSearch,
-    "best-sellers": BestSellers,
-    cakes: Cakes,
-    calendar: Calendar,
-    "converconversion-rates-chart-card": ConversionRatesChartCard,
     "icon-cards-carousel": IconCardsCarousel,
-    logs: Logs,
-    tickets: Tickets,
-    "product-categories-polar-area": ProductCategoriesPolarArea,
-    "profile-statuses": ProfileStatuses,
     "sub-lives": subLives,
-    "sales-chart-card": SalesChartCard,
-    "small-line-charts": SmallLineCharts,
-    "sortable-statictics-row": SortableStaticticsRow,
-    "top-rated-items": TopRatedItems,
-    "website-visit-chart-card": WebsiteVisitsChartCard,
-    "gradient-card": GradientCard,
-    "gradient-with-radial-progress-card": GradientWithRadialProgressCard,
-    "main-live":mainLive
+    "main-live":mainLive,
+    WebRtcPlayer,
+    "doughnut-chart": DoughnutChart,
+    "icon-card": IconCard
   },
   computed: {
-    ...mapGetters(["currentUser", "processing", "loginError"])
+    ...mapGetters(["currentUser", "processing", "loginError"]),
+    currentSize() {
+      return this.main.live_urls.length !== 1 ? "col-sm-6" : "col-sm-12"
+    }
   },
   data () {
     return {
@@ -172,7 +129,18 @@ export default {
       main : null,
       sub : null,
       currentSurgery:0,
-      mosaicChecked:true
+      mosaicChecked:true,
+      broadcastSurgery:0,
+      deviceChartData : null,
+      surgeryChartData : null,
+      eventsChartData : null,
+      devices:[],
+      activatedDevicesCount:0,
+      surgeries:[],
+      activatedSurgeriesCount:0,
+      todaySchedules:[],
+      standardEvent:0,
+      emergancyEvent:0
     }
   },
 
@@ -190,6 +158,85 @@ export default {
     this.sub = result;
   },
 
+  async mounted() {
+    this.surgeries = await api.getSurgery()
+
+    let start = moment().format("YYYY-MM-DD")
+    let end = moment().format("YYYY-MM-DD 23:59:59")
+
+    for(let i = 0; i < this.surgeries.length; i++) {
+      let temp = await api.getDevices(this.surgeries[i])
+      this.devices = this.devices.concat(temp)
+
+      let _temp = await api.getSchedule({alltype:1,start,end,surgery_id:this.surgeries[i].surgery_id,searchType:this.currentSearchType, search:''})
+      this.todaySchedules = this.todaySchedules.concat(_temp)
+
+      if(this.surgeries[i].record)
+        this.activatedSurgeriesCount++;
+    }
+
+    for(let i = 0; i < this.todaySchedules.length; i++) {
+      console.log(this.todaySchedules[i])
+      if(this.todaySchedules[i].emergancy)
+        this.emergancyEvent++;
+      else
+        this.standardEvent++;
+    }
+
+    let temp = await api.getConnectecDevices()
+    temp.data.forEach((item) => {
+      if(item.clientid.indexOf('server') === -1)
+        this.activatedDevicesCount++;
+    })
+    this.deviceChartData = {
+      labels: ['ON', 'OFF'],
+      datasets: [
+        {
+          label: '',
+          borderColor: [colors.themeColor2,colors.themeColor3],
+          backgroundColor: [
+            colors.themeColor2_10,
+            colors.themeColor3_10,
+          ],
+          borderWidth: 2,
+          data: [this.activatedDevicesCount,this.devices.length-this.activatedDevicesCount]
+        }
+      ]
+    }
+
+    this.surgeryChartData = {
+      labels: ['수술중', '대기중'],
+      datasets: [
+        {
+          label: '',
+          borderColor: [colors.themeColor2,colors.themeColor3],
+          backgroundColor: [
+            colors.themeColor2_10,
+            colors.themeColor3_10,
+          ],
+          borderWidth: 2,
+          data: [this.activatedSurgeriesCount,this.surgeries.length]
+        }
+      ]
+    }
+
+    this.eventsChartData = {
+      labels: ['긴급', '일반'],
+      datasets: [
+        {
+          label: '',
+          borderColor: [colors.themeColor2,colors.themeColor3],
+          backgroundColor: [
+            colors.themeColor2_10,
+            colors.themeColor3_10,
+          ],
+          borderWidth: 2,
+          data: [this.emergancyEvent,this.standardEvent]
+        }
+      ]
+    }
+  },
+
   methods: {
     nextSurgery() {
       this.currentSurgery++
@@ -199,7 +246,12 @@ export default {
       this.currentSurgery--
       this.changeVideo()
     },
+    clickBroad(val) {
+      this.currentSurgery = val
+      this.changeVideo()
+    },
     changeVideo() {
+      console.log(this.surgeries,this.currentSurgery)
       let temp = JSON.parse(JSON.stringify(this.surgeries[this.currentSurgery]))
       temp.device_names = temp.device_names.split(',')
       temp.live_urls = temp.live_urls.split(',')

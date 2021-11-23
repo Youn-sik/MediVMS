@@ -275,7 +275,7 @@
           <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
               <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
           </b-dropdown>
-          <b-button v-if="currentUser.authority <= 0" class="mb-1 mr-3" style="float:right" variant="outline-secondary" @click="()=>{reservModal=true}">수술실 예약</b-button>
+          <b-button class="mb-1 mr-3" style="float:right" variant="outline-secondary" @click="()=>{reservModal=true}">수술실 예약</b-button>
           <p v-if="currentSurgery.record" style="float:right; margin-top:8px">녹화 시작 시간 : {{currentSurgery.record_time}}</p>
           <div class="separator mb-5"></div>
           <template v-for="(i,index) in surgeryData.slice(this.currentPage * this.perPage - 3 , this.currentPage * this.perPage)">
@@ -640,8 +640,8 @@ export default {
         },1000 * 2)
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"wss",
-          port:8084,
+          protocol:"ws",
+          port:8083,
           keepalive:0,
           path:'/mqtt',
           clean: true,
