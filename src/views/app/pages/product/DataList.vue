@@ -1,19 +1,74 @@
 <template>
   <b-row>
-    <b-colxx class="disable-text-selection">
+    <!-- 열람 요청 -->
+    <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청">
+      <b-form-group label="요청 사유">
+          <b-form-textarea v-model="requestBrowseForm.reason" />
+      </b-form-group>
+      <template #modal-footer="{ ok, cancel, hide }">
+          <b-button variant="danger" @click="cancelSaveEvent">
+              취소
+          </b-button>
+          <b-button @click="saveRequestBrowse">
+              저장
+          </b-button>
+      </template>
+    </b-modal>
+
+    <!-- 반출 요청 -->
+    <b-modal size="lg" v-model="requestTakeoutModal" title="열람 요청">
+      <b-form-group label="요청 사유">
+          <b-form-textarea v-model="requestTakeoutForm.reason" />
+      </b-form-group>
+      <template #modal-footer="{ ok, cancel, hide }">
+          <b-button variant="danger" @click="cancelSaveEvent">
+              취소
+          </b-button>
+          <b-button @click="saveRequestTakeout">
+              저장
+          </b-button>
+      </template>
+    </b-modal>
+
+    <!-- 열람 modal -->
+    <b-modal v-if="videoData" size="lg" v-model="videoModal" title="데이터 열람">
+         <b-table-simple>
+            <b-tbody striped>
+                <b-tr>
+                    <b-th rowspan="1">일시</b-th>
+                    <b-th rowspan="1">수술실</b-th>
+                    <b-th rowspan="1">진료과</b-th>
+                    <b-th rowspan="1">주치의</b-th>
+                    <b-th rowspan="1">수술 내용</b-th>
+                    <b-th rowspan="1">환자 상태</b-th>
+                </b-tr>
+                <b-tr>
+                    <b-td rowspan="1">{{videoData.date}}</b-td>
+                    <b-td rowspan="1">{{videoData.sergery_name}}</b-td>
+                    <b-td rowspan="1">{{videoData.department}}</b-td>
+                    <b-td rowspan="1">{{videoData.doctor}}</b-td>
+                    <b-td rowspan="1">{{videoData.surgery_desc}}</b-td>
+                    <b-td rowspan="1">{{videoData.patient_status}}</b-td>
+                </b-tr>
+            </b-tbody>
+        </b-table-simple>
+        <div style="width:744px; height:415px;">
+            <VideoPlayer
+                :isHistory="true"
+                :manifest-url="videoLink"
+            ></VideoPlayer>
+        </div>
+        <div class="move-video-buttons mt-5">
+          <b-button :disabled="currentVideo === 0" class="mb-1" @click="prevSurgery" variant="primary"><</b-button>
+          <h2 style="display:inline"><b-badge class="mb-1" pill variant="primary">[ {{ currentVideo+1 }}번 카메라 ]</b-badge></h2>
+          <b-button :disabled="currentVideo === 3" @click="nextSurgery" class="mb-1" variant="primary">></b-button>
+        </div>
+    </b-modal>
+
+    <b-colxx md="12" class="disable-text-selection">
       <list-page-heading
         :title="$t('menu.data-list')"
-        :isAnyItemSelected="isAnyItemSelected"
-        :keymap="keymap"
-        :displayMode="displayMode"
-        :changeDisplayMode="changeDisplayMode"
-        :changeOrderBy="changeOrderBy"
-        :changePageSize="changePageSize"
         :sort="sort"
-        :searchChange="searchChange"
-        :from="from"
-        :to="to"
-        :total="total"
         :perPage="perPage"
         :startDate="startDate"
         :endDate="endDate"
@@ -25,29 +80,59 @@
         :selectEndData="selectEndData"
         :searchClick="searchClick"
         :changeRadio="changeRadio"
-        :currentProcessingStatus="currentProcessingStatus"
         :currentSearchType="currentSearchType"
         :changeSearchType="changeSearchType"
       ></list-page-heading>
-      <template v-if="isLoad">
-        <list-page-listing
-          :displayMode="displayMode"
-          :selectAll="selectAll"
-          :isSelectedAll="isSelectedAll"
-          :items="filteredItems"
-          :selectedItems="selectedItems"
-          :toggleItem="toggleItem"
-          :lastPage="lastPage"
-          :perPage="perPage"
-          :page="page"
-          :changePage="changePage"
-          :handleContextMenu="handleContextMenu"
-          :onContextMenuAction="onContextMenuAction"
-        ></list-page-listing>
-      </template>
-      <template v-else>
-        <div class="loading"></div>
-      </template>
+    </b-colxx>
+    <b-colxx md="12">
+      <b-card>
+      <!-- this.$refs.vuetable.selectedTo 선택된 데이터 정보 -->
+        <vuetable
+          ref="vuetable"
+          :api-mode="false"
+          :data="filteredItems"
+          :fields="fields"
+          :per-page="4"
+          pagination-path
+          @vuetable:pagination-data="onPaginationData"
+        >
+          <template slot="browse_status" scope="props">
+            <p>{{props.rowData.browse_status === 'standby' ? "허가 대기중" :
+              props.rowData.browse_status === 'permitted' ? "허용" :
+              props.rowData.browse_status === 'denied' ? "거부" : "권한 없음"}}</p>
+          </template>
+
+          <template slot="takeout_status" scope="props">
+            <p>{{props.rowData.takeout_status === 'standby' ? "허가 대기중" :
+              props.rowData.takeout_status === 'permitted' ? "허용" :
+              props.rowData.takeout_status === 'denied' ? "거부" : "권한 없음"}}</p>
+          </template>
+
+          <template slot="browse_request" scope="props">
+            <b-button v-if="props.rowData.browse_status === 'permitted'" disabled> 열람 요청 </b-button>
+            <b-button v-else @click="openBrowseRequestModal(props.rowData.id)"> 열람 요청 </b-button>
+          </template>
+
+          <template slot="browse" scope="props">
+            <b-button v-if="props.rowData.browse_status === 'permitted'" @click="openVideoModal(props.rowData)"> 열람 </b-button>
+            <b-button v-else disabled> 열람 </b-button>
+          </template>
+
+          <template slot="takeout_request" scope="props">
+            <b-button v-if="props.rowData.takeout_status === 'permitted'" disabled> 반출 요청 </b-button>
+            <b-button v-else @click="openTakeoutRequestModal(props.rowData.id)"> 반출 요청 </b-button>
+          </template>
+
+          <template slot="takeout" scope="props">
+            <b-button v-if="props.rowData.takeout_status === 'permitted'" @click="openVideoModal(props.rowData)"> 반출 </b-button>
+            <b-button v-else disabled> 반출 </b-button>
+          </template>
+        </vuetable>
+        <vuetable-pagination-bootstrap
+          ref="pagination"
+          @vuetable-pagination:change-page="onChangePage"
+        ></vuetable-pagination-bootstrap>
+      </b-card>
     </b-colxx>
   </b-row>
 </template>
@@ -55,17 +140,34 @@
 <script>
 import api from '../../../../api'
 import ListPageHeading from "../../../../containers/pages/ListPageHeading";
-import ListPageListing from "../../../../containers/pages/ListPageListing";
+import {
+    mapGetters
+} from "vuex";
+import Vuetable from 'vuetable-2/src/components/Vuetable'
+import VuetablePaginationBootstrap from '../../../../components/Common/VuetablePaginationBootstrap'
+import moment from 'moment'
+import VideoPlayer from '../../../../components/Shaka/VideoPlayer.vue'
+import {base_url} from "../../../../server.json"
 
 export default {
   components: {
     "list-page-heading": ListPageHeading,
-    "list-page-listing": ListPageListing
+    'vuetable' : Vuetable,
+    'vuetable-pagination-bootstrap' : VuetablePaginationBootstrap,
+    VideoPlayer,
+  },
+  computed: {
+    ...mapGetters({
+      currentUser: "currentUser",
+    }),
+    isSelectedAll() {
+      console.log(this.selectedItems.length >= this.filteredItems.length)
+      return this.selectedItems.length >= this.filteredItems.length;
+    },
   },
   data() {
     return {
       isLoad: false,
-      displayMode: "list",
       sort: {
         column: "title",
         label: "Product Name"
@@ -73,60 +175,208 @@ export default {
       page: 1,
       perPage: 4,
       search: "",
-      from: 0,
-      to: 0,
-      total: 0,
       lastPage: 0,
-      startDate:null,
-      endDate:null,
+      startDate:"",
+      endDate:"",
       currentProcessingStatus:0,
-      items: [
-        // {
-        //   head: false,
-        //   date:'2021-09-09 11:53:05',
-        //   surgeryNo: '수술실 #1',
-        //   department: '외과',
-        //   doctor: '전준희',
-        //   surgeryDetails: '갑상선암',
-        //   patientDischarge: '퇴원',
-        //   browseAuth: '열람 가능',
-        //   videoLink: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4'
-        // },
-        // {
-        //   head: false,
-        //   date:'2021-09-09 15:23:15',
-        //   surgeryNo: '수술실 #2',
-        //   department: '외과',
-        //   doctor: '전준희2',
-        //   surgeryDetails: '갑상선암',
-        //   patientDischarge: '퇴원',
-        //   browseAuth: '열람 가능',
-        //   videoLink: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
-        // },
-        // {
-        //   head: false,
-        //   date:'2021-09-10 11:53:05',
-        //   surgeryNo: '수술실 #3',
-        //   department: '외과',
-        //   doctor: '전준희3',
-        //   surgeryDetails: '갑상선암',
-        //   patientDischarge: '퇴원',
-        //   browseAuth: '열람 가능',
-        //   videoLink: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4'
-        // }
-      ],
+
+      //단말
+      videoData:null,
+      videoModal:false,
+      videoLink:null,
+      devices:[],
+      date:null,
+      currentVideo:0,
+
+      items: [],
       filteredItems:[],
       selectedItems: [],
       currentSearchType:'주치의',
       searchItems: [
         '주치의',
-        // '환자명',
         '수술실',
         '진료과'
-      ]
+      ],
+      fields: [
+        // 'date','sergery_name','department','doctor','surgery_desc','patient_status'
+          {
+            name: '__checkbox',
+            titleClass: 'center aligned',
+            dataClass: 'center aligned'
+          },
+          {
+            name: 'date',
+            title: '수술 날짜',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'sergery_name',
+            title: '수술실',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'department',
+            title: '진료과',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'doctor',
+            title: '주치의',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'surgery_desc',
+            title: '수술 내용',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'patient_status',
+            title: '환자 상태',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:browse_status",
+            title: '열람 권한',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:takeout_status",
+            title: '반출 권한',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:browse_request",
+            title: '열람 요청',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:browse",
+            title: '열람',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:takeout_request",
+            title: '반출 요청',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:takeout",
+            title: '반출',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          }
+        ],
+
+        recordAccess:[], //열람 권한
+        recordTakeout:[], //반출 권한
+
+        requestBrowseModal:false, //열람 요청 모달 변수
+        requestBrowseForm:{
+          user_id:null,
+          record_id:null,
+          status:null,
+          reason:null,
+          created_at:null
+        },
+
+        requestTakeoutModal:false, //반출 요청 모달 변수
+        requestTakeoutForm:{
+          user_id:null,
+          record_id:null,
+          status:null,
+          reason:null,
+          created_at:null
+        },
     };
   },
   methods: {
+    //열람 요청, 반출 요청 form 초기화
+    cancelSaveEvent() {
+      this.requestBrowseModal = false
+      this.requestTakeoutModal = false
+    },
+    //열람 요청 모달
+    openBrowseRequestModal(data) {
+      this.requestBrowseForm ={
+        user_id:this.currentUser.id,
+        record_id:data,
+        status:'standby',
+        reason:null,
+        created_at:moment().format("YYYY-MM-DD HH:mm:ss")
+      }
+
+      this.requestBrowseModal = true
+    },
+    //열람 요청 저장
+    async saveRequestBrowse() {
+      await api.saveRequestBrowse(this.requestBrowseForm)
+
+      this.getRecords()
+
+      this.requestBrowseModal = false
+    },
+    //열람 요청 모달
+    openTakeoutRequestModal(data) {
+      this.requestTakeoutForm ={
+        user_id:this.currentUser.id,
+        record_id:data,
+        status:'standby',
+        reason:null,
+        created_at:moment().format("YYYY-MM-DD HH:mm:ss")
+      }
+
+      this.requestTakeoutModal = true
+    },
+    //열람 요청 저장
+    async saveRequestTakeout() {
+      await api.saveRequestTakeout(this.requestTakeoutForm)
+
+      this.getRecords()
+
+      this.requestTakeoutModal = false
+    },
+    openVideoModal(data) {
+      this.videoData = data
+      this.devices = data.devices.split(',')
+      this.date = moment(data.date).format('YYYYMMDDHHmmss')
+
+      this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
+
+      this.videoModal = true
+    },
+    prevSurgery() {
+      this.currentVideo--
+
+      this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
+    },
+    nextSurgery() {
+      this.currentVideo++
+
+      this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
+    },
+    // currentVideo() {
+    //   this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
+    // },
+    onPaginationData (paginationData) {
+      this.$refs.pagination.setPaginationData(paginationData)
+    },
+    async onChangePage (page) {
+      this.$refs.vuetable.changePage(page)
+      this.page = page
+
+      await this.getRecords()
+    },
     changeSearchType(item) {
       this.currentSearchType = item
     },
@@ -134,36 +384,11 @@ export default {
       this.isLoad = true;
     },
 
-    changeDisplayMode(displayType) {
-      this.displayMode = displayType;
-    },
-    changePageSize(perPage) {
-      this.page = 1;
-      this.perPage = perPage;
-    },
-    changeOrderBy(sort) {
-      this.sort = sort;
-    },
-    searchChange(val) {
-      this.search = val;
-      this.page = 1;
-    },
-
     selectAll(isToggle) {
       if (this.selectedItems.length >= this.filteredItems.length) {
         if (isToggle) this.selectedItems = [];
       } else {
         this.selectedItems = this.filteredItems.map(x => x.id);
-      }
-    },
-    keymap(event) {
-      switch (event.srcKey) {
-        case "select":
-          this.selectAll(false);
-          break;
-        case "undo":
-          this.selectedItems = [];
-          break;
       }
     },
     getIndex(value, arr, prop) {
@@ -197,17 +422,6 @@ export default {
           this.selectedItems = this.selectedItems.filter(x => x !== itemId);
         } else this.selectedItems.push(itemId);
       }
-    },
-    handleContextMenu(vnode) {
-      if (!this.selectedItems.includes(vnode.key)) {
-        this.selectedItems = [vnode.key];
-      }
-    },
-    onContextMenuAction(action) {
-      console.log(
-        "context menu item clicked - " + action + ": ",
-        this.selectedItems
-      );
     },
     changePage(pageNum) {
       this.page = pageNum;
@@ -246,53 +460,95 @@ export default {
     selectEndData(val) {
       this.endDate = val
     },
-    searchClick() {
-      console.log("test")
-      if(this.startDate === null || this.endDate === null) {
-        alert("날짜를 선택해주세요")
-      } else {
-        let currentRadio = this.currentProcessingStatus === 0 ? '전체' :
-        this.currentProcessingStatus === 1 ? '수술 완료' :
-        this.currentProcessingStatus === 2 ? '수술 취소' :
-        this.currentProcessingStatus === 3 ? '입원' : '퇴원'
-
-        let searchType = this.currentSearchType === '주치의' ? 'doctor' :
-        this.currentSearchType === '수술실' ? 'surgery_name' : 'department'
-
-        let temp = this.items.filter((i) => {
-          if(currentRadio === '전체') {
-            if(new Date(this.startDate) <= new Date(i.date.split(' ')[0]) && new Date(this.endDate) >= new Date(i.date.split(' ')[0])) {
-              return i[searchType].indexOf(this.search) > -1
-            }
-          }
-          else {
-            if(currentRadio === i.patient_status){
-              if(new Date(this.startDate) <= new Date(i.date.split(' ')[0]) && new Date(this.endDate) >= new Date(i.date.split(' ')[0])) {
-                return i[searchType].indexOf(this.search) > -1
-              }
-            }
-          }
-        })
-
-        this.filteredItems = temp
-      }
+    async searchClick(val) {
+      console.log(val)
+      this.search = val
+      await this.getRecords()
     },
     changeRadio(val){
       this.currentProcessingStatus = val
+    },
+    async getRecords() {
+      this.items = await api.getRecords({
+        start:this.startDate === '' ? '' : moment(this.startDate).format("YYYY-MM-DD 00:00:00"),
+        end:this.endDate === '' ? '' : moment(this.endDate).format("YYYY-MM-DD 00:00:00"),
+        searchType:this.currentSearchType === '주치의' ? 'doctor' :
+        this.currentSearchType === '수술실' ? 'surgery_name' : 'department',
+        search:this.search ? this.search : '',
+        page:this.page,
+        per_page:this.perPage,
+        status : this.currentProcessingStatus === 0 ? '' :
+          this.currentProcessingStatus === 1 ? '수술 완료' :
+          this.currentProcessingStatus === 2 ? '수술 취소' :
+          this.currentProcessingStatus === 3 ? '입원' : '퇴원'
+      })
+
+      //열람 권한 조회
+      if(this.items.data.length){
+        this.recordAccess = await api.getRecrodAccess({
+          user_id:this.currentUser.id,
+          first:this.items.data[this.items.data.length-1].id,
+          last:this.items.data[0].id,
+          start:this.startDate === '' ? '' : moment(this.startDate).format("YYYY-MM-DD 00:00:00"),
+          end:this.endDate === '' ? '' : moment(this.endDate).format("YYYY-MM-DD 00:00:00"),
+          searchType:this.currentSearchType === '주치의' ? 'doctor' :
+          this.currentSearchType === '수술실' ? 'surgery_name' : 'department',
+          search:this.search ? this.search : '',
+          status : this.currentProcessingStatus === 0 ? '' :
+            this.currentProcessingStatus === 1 ? '수술 완료' :
+            this.currentProcessingStatus === 2 ? '수술 취소' :
+            this.currentProcessingStatus === 3 ? '입원' : '퇴원',
+          per_page : '',
+          page : ''
+        })
+
+        //반출 권한 조회
+        this.recordTakeout = await api.getTekeoutAccess({
+          user_id:this.currentUser.id,
+          first:this.items.data[this.items.data.length-1].id,
+          last:this.items.data[0].id,
+          start:this.startDate === '' ? '' : moment(this.startDate).format("YYYY-MM-DD 00:00:00"),
+          end:this.endDate === '' ? '' : moment(this.endDate).format("YYYY-MM-DD 00:00:00"),
+          searchType:this.currentSearchType === '주치의' ? 'doctor' :
+          this.currentSearchType === '수술실' ? 'surgery_name' : 'department',
+          search:this.search ? this.search : '',
+          status : this.currentProcessingStatus === 0 ? '' :
+            this.currentProcessingStatus === 1 ? '수술 완료' :
+            this.currentProcessingStatus === 2 ? '수술 취소' :
+            this.currentProcessingStatus === 3 ? '입원' : '퇴원',
+          per_page : '',
+          page : ''
+        })
+
+        //조건에 맞는 권한이 존재하면 id 비교후 합치기
+        // if(this.recordAccess.length){
+          this.items.data.forEach((record,index) => {
+            this.recordAccess.data.forEach(access => {
+              if(record.id === access.record_id) {
+                this.items.data[index] = {
+                  ...record,
+                  browse_status:access.status,
+                  browse_reason:access.reason,
+                }
+              }
+            })
+
+            this.recordTakeout.data.forEach(access => {
+              if(record.id === access.record_id) {
+                this.items.data[index] = {
+                  ...this.items.data[index],
+                  takeout_status:access.status,
+                  takeout_reason:access.reason,
+                }
+              }
+            })
+          });
+        // }
+      }
+      this.filteredItems = this.items
+      console.log(this.filteredItems)
     }
 
-  },
-  computed: {
-    isSelectedAll() {
-      console.log(this.selectedItems.length >= this.filteredItems.length)
-      return this.selectedItems.length >= this.filteredItems.length;
-    },
-    isAnyItemSelected() {
-      return (
-        this.selectedItems.length > 0 &&
-        this.selectedItems.length < this.filteredItems.length
-      );
-    },
   },
   watch: {
     search() {
@@ -301,8 +557,8 @@ export default {
   },
   async mounted() {
     this.loadItems();
-    this.items = await api.getRecords()
-    this.filteredItems = this.items
+
+    this.getRecords()
   }
 };
 </script>

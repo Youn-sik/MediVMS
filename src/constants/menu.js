@@ -40,10 +40,28 @@ const data = {
   ]
 },
 {
-  id: "applications",
+  id: "admin",
   icon: "iconsminds-firewall",
-  label: "권한관리",
-  to: `${adminRoot}/applications`,
+  label: "관리자 메뉴",
+  to: `${adminRoot}/admin`,
+  subs: [
+    {
+      id: "auth-manage",
+      label: "권한 관리",
+      to: `${adminRoot}/admin/auth`,
+    },
+    {
+      id: "browse-permit",
+      label: "열람 허가",
+      to: `${adminRoot}/admin/browse`,
+    },
+    {
+      id: "takeout-permit",
+      label: "반출 허가",
+      to: `${adminRoot}/admin/takeout`,
+    },
+  ]
+
 },
 {
   id: "settings",

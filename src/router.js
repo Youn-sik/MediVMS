@@ -220,15 +220,25 @@ const routes = [
         ]
       },
       {
-        path: "applications",
+        path: "admin",
         component: () =>
           import(/* webpackChunkName: "applications" */ "./views/app/applications"),
-        redirect: `${adminRoot}/applications/todo`,
+        redirect: `${adminRoot}/admin/auth`,
         children: [
           {
-            path: "todo",
+            path: "auth",
             component: () =>
               import(/* webpackChunkName: "applications" */ "./views/app/applications/Todo")
+          },
+          {
+            path: "browse",
+            component: () =>
+              import(/* webpackChunkName: "applications" */ "./views/app/pages/permit/BrowsePermit")
+          },
+          {
+            path: "takeout",
+            component: () =>
+              import(/* webpackChunkName: "applications" */ "./views/app/pages/permit/TakeoutPermit")
           },
           // {
           //   path: "survey",

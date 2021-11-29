@@ -12,7 +12,8 @@ const mqtt = require('mqtt');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-var mysql = require('mysql')
+var mysql = require('mysql');
+const { Console } = require("console");
 
 var connection = mysql.createPool({
     host: 'localhost',
@@ -60,6 +61,11 @@ mqttClient.on('message', (topic, message) => {
 
 app.use(cors())
 app.use('/stream',express.static('/var/www/html/VMS/VMS_backend/record'));
+
+app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    res.status(500).send(err);
+});
 
 app.get('/surgery',(req,res) => {
     connection.query("SELECT * FROM surgery", function (err, rows, fields) {
@@ -227,10 +233,46 @@ app.post('/saveRecord', (req,res) => {
 })
 
 app.get('/getRecords', (req,res) => {
-    connection.query("SELECT * FROM records WHERE expiration = 0 ORDER BY id DESC", function (err, rows, fields) {
-        if (err) throw err
+    let per_page = parseInt(req.query.per_page);
+    let page = parseInt(req.query.page)-1;
+    let start = req.query.start;
+    let end = req.query.end;
+    let status = req.query.status;
+    let searchType = req.query.searchType;
+    let search = req.query.search
 
-        res.send(rows)
+    connection.query(`
+    SELECT
+    count(*) as 'count'
+    FROM records
+    WHERE expiration = 0
+    ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
+    ${status ? "AND patient_status = '" + status + "'" : ""}
+    ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}`,function (err, rows, fields) {
+        if (err) next(err)
+
+        let last_page = parseInt(rows[0].count / per_page) + (rows[0].count % per_page > 0 ? 1 : 0)
+        let count = rows[0].count
+        connection.query(`
+        SELECT *
+        FROM records
+        WHERE expiration = 0
+        ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
+        ${status ? "AND patient_status = '" + status + "'" : ""}
+        ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
+        ORDER BY id
+        DESC
+        LIMIT ${page*per_page},${per_page};
+        `, function (err, _rows, fields) {
+            res.send({
+                last_page,
+                from:page*per_page+1,
+                current_page:page+1,
+                per_page,
+                total:count,
+                data:_rows ? _rows : []
+            })
+        })
     })
 })
 
@@ -412,7 +454,7 @@ app.get('/history',(req,res) => {
         if (err) throw err
 
         let last_page = parseInt(rows[0].count / per_page) + (rows[0].count % per_page > 0 ? 1 : 0)
-
+        let count = rows[0].count
         connection.query(`
         SELECT *
         FROM browsing_history
@@ -431,10 +473,158 @@ app.get('/history',(req,res) => {
                 from:page*per_page+1,
                 current_page:page+1,
                 per_page,
-                total:rows[0].count,
+                total:count,
                 data:rows
             })
         })
+    })
+})
+
+app.get('/record_access', function(req,res) {
+    let start = req.query.start;
+    let end = req.query.end;
+    let status = req.query.status;
+    let searchType = req.query.searchType;
+    let search = req.query.search
+    let first = parseInt(req.query.first)
+    let last = parseInt(req.query.last)
+    let user_id = parseInt(req.query.user_id)
+
+    let per_page = req.query.per_page;
+    let page = req.query.page;
+
+    connection.query(`
+    SELECT *
+    FROM record_access
+    JOIN records
+    ON record_id = records.id
+    JOIN accounts
+    ON user_id <> accounts.id
+    WHERE expiration = 0
+    ${user_id ? 'AND user_id = ' + user_id : ''}
+    ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
+    ${status ? "AND patient_status = '" + status + "'" : ""}
+    ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
+    ${first ? 'AND record_id >= ' + first : ''}
+    ${first ? 'AND record_id <= ' + last : ''}
+    ORDER BY records.id
+    DESC
+    ${per_page && page ? "LIMIT " + (parseInt(page)-1)*parseInt(per_page) + " , " + parseInt(per_page) : '' };
+    `, function (err, rows, fields) {
+
+        if(per_page,page) { //페이징 사용시 db count 구함
+            connection.query('SELECT count(*) as "count" FROM record_access', function (err,_rows, fields) {
+                let last_page = parseInt(_rows[0].count / parseInt(per_page)) + (_rows[0].count % parseInt(per_page) > 0 ? 1 : 0)
+                res.send({
+                    last_page,
+                    from:parseInt(page)*parseInt(per_page),
+                    current_page:parseInt(page),
+                    per_page:parseInt(per_page),
+                    total:_rows[0].count,
+                    data:rows ? rows : [],
+                })
+            })
+        } else {
+            res.send({
+                data:rows ? rows : [],
+            })
+        }
+    })
+})
+
+app.post('/record_access', (req,res) => {
+    connection.query(`INSERT INTO record_access
+    VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}")`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.patch('/record_access', (req,res) => {
+    connection.query(`UPDATE record_access
+    SET
+    reason = "${req.body.reason}",
+    status = "${req.body.status}"
+    WHERE id = ${req.body.id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.get('/takeout_access', function(req,res) {
+    let start = req.query.start;
+    let end = req.query.end;
+    let status = req.query.status;
+    let searchType = req.query.searchType;
+    let search = req.query.search
+    let first = parseInt(req.query.first)
+    let last = parseInt(req.query.last)
+    let user_id = parseInt(req.query.user_id)
+
+    let per_page = req.query.per_page;
+    let page = req.query.page;
+
+    connection.query(`
+    SELECT *,records.id as record_id,  accounts.id as account_id
+    FROM takeout_access
+    JOIN records
+    ON record_id = records.id
+    JOIN accounts
+    ON user_id = accounts.id
+    WHERE expiration = 0
+    ${user_id ? 'AND user_id = ' + user_id : ''}
+    ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
+    ${status ? "AND patient_status = '" + status + "'" : ""}
+    ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
+    ${first ? 'AND record_id >= ' + first : ''}
+    ${first ? 'AND record_id <= ' + last : ''}
+    ORDER BY records.id
+    DESC
+    ${per_page && page ? "LIMIT " + (parseInt(page)-1)*parseInt(per_page) + " , " + parseInt(per_page) : '' };
+    `, function (err, rows, fields) {
+        if(per_page && page) { //페이징 사용시 db count 구함
+            connection.query('SELECT count(*) as "count" FROM takeout_access', function (err,_rows, fields) {
+                let last_page = parseInt(_rows[0].count / parseInt(per_page)) + (_rows[0].count % parseInt(per_page) > 0 ? 1 : 0)
+                res.send({
+                    last_page,
+                    from:parseInt(page)*parseInt(per_page),
+                    current_page:parseInt(page),
+                    per_page:parseInt(per_page),
+                    total:_rows[0].count,
+                    data:rows ? rows : [],
+                })
+            })
+        } else {
+            res.send({
+                data:rows ? rows : [],
+            })
+        }
+    })
+})
+
+
+app.patch('/takeout_access', (req,res) => {
+    connection.query(`UPDATE takeout_access
+    SET
+    reason = "${req.body.reason}",
+    status = "${req.body.status}"
+    WHERE id = ${req.body.id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.post('/takeout_access', (req,res) => {
+    connection.query(`INSERT INTO takeout_access
+    VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}")`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
     })
 })
 

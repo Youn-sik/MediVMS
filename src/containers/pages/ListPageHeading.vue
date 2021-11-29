@@ -3,35 +3,7 @@
     <b-colxx xxs="12">
       <h3>{{ '열람검색' }}</h3>
       <div class="top-right-button-container">
-        <!-- <b-button
-          v-b-modal.modalright
-          variant="primary"
-          size="lg"
-          class="top-right-button mb-3"
-        >내 정보</b-button> -->
         <b-button-group>
-          <!-- <b-dropdown split right @click="selectAll(true)" class="check-button" variant="primary">
-            <label
-              class="custom-control custom-checkbox pl-4 mb-0 d-inline-block"
-              slot="button-content"
-            >
-              <input
-                class="custom-control-input"
-                type="checkbox"
-                :checked="isSelectedAll"
-                v-shortkey="{select: ['ctrl','a'], undo: ['ctrl','d']}"
-                @shortkey="keymap"
-              />
-              <span
-                :class="{
-                'custom-control-label' :true,
-                'indeterminate' : isAnyItemSelected
-                }"
-              >&nbsp;</span>
-            </label>
-            <b-dropdown-item>{{$t('pages.delete')}}</b-dropdown-item>
-            <b-dropdown-item>{{$t('pages.another-action')}}</b-dropdown-item>
-          </b-dropdown> -->
         </b-button-group>
       </div>
       <add-new-modal :categories="categories" :statuses="statuses"></add-new-modal>
@@ -106,7 +78,6 @@
                             <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
                           </b-dropdown>
                         </b-input-group-prepend>
-                        <!-- <b-form-input/> -->
                         <div
                           class="search"
                           ref="searchContainer"
@@ -115,11 +86,10 @@
                         >
                           <b-input
                             placeholder="검색"
-                            @keypress.native.enter="searchClick"
+                            @keypress.native.enter="searchClick(searchKeyword)"
                             v-model="searchKeyword"
-                            @change="searchChange"
                           />
-                          <span class="search-icon" @click="searchClick">
+                          <span class="search-icon" @click="searchClick(searchKeyword)">
                             <i class="simple-icon-magnifier"></i>
                           </span>
                         </div>
@@ -130,23 +100,6 @@
               </b-tbody>
             </b-table-simple>
           </div>
-          <!-- <div class="float-md-right pt-1">
-            <span class="text-muted text-small mr-1 mb-2">{{from}}-{{to}} of {{ total }}</span>
-            <b-dropdown
-              id="ddown2"
-              right
-              :text="`${perPage}`"
-              variant="outline-dark"
-              class="d-inline-block"
-              size="xs"
-            >
-              <b-dropdown-item
-                v-for="(size,index) in pageSizes"
-                :key="index"
-                @click="changePageSize(size)"
-              >{{ size }}</b-dropdown-item>
-            </b-dropdown>
-          </div> -->
         </b-collapse>
       </div>
       <div class="separator mb-5" />
@@ -177,19 +130,8 @@ export default {
   props: [
     'changeSearchType',
     'currentSearchType',
-    "currentProcessingStatus",
     "title",
-    "isAnyItemSelected",
-    "keymap",
-    "displayMode",
-    "changeDisplayMode",
-    "changeOrderBy",
-    "changePageSize",
     "sort",
-    "searchChange",
-    "from",
-    "to",
-    "total",
     "perPage",
     "startDate",
     "endDate",

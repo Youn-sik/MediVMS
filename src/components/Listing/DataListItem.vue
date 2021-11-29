@@ -111,11 +111,7 @@ export default {
         nextSurgery() {
             this.currentSurgery++
 
-            // if(this.currentSurgery === 3) {
-            //     this.videoLink = 'https://${base_url}:3000/stream/vital.webm'
-            // } else {
-                this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}/${this.devices[this.currentSurgery]}_${this.date}.mpd`
-            // }
+            this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentSurgery]}_${this.date}/${this.devices[this.currentSurgery]}_${this.date}.mpd`
         },
         currentVideo() {
             this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`

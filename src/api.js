@@ -135,9 +135,75 @@ const api = {
         })
     },
 
+    getRecrodAccess(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/record_access?per_page=${params.per_page}&page=${params.page}&user_id=${params.user_id}&first=${params.first}&last=${params.last}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    saveRequestBrowse(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/record_access',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    parchRequestBrowse(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/record_access',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    getTekeoutAccess(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/takeout_access?per_page=${params.per_page}&page=${params.page}&user_id=${params.user_id}&first=${params.first}&last=${params.last}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    saveRequestTakeout(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/takeout_access',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    patchRequestTakeout(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/takeout_access',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
     getRecords(params) {
         return new Promise((resolve, reject) => {
-            axios.get('/getRecords').then(
+            axios.get(`/getRecords?per_page=${params.per_page}&page=${params.page}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}`).then(
                 res => {
                     resolve(res.data)
                 },

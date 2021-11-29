@@ -462,6 +462,8 @@ export default {
             id:this.currentSurgery.surgery_id
           })
 
+
+          console.log("record_start");
           let currentSerial = null
           this.currentSurgery.serial_numbers.forEach(e => {
             currentSerial = e
@@ -488,6 +490,8 @@ export default {
           await api.recordStop({
             id:this.currentSurgery.surgery_id
           })
+
+          console.log("record_stop");
           this.currentSurgery.serial_numbers.forEach(e => {
               this.mqttClient.publish(`/record/stop/${e}`, JSON.stringify({
                 serial_number:`${e}`,
