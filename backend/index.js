@@ -60,7 +60,7 @@ mqttClient.on('message', (topic, message) => {
 })
 
 app.use(cors())
-app.use('/stream',express.static('/var/www/html/VMS/VMS_backend/record'));
+app.use('/stream',express.static('/var/www/html/VMS/backend/record'));
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
@@ -494,19 +494,19 @@ app.get('/record_access', function(req,res) {
     let page = req.query.page;
 
     connection.query(`
-    SELECT *
+    SELECT record_access.id, status,reason,created_at,sergery_name,records.department as department,doctor,surgery_desc,patient_status,video_link,date,patient_name,account,name,record_id,user_id
     FROM record_access
     JOIN records
     ON record_id = records.id
     JOIN accounts
-    ON user_id <> accounts.id
+    ON user_id = accounts.id
     WHERE expiration = 0
     ${user_id ? 'AND user_id = ' + user_id : ''}
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
-    ${status ? "AND patient_status = '" + status + "'" : ""}
+    ${status ? "AND status = '" + status + "'" : ""}
     ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
     ${first ? 'AND record_id >= ' + first : ''}
-    ${first ? 'AND record_id <= ' + last : ''}
+    ${last ? 'AND record_id <= ' + last : ''}
     ORDER BY records.id
     DESC
     ${per_page && page ? "LIMIT " + (parseInt(page)-1)*parseInt(per_page) + " , " + parseInt(per_page) : '' };
@@ -568,7 +568,7 @@ app.get('/takeout_access', function(req,res) {
     let page = req.query.page;
 
     connection.query(`
-    SELECT *,records.id as record_id,  accounts.id as account_id
+    SELECT takeout_access.id, status,reason,created_at,sergery_name,records.department as department,doctor,surgery_desc,patient_status,video_link,date,patient_name,account,name,record_id,user_id
     FROM takeout_access
     JOIN records
     ON record_id = records.id
@@ -577,7 +577,7 @@ app.get('/takeout_access', function(req,res) {
     WHERE expiration = 0
     ${user_id ? 'AND user_id = ' + user_id : ''}
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
-    ${status ? "AND patient_status = '" + status + "'" : ""}
+    ${status ? "AND status = '" + status + "'" : ""}
     ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
     ${first ? 'AND record_id >= ' + first : ''}
     ${first ? 'AND record_id <= ' + last : ''}
@@ -630,14 +630,11 @@ app.post('/takeout_access', (req,res) => {
 
 app.get("/mqttapi",(req,res) => {
     var options = {
-        url: 'http://localhost:18083/api/v4/clients/',
-        auth: {
-            user: "admin",
-            password: "public"
-        }
-      };
+        url: 'https://localhost:8443/api/getMediaList'
+    };
 
     request(options,(err,_res, body) => {
+        console.log(body)
         res.send(body)
     })
 })

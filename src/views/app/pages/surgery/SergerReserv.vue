@@ -279,8 +279,25 @@
                             :event-overlap-threshold="30"
                             :event-color="getEventColor"
                             @change="getEvents"
+                            @mousedown:event="startDrag"
+                            @mousedown:time="startTime"
+                            @mousemove:time="mouseMove"
+                            @mouseup:time="endDrag"
+                            @mouseleave.native="cancelDrag"
                             :dark="true"
-                        ></v-calendar>
+                        >
+                            <template v-slot:event="{ event, timed, eventSummary }">
+                                <div
+                                class="v-event-draggable"
+                                v-html="eventSummary()"
+                                ></div>
+                                <div
+                                v-if="timed"
+                                class="v-event-drag-bottom"
+                                @mousedown.stop="extendBottom(event)"
+                                ></div>
+                            </template>
+                        </v-calendar>
                          <v-menu
                         v-model="selectedOpen"
                         :close-on-content-click="false"
@@ -402,11 +419,116 @@ export default {
             searchKeyword:'',
             commitedSearchKeyword:'',
             calendarType:"월간",
-            calendarTypes:["월간","주간","일간"]
-            // todaySchedules: [],
+            calendarTypes:["월간","주간","일간"],
+            dragEvent: null,
+            dragStart: null,
+            createEvent: null,
+            createStart: null,
+            extendOriginal: null,
         }
     },
     methods:{
+        startDrag ({ event, timed }) {
+            if (event && timed) {
+                this.dragEvent = event
+                this.dragTime = null
+                this.extendOriginal = null
+            }
+        },
+        startTime (tms) {
+            const mouse = this.toTime(tms)
+            if (this.dragEvent && this.dragTime === null) {
+                const start = new Date(this.dragEvent.start)
+
+                this.dragTime = mouse - start
+            } else {
+                this.createStart = this.roundTime(mouse)
+                this.createEvent = {
+                    name: `Event #${this.events.length}`,
+                    color: 'blue',
+                    start: moment(this.createStart).format("YYYY-MM-DD HH:mm:ss"),
+                    end: moment(this.createStart).format("YYYY-MM-DD HH:mm:ss"),
+                    timed: true,
+                }
+
+                this.events.push(this.createEvent)
+            }
+        },
+        extendBottom (event) {
+            this.createEvent = event
+            this.createStart = new Date(event.start)
+            this.extendOriginal = new Date(event.end)
+        },
+        mouseMove (tms) {
+            const mouse = this.toTime(tms)
+
+            if (this.dragEvent && this.dragTime !== null) {
+                const start = new Date(this.dragEvent.start)
+                const end = new Date(this.dragEvent.end)
+                const duration = end - start
+                const newStartTime = mouse - this.dragTime
+                const newStart = this.roundTime(newStartTime)
+                const newEnd = newStart + duration
+
+                this.dragEvent.start = moment(newStart).format("YYYY-MM-DD HH:mm:ss")
+                this.dragEvent.end = moment(newEnd).format("YYYY-MM-DD HH:mm:ss")
+            } else if (this.createEvent && this.createStart !== null) {
+                const mouseRounded = this.roundTime(mouse, false)
+                const min = Math.min(mouseRounded, this.createStart)
+                const max = Math.max(mouseRounded, this.createStart)
+
+                this.createEvent.start = moment(min).format("YYYY-MM-DD HH:mm:ss")
+                this.createEvent.end = moment(max).format("YYYY-MM-DD HH:mm:ss")
+            }
+        },
+        async endDrag () {
+            if (this.dragEvent && this.dragTime !== null) {
+                await api.patchSchedule(this.dragEvent);
+            } else if (this.createEvent && this.createStart !== null) {
+                this.newEvent = {
+                    ...this.newEvent,
+                    ...this.createEvent,
+                    start:moment(this.createEvent.start).format('YYYY-MM-DDTHH:mm:ssZ'),
+                    end:moment(this.createEvent.end).format('YYYY-MM-DDTHH:mm:ssZ')
+                }
+                this.addModal = true
+            }
+
+            this.dragTime = null
+            this.dragEvent = null
+            this.createEvent = null
+            this.createStart = null
+            this.extendOriginal = null
+        },
+        cancelDrag () {
+            if (this.createEvent) {
+                if (this.extendOriginal) {
+                    this.createEvent.end = moment(this.extendOriginal).format("YYYY-MM-DD HH:mm:ss")
+                } else {
+                    const i = this.events.indexOf(this.createEvent)
+                    if (i !== -1) {
+                        this.events.splice(i, 1)
+                    }
+                }
+            }
+
+            this.createEvent = null
+            this.createStart = null
+            this.dragTime = null
+            this.dragEvent = null
+        },
+        roundTime (time, down = true) {
+            const roundTo = 15 // minutes
+            const roundDownTime = roundTo * 60 * 1000
+
+            return down
+            ? time - time % roundDownTime
+            : time + (roundDownTime - (time % roundDownTime))
+        },
+        toTime (tms) {
+            return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime()
+        },
+
         modifySchedule(i) {
             this.modModal = true
 
@@ -450,6 +572,8 @@ export default {
 
             this.addModal = false;
             this.modModal = false;
+
+            this.events.pop()
         },
         openAddModal() {
             this.addModal = true;
@@ -553,7 +677,7 @@ export default {
 
         async getSchedule() {
             let start = moment(this.date).startOf('month').format('YYYY-MM-DD');
-            let end = moment(this.date).endOf('month').format('YYYY-MM-DD');
+            let end = moment(this.date).endOf('month').format('YYYY-MM-DD 23:59:59');
             this.events = []
             this.events = await api.getSchedule({start,end,surgery_id:this.currentSurgery.surgery_id,alltype:1,searchType:this.currentSearchType, search:this.commitedSearchKeyword})
 
@@ -571,6 +695,8 @@ export default {
 
             let startSchedule = false
             let newEvent = null
+
+            await this.getSchedule()
 
             if((!this.events.length || !this.events[0].is_record) && this.newEvent.emergency ) {
                 startSchedule = true

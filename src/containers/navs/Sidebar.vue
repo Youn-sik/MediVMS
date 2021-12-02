@@ -8,7 +8,7 @@
         <ul class="list-unstyled">
           <li
             v-for="(item,index) in filteredMenuItems(menuItems)"
-            :class="{ 'active' : (selectedParentMenu === item.id && viewingParentMenu === '') || viewingParentMenu === item.id || $route.path === item.to }"
+            :class="{ 'active' : (selectedParentMenu === item.id && viewingParentMenu === '') || viewingParentMenu === item.id}"
             :key="`parent_${index}`"
             :data-flag="item.id"
           >

@@ -42,6 +42,11 @@
                 pagination-path
                 @vuetable:pagination-data="onPaginationData"
             >
+                <template slot="status" scope="props">
+                    {{props.rowData.status === 'standby' ? '허가 대기중' :
+                    props.rowData.status === 'permitted' ? '허가' :
+                    props.rowData.status === 'denied' ? '거부' : "권한 없음"}}
+                </template>
                 <template slot="browse" scope="props">
                     <b-button @click="browsePermit(props.rowData)"> 열람 요청 </b-button>
                 </template>
@@ -132,6 +137,12 @@ export default {
                 dataClass: 'list-item-heading'
             },
             {
+                name: "__slot:status",
+                title: '요청 상태',
+                titleClass: '',
+                dataClass: 'list-item-heading'
+            },
+            {
                 name: "__slot:browse",
                 title: '열람 요청',
                 titleClass: '',
@@ -161,9 +172,10 @@ export default {
   },
     methods: {
         async savePermit() {
-            console.log(this.form)
             await api.parchRequestBrowse({reason:this.form.reason, status:this.form.status.value, id:this.currentTakeoutData.id})
             this.permitModal = false;
+
+            this.getItems()
         },
         browsePermit(data) {
             this.currentTakeoutData = data
@@ -182,14 +194,13 @@ export default {
                 end:'',
                 searchType: '',
                 search:'',
-                status : '',
+                status : 'standby',
                 page:this.currentPage,
                 per_page:this.perPage
             })
             this.items = temp
         },
         onPaginationData (paginationData) {
-            console.log(paginationData)
             this.$refs.pagination.setPaginationData(paginationData)
         },
         async onChangePage (page) {

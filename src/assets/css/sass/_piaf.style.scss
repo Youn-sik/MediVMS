@@ -3171,9 +3171,9 @@ body.default-transition main {
 }
 
 .dashboard-donut-chart {
-  height: 270px;
+  height: 170px;
   .chart-container {
-    height: 270px;
+    height: 170px;
   }
 }
 
@@ -5268,7 +5268,7 @@ input:-webkit-autofill {
 }
 
 .chart-container {
-  height: 230px;
+  height: 200px;
 }
 
 .theme-colors {
@@ -8091,4 +8091,43 @@ select:-webkit-autofill:focus {
 
 .form-control:disabled {
   background-color: #232223 !important;
+}
+
+.surgeryTable .card-body {
+  padding:0px !important;
+}
+
+.v-event-draggable {
+  padding-left: 6px;
+}
+
+.v-event-timed {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.v-event-drag-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 4px;
+  cursor: ns-resize;
+
+  &::after {
+    display: none;
+    position: absolute;
+    left: 50%;
+    height: 4px;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    width: 16px;
+    margin-left: -8px;
+    opacity: 0.8;
+    content: '';
+  }
+
+  &:hover::after {
+    display: block;
+  }
 }

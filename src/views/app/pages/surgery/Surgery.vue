@@ -602,6 +602,7 @@ export default {
           let end = moment().endOf('month').format("YYYY-MM-DD 23:59:59")
           let newSchedules = await api.getSchedule({surgery_id:this.currentSurgery.surgery_id,start,end,alltype:0,searchType:'',search:''})
           if(type === 'start'){
+            this.rightModal = false;
             await this.getSchedule()
           } else if(type === 'emergancy') {
             if(this.schedules.length) {
@@ -644,29 +645,33 @@ export default {
               this.currentSurgeryImdex++;
 
               //TODO : 필요한지 고민 필요
-              // if(this.schedules.length-1 === this.currentScheduleIndex){
-              //   this.schedules = newSchedules
-              //   this.nextSchedule()
-              //   return
-              // }
-              // let newItem = null
-              // newSchedules.forEach((item,index) => {
-              //   let dupl = false
-              //   this.schedules.forEach((j,_index) => {
-              //     if(item.id === j.id)
-              //       dupl = true
-              //   })
+              if(this.schedules.length-1 === this.currentScheduleIndex){
+                this.schedules = newSchedules
+                this.nextSchedule()
+                return
+              }
+              let newItem = null
+              newSchedules.forEach((item,index) => {
+                let dupl = false
+                this.schedules.forEach((j,_index) => {
+                  if(item.id === j.id)
+                    dupl = true
+                })
 
-              //   if(!dupl)
-              //     newItem = item
-              //   return false
-              // })
+                if(!dupl)
+                  newItem = item
+                return false
+              })
 
-              // if(newItem) {
-              //   this.schedules.splice(this.currentScheduleIndex+1,0,newItem)
-              // }else {
-              //   return false;
-              // }
+              let now = moment().format("YYYY-MM-DD HH:mm:ss")
+              console.log(newItem)
+              if(newItem && newItem.start <= now && newItem.end > now) {
+                this.schedules.splice(this.currentScheduleIndex+1,0,newItem)
+                if(!this.rightModal)
+                  this.nextSchedule();
+              }else {
+                return false;
+              }
             }
           } else if(type === 'delete') {
             if( newSchedules.length !== this.currentScheduleIndex
@@ -711,7 +716,8 @@ export default {
             let now = moment().format("YYYY-MM-DD HH:mm")
             console.log(this.pendingSchedule , now)
             if(!this.rightModal && this.pendingSchedule.start <= now) {
-              --this.currentScheduleIndex;
+              if(this.currentScheduleIndex < 0)
+                --this.currentScheduleIndex;
               this.nextSchedule()
               this.pendingSchedule = null;
               this._clearInterval()

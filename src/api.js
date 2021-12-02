@@ -6,7 +6,7 @@ axios.defaults.baseURL = `http://${base_url}:3000`
 const api = {
     getConnectecDevices(params) {
         return new Promise((resolve, reject) => {
-            axios.get(`/mqttapi`).then(
+            axios.get(`https://${base_url}:8443/api/getMediaList`).then(
                 res => {
                     resolve(res.data)
                 },

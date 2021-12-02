@@ -301,6 +301,14 @@ export default {
     };
   },
   methods: {
+    //열람시 기록 저장
+    saveRecord(data) {
+        api.saveHistory({
+            record_id:data.id,
+            account_id:this.currentUser.id,
+            created_at:moment().format('YYYY-MM-DD HH:mm:ss')
+        })
+    },
     //열람 요청, 반출 요청 form 초기화
     cancelSaveEvent() {
       this.requestBrowseModal = false
@@ -354,6 +362,8 @@ export default {
       this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
 
       this.videoModal = true
+
+      this.saveRecord(data)
     },
     prevSurgery() {
       this.currentVideo--
