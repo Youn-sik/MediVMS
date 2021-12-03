@@ -104,6 +104,16 @@
                         </template>
                     </vselect>
                 </b-form-group>
+                <b-form-group label="수술실">
+                    <vselect label="surgery_name" :options="surgeries" v-model="newEvent.surgery" dir="ltr" >
+                        <!-- <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <div style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.surgery_name }}
+                            </div>
+                        </template> -->
+                    </vselect>
+                </b-form-group>
                 <!-- <b-form-checkbox
                 id="emergency"
                 v-model="newEvent.emergency"
@@ -169,6 +179,17 @@
                         </template>
                     </vselect>
                 </b-form-group>
+                <b-form-group label="수술실">
+                    <vselect label="surgery_name" :options="surgeries" v-model="newEvent.surgery" dir="ltr" >
+                        <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <!-- <img :src="option.owner.avatar_url" height="25" /> -->
+                                <div style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.surgery_name }}
+                            </div>
+                        </template>
+                    </vselect>
+                </b-form-group>
                 <b-form-checkbox
                 id="emergency"
                 v-model="newEvent.emergency"
@@ -229,10 +250,10 @@
                             <b-button
                                 variant="outline-primary"
                                 icon
-                                v-if="$refs.calendar"
+                                v-if="$refs.calendar0"
                                 class="ma-2"
                             >
-                                {{$refs.calendar.title}}
+                                {{$refs.calendar0.title}}
                             </b-button>
                             <b-button
                                 variant="outline-primary"
@@ -265,11 +286,11 @@
                     </b-input-group>
 
                     <v-sheet height="700" :dark="true">
-                        <template v-if="calendarType === '일간'">
+                        <!-- <template v-if="calendarType === '일간'">
                             <b-row style="height:100%">
                                 <b-colxx style="height:100%" sm="12" xl="3" lg="3" v-for="(surgery,index) in surgeries" :key="index">
                                     <v-calendar
-                                        ref="calendar"
+                                        :ref="'calendar'+index"
                                         v-model="value"
                                         :weekdays="weekday"
                                         :type="calendarType === '월간' ? 'month' :
@@ -303,9 +324,9 @@
                                 </b-colxx>
                             </b-row>
                         </template>
-                        <template v-else>
+                        <template v-else> -->
                             <v-calendar
-                                ref="calendar"
+                                ref="calendar0"
                                 v-model="value"
                                 :weekdays="weekday"
                                 :type="calendarType === '월간' ? 'month' :
@@ -376,7 +397,7 @@
                                     </v-card-actions>
                                 </v-card>
                             </v-menu>
-                        </template>
+                        <!-- </template> -->
                     </v-sheet>
                 </div>
             </b-card>
@@ -422,6 +443,7 @@ export default {
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 patient:'',
                 doctor:'',
+                surgery:null,
                 emergency:false,
             },
             addModal:false,
@@ -579,20 +601,21 @@ export default {
         modifySchedule(i) {
             this.modModal = true
 
-            this.newEvent = {...i, start:moment(i.start).format('YYYY-MM-DDTHH:mm:ssZ'), end:moment(i.end).format('YYYY-MM-DDTHH:mm:ssZ')}
+            this.newEvent = {...i,surgery:this.currentSurgery, start:moment(i.start).format('YYYY-MM-DDTHH:mm:ssZ'), end:moment(i.end).format('YYYY-MM-DDTHH:mm:ssZ')}
         },
         prevDate() {
             this.getSchedule()
-            this.$refs.calendar.prev()
+            this.$refs.calendar0.prev()
         },
         nextDate() {
             this.getSchedule()
-            this.$refs.calendar.next()
+            this.$refs.calendar0.next()
         },
         cancelSaveEvent() {
             this.newEvent = {
                 color:'',
                 name:'',
+                surgery:null,
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
@@ -612,6 +635,7 @@ export default {
             this.newEvent = {
                 color:'',
                 name:'',
+                surgery:this.currentSurgery,
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
@@ -677,11 +701,11 @@ export default {
         },
         changeCalendarType(val,index) {
 
-            if(this.calendarType === '일간'){
-                this.getSchedule()
-            } else if(val === '일간') {
-                this.getAllSchedule()
-            }
+            // if(this.calendarType === '일간'){
+            //     this.getSchedule()
+            // } else if(val === '일간') {
+            //     this.getAllSchedule()
+            // }
             this.calendarType = val
         },
         async getSurgery() {
@@ -733,7 +757,7 @@ export default {
                 startSchedule = true
             }
 
-            await api.addSchedule({...this.newEvent, surgery_id:this.currentSurgery.surgery_id})
+            await api.addSchedule({...this.newEvent})
 
             await this.getSchedule()
 
@@ -785,6 +809,7 @@ export default {
             this.newEvent = {
                 color:'',
                 name:'',
+                surgery:null,
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
                 end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),

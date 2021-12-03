@@ -399,7 +399,7 @@ app.get('/schedule',(req,res) => {
 
 app.post('/schedule',(req,res) => {
     connection.query(`INSERT INTO schedule
-    VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}",${req.body.emergency},${req.body.surgery_id},0,0,"${req.body.patient}","${req.body.doctor}")`, function (err, rows, fields) {
+    VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}",${req.body.emergency},${req.body.surgery.surgery_id},0,0,"${req.body.patient}","${req.body.doctor}")`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -416,7 +416,8 @@ app.patch('/schedule',(req,res) => {
     is_record = ${req.body.is_record},
     is_over = ${req.body.is_over},
     patient = "${req.body.patient}",
-    doctor = "${req.body.doctor}"
+    doctor = "${req.body.doctor}",
+    surgery_id = ${req.body.surgery.surgery_id}
     WHERE id = ${req.body.id}`,
     function (err, rows, fields) {
         if (err) throw err

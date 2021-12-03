@@ -34,10 +34,16 @@
                   수술실 시작 시간
                 </b-th>
                 <b-th class="text-center">
+                  담당의
+                </b-th>
+                <b-th class="text-center">
+                  환자명
+                </b-th>
+                <b-th class="text-center">
                   비고
                 </b-th>
                 <b-th class="text-center">
-                  송출
+                  시청
                 </b-th>
               </b-tr>
               <b-tr v-for="(surgery,index) in surgeries" :key="index" style="height:30px">
@@ -51,6 +57,12 @@
                   {{surgery.record_time}}
                 </b-td>
                 <b-td class="text-center">
+                  {{surgery.doctor}}
+                </b-td>
+                <b-td class="text-center">
+                  {{surgery.patient}}
+                </b-td>
+                <b-td class="text-center">
                   {{surgery.note}}
                 </b-td>
                 <b-td class="text-center">
@@ -61,10 +73,10 @@
                     class="ma-2"
                     @click="clickBroad(index)"
                   >
-                    송출
+                    시청
                   </b-button>
                   <div style="padding:9px 0 9px 0" v-else>
-                    송출중...
+                    시청중...
                   </div>
                 </b-td>
               </b-tr>
@@ -186,7 +198,15 @@ export default {
         this.activatedSurgeriesCount++;
     }
 
+
+
     for(let i = 0; i < this.todaySchedules.length; i++) {
+      for(let j = 0; j < this.surgeries.length; j++) {
+        if(this.surgeries[j].surgery_id === this.todaySchedules[i].surgery_id) {
+          this.surgeries[j].patient = this.todaySchedules[i].patient
+          this.surgeries[j].doctor = this.todaySchedules[i].doctor
+        }
+      }
       if(this.todaySchedules[i].is_record)
         this.recordingEvent++;
       else
