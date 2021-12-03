@@ -558,7 +558,8 @@ export default {
                     ...this.newEvent,
                     ...this.createEvent,
                     start:moment(this.createEvent.start).format('YYYY-MM-DDTHH:mm:ssZ'),
-                    end:moment(this.createEvent.end).format('YYYY-MM-DDTHH:mm:ssZ')
+                    end:moment(this.createEvent.end).format('YYYY-MM-DDTHH:mm:ssZ'),
+                    surgery:this.currentSurgery
                 }
                 this.addModal = true
             }
@@ -894,8 +895,8 @@ export default {
         this.getSurgery()
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"ws",
-          port:8083,
+          protocol:"wss",
+          port:8084,
           keepalive:0,
           path:'/mqtt',
           clientId: 'server_' + Math.random().toString(16).substr(2, 8),

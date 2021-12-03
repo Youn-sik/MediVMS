@@ -8,7 +8,6 @@ const https = require('https');
 const http = require('http');
 const request = require('request');
 const fs = require('fs');
-const mqtt = require('mqtt');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -17,8 +16,8 @@ const { Console } = require("console");
 
 var connection = mysql.createPool({
     host: 'localhost',
-    user: 'root',
-    password: '6126',
+    user: 'kool',
+    password: 'master',
     database: 'VMS',
     dateStrings: 'date'
 })
@@ -27,37 +26,6 @@ var connection = mysql.createPool({
 connection.on('error', function(err) {
     console.log(err)
 });
-
-
-var mqttClient = mqtt.connect('localhost',{
-    protocol:"ws",
-    port:8083,
-    keepalive:0,
-    path:'/mqtt',
-    clientId: 'server_' + Math.random().toString(16).substr(2, 8),
-    clean: true,
-})
-
-mqttClient.on('connect', (test) => {
-    console.log('MQTT connected.')
-    mqttClient.subscribe([
-        '/nvr/request/stblist',
-    ], (error, result) => {
-        if (error) {
-            console.log('MQTT subscribe error.');
-        } else {
-            console.log('MQTT subscribed.');
-        }
-    });
-})
-
-mqttClient.on('message', (topic, message) => {
-    connection.query(`SELECT * FROM devices`, function (err, rows, fields) {
-        if (err) throw err
-
-        mqttClient.publish(`/nvr/request/stblist/result`,JSON.stringify(rows))
-    })
-})
 
 app.use(cors())
 app.use('/stream',express.static('/var/www/html/VMS/backend/record'));
@@ -147,6 +115,7 @@ app.get('/getAccounts', (req,res) => {
 })
 
 app.post('/login',(req,res) => {
+    console.log(req.body)
     connection.query(`SELECT *
     FROM accounts
     WHERE account = "${req.body.account}"
@@ -157,8 +126,6 @@ app.post('/login',(req,res) => {
         if(rows.length === 0)
             res.status(401)
 
-        // console.log(rows[0].surgery_room_auth)
-        rows[0].surgery_room_auth = JSON.parse(rows[0].surgery_room_auth)
         res.send(rows)
     })
 })
@@ -417,7 +384,7 @@ app.patch('/schedule',(req,res) => {
     is_over = ${req.body.is_over},
     patient = "${req.body.patient}",
     doctor = "${req.body.doctor}",
-    surgery_id = ${req.body.surgery.surgery_id}
+    surgery_id = ${req.body.surgery_id}
     WHERE id = ${req.body.id}`,
     function (err, rows, fields) {
         if (err) throw err
@@ -629,17 +596,6 @@ app.post('/takeout_access', (req,res) => {
     })
 })
 
-app.get("/mqttapi",(req,res) => {
-    var options = {
-        url: 'https://localhost:8443/api/getMediaList'
-    };
-
-    request(options,(err,_res, body) => {
-        console.log(body)
-        res.send(body)
-    })
-})
-
 // 30일 지난 record 삭제
 cron.schedule('0 4 * * *', () => {
         let now = moment().subtract(30, 'days').format("YYYY-MM-DD HH:mm:ss")
@@ -652,17 +608,17 @@ cron.schedule('0 4 * * *', () => {
     }
 );
 
-const start = () => {
-    app.listen(3000,'0.0.0.0')
-}
-
-start()
-
-
-
-// const sslOptions = {
-//     key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
-//     cert: fs.readFileSync('/etc/nginx/ssl/nginx-certificate.crt'),
+// const start = () => {
+//     app.listen(3000,'0.0.0.0')
 // }
 
-// https.createServer(sslOptions,app).listen(3000);
+// start()
+
+
+
+const sslOptions = {
+    key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
+    cert: fs.readFileSync('/etc/nginx/ssl/nginx-certificate.crt'),
+}
+
+https.createServer(sslOptions,app).listen(3000);

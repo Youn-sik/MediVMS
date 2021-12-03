@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import {base_url} from './server.json'
-axios.defaults.baseURL = `http://${base_url}:3000`
+axios.defaults.baseURL = `https://${base_url}:3000`
 
 const api = {
     getConnectecDevices(params) {

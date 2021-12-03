@@ -60,8 +60,8 @@ export default {
   mounted() {
     console.log(this.currentUser)
     this.mqttClient = mqtt.connect(mqtt_url,{
-      protocol:"ws",
-      port:8083,
+      protocol:"wss",
+      port:8084,
       keepalive:0,
       path:'/mqtt',
       clientId: 'server_' + Math.random().toString(16).substr(2, 8),

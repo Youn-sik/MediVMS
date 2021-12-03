@@ -87,7 +87,7 @@
           </b-card>
 
           <div class="mt-2" style="text-align:center;">
-            <b-button v-if="schedules.length" @click="startSchedule(currentSchedule)">시작</b-button>
+            <b-button v-if="schedules.length && !currentSchedule.is_record" @click="startSchedule(currentSchedule)">시작</b-button>
             <b-button v-if="currentSchedule.is_record" variant="danger" @click="endSchedule(currentSchedule)">종료</b-button>
           </div>
         </b-colxx>
@@ -244,8 +244,8 @@ export default {
         await this.getSurgery()
 
         this.mqttClient = mqtt.connect(mqtt_url,{
-          protocol:"ws",
-          port:8083,
+          protocol:"wss",
+          port:8084,
           keepalive:0,
           path:'/mqtt',
           clientId: 'server_' + Math.random().toString(16).substr(2, 8),
