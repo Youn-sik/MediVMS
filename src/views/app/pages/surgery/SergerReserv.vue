@@ -104,14 +104,14 @@
                         </template>
                     </vselect>
                 </b-form-group>
-                <b-form-checkbox
+                <!-- <b-form-checkbox
                 id="emergency"
                 v-model="newEvent.emergency"
                 name="emergency"
                 >
                 긴급 녹화&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다
-                </b-form-checkbox>
+                </b-form-checkbox> -->
             </b-form>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelSaveEvent">
@@ -265,79 +265,118 @@
                     </b-input-group>
 
                     <v-sheet height="700" :dark="true">
-                        <v-calendar
-                            ref="calendar"
-                            v-model="value"
-                            :weekdays="weekday"
-                            :type="calendarType === '월간' ? 'month' :
-                            calendarType === '주간' ? 'week' : 'day'"
-                            :events="events"
-                            :event-overlap-mode="mode"
-                            @click:more="viewDay"
-                            @click:date="viewDayFromDate"
-                            @click:event="showEvent"
-                            :event-overlap-threshold="30"
-                            :event-color="getEventColor"
-                            @change="getEvents"
-                            @mousedown:event="startDrag"
-                            @mousedown:time="startTime"
-                            @mousemove:time="mouseMove"
-                            @mouseup:time="endDrag"
-                            @mouseleave.native="cancelDrag"
-                            :dark="true"
-                        >
-                            <template v-slot:event="{ event, timed, eventSummary }">
-                                <div
-                                class="v-event-draggable"
-                                v-html="eventSummary()"
-                                ></div>
-                                <div
-                                v-if="timed"
-                                class="v-event-drag-bottom"
-                                @mousedown.stop="extendBottom(event)"
-                                ></div>
-                            </template>
-                        </v-calendar>
-                         <v-menu
-                        v-model="selectedOpen"
-                        :close-on-content-click="false"
-                        :activator="selectedElement"
-                        offset-x
-                        >
-                            <v-card
-                                color="grey lighten-4"
-                                min-width="350px"
-                                flat
-                            >
-                                <v-toolbar
-                                :color="selectedEvent.color"
-                                dark
-                                >
-                                    <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                    <v-btn @click="modifySchedule(selectedEvent)" icon>
-                                        <v-icon>simple-icon-note</v-icon>
-                                    </v-btn>
-                                    <v-btn @click="()=>{deleteSchedule(selectedEvent.id)}" icon>
-                                        <v-icon>simple-icon-trash</v-icon>
-                                    </v-btn>
-                                </v-toolbar>
-
-                                <v-card-text>
-                                    <span style="color:white" v-html="selectedEvent.note"></span>
-                                </v-card-text>
-
-                                <v-card-actions>
-                                    <v-btn
-                                        text
-                                        color="secondary"
-                                        @click="selectedOpen = false"
+                        <template v-if="calendarType === '일간'">
+                            <b-row style="height:100%">
+                                <b-colxx style="height:100%" sm="12" xl="3" lg="3" v-for="(surgery,index) in surgeries" :key="index">
+                                    <v-calendar
+                                        ref="calendar"
+                                        v-model="value"
+                                        :weekdays="weekday"
+                                        :type="calendarType === '월간' ? 'month' :
+                                        calendarType === '주간' ? 'week' : 'day'"
+                                        :events="events"
+                                        :event-overlap-mode="mode"
+                                        @click:more="viewDay"
+                                        @click:date="viewDayFromDate"
+                                        @click:event="showEvent"
+                                        :event-overlap-threshold="30"
+                                        :event-color="getEventColor"
+                                        @mousedown:event="startDrag"
+                                        @mousedown:time="startTime"
+                                        @mousemove:time="mouseMove"
+                                        @mouseup:time="endDrag"
+                                        @mouseleave.native="cancelDrag"
+                                        :dark="true"
                                     >
-                                        닫기
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-menu>
+                                        <template v-slot:event="{ event, timed, eventSummary }">
+                                            <div
+                                            class="v-event-draggable"
+                                            v-html="eventSummary()"
+                                            ></div>
+                                            <div
+                                            v-if="timed"
+                                            class="v-event-drag-bottom"
+                                            @mousedown.stop="extendBottom(event)"
+                                            ></div>
+                                        </template>
+                                    </v-calendar>
+                                </b-colxx>
+                            </b-row>
+                        </template>
+                        <template v-else>
+                            <v-calendar
+                                ref="calendar"
+                                v-model="value"
+                                :weekdays="weekday"
+                                :type="calendarType === '월간' ? 'month' :
+                                calendarType === '주간' ? 'week' : 'day'"
+                                :events="events"
+                                :event-overlap-mode="mode"
+                                @click:more="viewDay"
+                                @click:date="viewDayFromDate"
+                                @click:event="showEvent"
+                                :event-overlap-threshold="30"
+                                :event-color="getEventColor"
+                                @mousedown:event="startDrag"
+                                @mousedown:time="startTime"
+                                @mousemove:time="mouseMove"
+                                @mouseup:time="endDrag"
+                                @mouseleave.native="cancelDrag"
+                                :dark="true"
+                            >
+                                <template v-slot:event="{ event, timed, eventSummary }">
+                                    <div
+                                    class="v-event-draggable"
+                                    v-html="eventSummary()"
+                                    ></div>
+                                    <div
+                                    v-if="timed"
+                                    class="v-event-drag-bottom"
+                                    @mousedown.stop="extendBottom(event)"
+                                    ></div>
+                                </template>
+                            </v-calendar>
+                            <v-menu
+                            v-model="selectedOpen"
+                            :close-on-content-click="false"
+                            :activator="selectedElement"
+                            offset-x
+                            >
+                                <v-card
+                                    color="grey lighten-4"
+                                    min-width="350px"
+                                    flat
+                                >
+                                    <v-toolbar
+                                    :color="selectedEvent.color"
+                                    dark
+                                    >
+                                        <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+                                        <v-spacer></v-spacer>
+                                        <v-btn @click="modifySchedule(selectedEvent)" icon>
+                                            <v-icon>simple-icon-note</v-icon>
+                                        </v-btn>
+                                        <v-btn @click="()=>{deleteSchedule(selectedEvent.id)}" icon>
+                                            <v-icon>simple-icon-trash</v-icon>
+                                        </v-btn>
+                                    </v-toolbar>
+
+                                    <v-card-text>
+                                        <span style="color:white" v-html="selectedEvent.note"></span>
+                                    </v-card-text>
+
+                                    <v-card-actions>
+                                        <v-btn
+                                            text
+                                            color="secondary"
+                                            @click="selectedOpen = false"
+                                        >
+                                            닫기
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-menu>
+                        </template>
                     </v-sheet>
                 </div>
             </b-card>
@@ -356,6 +395,7 @@ import vSelect from "vue-select";
 import {mqtt_url} from '../../../../server.json'
 import mqtt from 'mqtt';
 import "vue-select/dist/vue-select.css";
+import calender from './calender.vue'
 moment.locale("ko");
 export default {
     computed: {
@@ -366,7 +406,8 @@ export default {
     },
     components: {
         datetime: Datetime,
-        "vselect": vSelect
+        "vselect": vSelect,
+        Calender:calender
     },
     data() {
         return {
@@ -425,6 +466,7 @@ export default {
             createEvent: null,
             createStart: null,
             extendOriginal: null,
+            sizeMod : false,
         }
     },
     methods:{
@@ -457,6 +499,7 @@ export default {
         extendBottom (event) {
             this.createEvent = event
             this.createStart = new Date(event.start)
+            this.sizeMod = true
             this.extendOriginal = new Date(event.end)
         },
         mouseMove (tms) {
@@ -482,7 +525,11 @@ export default {
             }
         },
         async endDrag () {
-            if (this.dragEvent && this.dragTime !== null) {
+            if(this.sizeMod){
+                console.log(this.createEvent)
+                await api.patchSchedule(this.createEvent);
+                this.sizeMod = false
+            } else if (this.dragEvent && this.dragTime !== null) {
                 await api.patchSchedule(this.dragEvent);
             } else if (this.createEvent && this.createStart !== null) {
                 this.newEvent = {
@@ -535,24 +582,10 @@ export default {
             this.newEvent = {...i, start:moment(i.start).format('YYYY-MM-DDTHH:mm:ssZ'), end:moment(i.end).format('YYYY-MM-DDTHH:mm:ssZ')}
         },
         prevDate() {
-            // if(this.calendarType === '월간'){
-            //     this.date = moment(this.date).subtract(1,'M').format("YYYY-MM")
-            // } else if(this.calendarType === '주간'){
-            //     this.date = moment(this.date).subtract(7,'days').format("YYYY-MM-DD")
-            // } else {
-            //     this.date = moment(this.date).subtract(1,'days').format("YYYY-MM-DD")
-            // }
             this.getSchedule()
             this.$refs.calendar.prev()
         },
         nextDate() {
-            // if(this.calendarType === '월간'){
-            //     this.date = moment(this.date).add(1,'M').format("YYYY-MM")
-            // } else if(this.calendarType === '주간'){
-            //     this.date = moment(this.date).add(7,'days').format("YYYY-MM-DD")
-            // } else {
-            //     this.date = moment(this.date).add(1,'days').format("YYYY-MM-DD")
-            // }
             this.getSchedule()
             this.$refs.calendar.next()
         },
@@ -576,10 +609,19 @@ export default {
             this.events.pop()
         },
         openAddModal() {
+            this.newEvent = {
+                color:'',
+                name:'',
+                timed:true,
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                patient:'',
+                doctor:'',
+                emergency:false,
+            }
             this.addModal = true;
         },
         showEvent ({ nativeEvent, event }) {
-            console.log(nativeEvent, event)
             const open = () => {
             this.selectedEvent = event
             this.selectedElement = nativeEvent.target
@@ -634,6 +676,12 @@ export default {
             this.getSchedule()
         },
         changeCalendarType(val,index) {
+
+            if(this.calendarType === '일간'){
+                this.getSchedule()
+            } else if(val === '일간') {
+                this.getAllSchedule()
+            }
             this.calendarType = val
         },
         async getSurgery() {
@@ -641,32 +689,6 @@ export default {
           this.surgeries = result
 
           this.changeSurgery(result[this.currentSurgeryImdex])
-        },
-        getEvents ({ start, end }) {
-            // const events = []
-
-            // const min = new Date(`${start.date}T00:00:00`)
-            // const max = new Date(`${end.date}T23:59:59`)
-            // const days = (max.getTime() - min.getTime()) / 86400000
-            // const eventCount = this.rnd(days, days + 20)
-
-            // for (let i = 0; i < eventCount; i++) {
-            // const allDay = this.rnd(0, 3) === 0
-            // const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-            // const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-            // const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-            // const second = new Date(first.getTime() + secondTimestamp)
-
-            // events.push({
-            //     name: this.names[this.rnd(0, this.names.length - 1)],
-            //     start: first,
-            //     end: second,
-            //     color: this.colors[this.rnd(0, this.colors.length - 1)],
-            //     timed: !allDay,
-            // })
-            // }
-            // console.log(events)
-            // this.events = events
         },
         getEventColor (event) {
             return event.color
@@ -682,6 +704,15 @@ export default {
             this.events = await api.getSchedule({start,end,surgery_id:this.currentSurgery.surgery_id,alltype:1,searchType:this.currentSearchType, search:this.commitedSearchKeyword})
 
             this.todaySchedules
+        },
+
+        async getAllSchedule() {
+            let start = moment(this.date).startOf('month').format('YYYY-MM-DD');
+            let end = moment(this.date).endOf('month').format('YYYY-MM-DD 23:59:59');
+            for(let surgery in this.surgeries) {
+                let temp = await api.getSchedule({start,end,surgery_id:this.surgeries[surgery].surgery_id,alltype:1,searchType:this.currentSearchType, search:this.commitedSearchKeyword})
+                this.$set(this.surgeries[surgery],'schedules',temp)
+            }
         },
 
         async addSchedule() {

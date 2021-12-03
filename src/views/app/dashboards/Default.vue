@@ -151,7 +151,7 @@ export default {
       activatedSurgeriesCount:0,
       todaySchedules:[],
       standardEvent:0,
-      emergancyEvent:0
+      recordingEvent:0
     }
   },
 
@@ -187,14 +187,15 @@ export default {
     }
 
     for(let i = 0; i < this.todaySchedules.length; i++) {
-      console.log(this.todaySchedules[i])
-      if(this.todaySchedules[i].emergancy)
-        this.emergancyEvent++;
+      if(this.todaySchedules[i].is_record)
+        this.recordingEvent++;
       else
         this.standardEvent++;
     }
 
-    let temp = await api.getConnectecDevices()
+    // 스트리밍 서버있을때 용
+    // let temp = await api.getConnectecDevices()
+    let temp = []
     this.activatedDevicesCount = temp.length
     this.deviceChartData = {
       labels: ['ON', 'OFF'],
@@ -229,7 +230,7 @@ export default {
     }
 
     this.eventsChartData = {
-      labels: ['긴급', '일반'],
+      labels: ['시작중', '대기'],
       datasets: [
         {
           label: '',
@@ -239,7 +240,7 @@ export default {
             colors.themeColor3_10,
           ],
           borderWidth: 2,
-          data: [this.emergancyEvent,this.standardEvent]
+          data: [this.recordingEvent,this.standardEvent]
         }
       ]
     }
