@@ -8,6 +8,7 @@ const https = require('https');
 const http = require('http');
 const request = require('request');
 const fs = require('fs');
+const mqtt = require('mqtt');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -26,6 +27,38 @@ var connection = mysql.createPool({
 connection.on('error', function(err) {
     console.log(err)
 });
+
+
+var mqttClient = mqtt.connect('localhost',{
+    protocol:"ws",
+    port:8083,
+    keepalive:0,
+    path:'/mqtt',
+    clientId: 'server_' + Math.random().toString(16).substr(2, 8),
+    clean: true,
+})
+
+mqttClient.on('connect', (test) => {
+    console.log('MQTT connected.')
+    mqttClient.subscribe([
+        '/nvr/request/stblist',
+    ], (error, result) => {
+        if (error) {
+            console.log('MQTT subscribe error.');
+        } else {
+            console.log('MQTT subscribed.');
+        }
+    });
+})
+
+mqttClient.on('message', (topic, message) => {
+    connection.query(`SELECT * FROM devices`, function (err, rows, fields) {
+        if (err) throw err
+
+        mqttClient.publish(`/nvr/request/stblist/result`,JSON.stringify(rows))
+    })
+})
+
 
 app.use(cors())
 app.use('/stream',express.static('/var/www/html/VMS/backend/record'));
