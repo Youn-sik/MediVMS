@@ -13,7 +13,7 @@ var WebRtcStreamer = function WebRtcStreamer (videoElement, srvurl) {
 	} else {
 		this.videoElement = videoElement;
 	}
-	this.srvurl           = 'https://172.16.41.171:8443';
+	this.srvurl           = 'https://172.16.42.230:8443';
 	this.pc               = null;
 
 	this.mediaConstraints = { offerToReceiveAudio: true, offerToReceiveVideo: true };

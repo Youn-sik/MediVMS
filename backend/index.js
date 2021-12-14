@@ -380,6 +380,13 @@ app.get('/schedule',(req,res) => {
     connection.query(`
     SELECT *
     FROM schedule
+    WHERE is_record = 1
+    AND surgery_id = ${req.query.surgery_id}
+
+    UNION ALL
+
+    SELECT *
+    FROM schedule
     WHERE start >= "${req.query.start}"
     AND end <= "${req.query.end}"
     ${parseInt(req.query.alltype) === 1? '' : `AND is_over = 0`}
@@ -388,7 +395,7 @@ app.get('/schedule',(req,res) => {
     "AND patient LIKE '%" + req.query.search + "%'" :
     "AND doctor LIKE '%" + req.query.search + "%'"
     : ""}
-    OR is_record = 1
+    AND is_record = 0
     ORDER BY is_record DESC, emergency DESC, start;
     `, function (err, rows, fields) {
         if (err) throw err

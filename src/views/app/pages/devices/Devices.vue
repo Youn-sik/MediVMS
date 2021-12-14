@@ -352,14 +352,13 @@ export default {
     methods: {
             async changeSurgery(val,index) {
                 this.currentSurgery = JSON.parse(JSON.stringify(val))
+                this.dataProvider()
                 this.currentSurgery.live_urls = this.currentSurgery.live_urls.split(',')
                 this.currentSurgery.device_names = this.currentSurgery.device_names.split(',')
                 this.currentSurgery.devices = this.currentSurgery.devices.split(',')
                 this.currentSurgery.isLives = this.currentSurgery.isLives.split(',')
                 this.currentSurgery.serial_numbers = this.currentSurgery.serial_numbers.split(',')
                 this.currentSurgeryImdex = index
-
-                this.dataProvider()
             },
             async getSurgery() {
                 let result = await api.getSurgery()
@@ -505,6 +504,7 @@ export default {
                 this.bootstrapTable.selected = items
             },
             async dataProvider () {
+                console.log(this.currentSurgery)
                 let result = await api.getDevices({surgery_id : this.currentSurgery.surgery_id})
 
                 this.items = result

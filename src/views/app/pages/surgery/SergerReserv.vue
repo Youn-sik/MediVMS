@@ -691,14 +691,24 @@ export default {
         },
         async changeSurgery(val,index) {
             this.currentSurgery = JSON.parse(JSON.stringify(val))
-            this.currentSurgery.live_urls = this.currentSurgery.live_urls.split(',')
-            this.currentSurgery.device_names = this.currentSurgery.device_names.split(',')
-            this.currentSurgery.devices = this.currentSurgery.devices.split(',')
-            this.currentSurgery.isLives = this.currentSurgery.isLives.split(',')
-            this.currentSurgery.serial_numbers = this.currentSurgery.serial_numbers.split(',')
-            this.currentSurgeryImdex = index
-
             this.getSchedule()
+
+            this.currentSurgeryImdex = index
+            if(typeof(this.currentSurgery.devices) === 'undefined'){
+                this.currentSurgery.live_urls = []
+                this.currentSurgery.device_names = []
+                this.currentSurgery.devices = []
+                this.currentSurgery.isLives = []
+                this.currentSurgery.serial_numbers = []
+                return 0;
+            } else {
+                this.currentSurgery.live_urls = this.currentSurgery.live_urls.split(',')
+                this.currentSurgery.device_names = this.currentSurgery.device_names.split(',')
+                this.currentSurgery.devices = this.currentSurgery.devices.split(',')
+                this.currentSurgery.isLives = this.currentSurgery.isLives.split(',')
+                this.currentSurgery.serial_numbers = this.currentSurgery.serial_numbers.split(',')
+                return 0;
+            }
         },
         changeCalendarType(val,index) {
 

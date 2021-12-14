@@ -14,12 +14,12 @@
                         :liveurl="url"
                         :id="'surgeryLive'+index"
                       />
-                      <VideoPlayer
+                      <!-- <VideoPlayer
                           v-else
                           :isHistory="false"
                           :manifest-url="url"
                           style="height:100%;"
-                      />
+                      /> -->
                 </b-colxx>
             </b-row>
         </b-colxx>
@@ -134,16 +134,33 @@ export default {
     methods: {
         async changeSurgery(val,index) { //수술실 변경 함수
             this.currentSurgery = JSON.parse(JSON.stringify(val))
-            this.currentSurgery.live_urls = this.currentSurgery.live_urls.split(',')
-            this.currentSurgery.device_names = this.currentSurgery.device_names.split(',')
-            this.currentSurgery.devices = this.currentSurgery.devices.split(',')
-            this.currentSurgery.isLives = this.currentSurgery.isLives.split(',')
-            this.currentSurgery.serial_numbers = this.currentSurgery.serial_numbers.split(',')
+            let temp = this.currentSurgery.live_urls
+            this.$set(this.currentSurgery,'live_urls',[])
             this.currentSurgeryImdex = index
 
             this.currentSchedule = {}
 
             this.getSchedule()
+
+            if(typeof(this.currentSurgery.devices) === 'undefined') {
+              setTimeout(() => {
+                this.currentSurgery.device_names = []
+                this.currentSurgery.devices = []
+                this.currentSurgery.isLives = []
+                this.currentSurgery.live_urls = []
+                this.currentSurgery.serial_numbers = []
+              },0)
+              return 0;
+            } else {
+              setTimeout(() => {
+                this.currentSurgery.device_names = this.currentSurgery.device_names.split(',')
+                this.currentSurgery.devices = this.currentSurgery.devices.split(',')
+                this.currentSurgery.isLives = this.currentSurgery.isLives.split(',')
+                this.currentSurgery.live_urls = temp.split(',')
+                this.currentSurgery.serial_numbers = this.currentSurgery.serial_numbers.split(',')
+
+              },0)
+            }
         },
 
         async getSurgery() { //db에서 수술실 목록 가져오는 함수

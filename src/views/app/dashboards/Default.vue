@@ -20,9 +20,9 @@
     <b-row>
       <b-colxx sm="12" xl="7" lg="7">
         <!-- 수술실 목록 -->
-        <b-card class="surgeryTable" style="height:330px;">
-          <b-card-body style="padding:0px;">
-            <b-table-simple>
+        <b-card class="surgeryTable" style="height:410px; overflow:auto">
+          <b-card-body style="height:410px">
+            <b-table-simple style="height:80% !important;">
               <b-tr>
                 <b-th class="text-center">
                   수술실
@@ -171,10 +171,18 @@ export default {
     let result = await api.getSurgery()
     this.surgeries = result
     let temp = JSON.parse(JSON.stringify(result[0]))
-    temp.device_names = temp.device_names.split(',')
-    temp.live_urls = temp.live_urls.split(',')
-    temp.devices = temp.devices.split(',')
-    temp.isLives = temp.isLives.split(',')
+
+    if(typeof(temp) === 'undefined') {
+      temp.device_names = []
+      temp.live_urls = []
+      temp.devices = []
+      temp.isLives = []
+    }else {
+      temp.device_names = temp.device_names.split(',')
+      temp.live_urls = temp.live_urls.split(',')
+      temp.devices = temp.devices.split(',')
+      temp.isLives = temp.isLives.split(',')
+    }
 
     this.main = temp
 
@@ -214,8 +222,8 @@ export default {
     }
 
     // 스트리밍 서버있을때 용
-    // let temp = await api.getConnectecDevices()
-    let temp = []
+    let temp = await api.getConnectecDevices()
+    // let temp = []
     this.activatedDevicesCount = temp.length
     this.deviceChartData = {
       labels: ['ON', 'OFF'],
@@ -281,13 +289,22 @@ export default {
       this.changeVideo()
     },
     changeVideo() {
-      console.log(this.surgeries,this.currentSurgery)
+      this.$set(this.main,'live_urls',[])
       let temp = JSON.parse(JSON.stringify(this.surgeries[this.currentSurgery]))
-      temp.device_names = temp.device_names.split(',')
-      temp.live_urls = temp.live_urls.split(',')
-      temp.devices = temp.devices.split(',')
-      temp.isLives = temp.isLives.split(',')
-      this.main = temp
+      if(typeof(temp.devices) === 'undefined'){
+        temp.device_names = []
+        temp.live_urls = []
+        temp.devices = []
+        temp.isLives = []
+      } else {
+        temp.device_names = temp.device_names.split(',')
+        temp.live_urls = temp.live_urls.split(',')
+        temp.devices = temp.devices.split(',')
+        temp.isLives = temp.isLives.split(',')
+      }
+      setTimeout(() => {
+        this.main = temp
+      },0)
     },
     mosaicToggle(val) {
       console.log(val);
