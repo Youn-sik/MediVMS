@@ -10,7 +10,9 @@ const request = require('request');
 const fs = require('fs');
 const mqtt = require('mqtt');
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({
+    limit:"50mb"
+}));
 
 var mysql = require('mysql');
 const { Console } = require("console");
@@ -61,7 +63,7 @@ mqttClient.on('message', (topic, message) => {
 
 
 app.use(cors())
-app.use('/stream',express.static('/var/www/html/VMS/backend/record'));
+app.use('/stream',express.static('/var/www/VMS/backend/record'));
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
@@ -630,6 +632,37 @@ app.patch('/takeout_access', (req,res) => {
 app.post('/takeout_access', (req,res) => {
     connection.query(`INSERT INTO takeout_access
     VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}")`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.get('/settings',(req,res) => {
+    connection.query('SELECT * FROM settings',function(err, rows, fields) {
+        if(err) throw err
+
+        res.send(rows[0])
+    })
+})
+
+
+app.patch('/settings',(req,res) => {
+    if(req.body.file !== null) {
+        let path = '/var/www/VMS/backend/record/watermark.png'
+        let base64 = req.body.base64
+        fs.writeFileSync(path,base64,'base64')
+
+    }
+
+    connection.query(`UPDATE settings
+    SET
+    watermark = ${req.body.watermark},
+    face = ${req.body.face},
+    human = ${req.body.human},
+    voice = ${req.body.voice}
+    WHERE id = ${req.body.id}`,
+    function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)

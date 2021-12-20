@@ -1,5 +1,28 @@
 <template>
   <b-row>
+    <!-- 반출 로딩 모달 -->
+    <b-modal size="sm" v-model="loadingModal" title="반출 요청">
+      <div class="progress-bar">
+        <div class="progress-bar-value"></div>
+      </div>
+
+      <template #modal-footer="{ ok, cancel, hide }">
+          <b-button variant="danger" @click="cancel">
+              닫기
+          </b-button>
+      </template>
+    </b-modal>
+
+    <!-- 반출 모달 -->
+    <b-modal size="sm" v-model="loadingModal" title="반출 요청">
+
+      <template #modal-footer="{ ok, cancel, hide }">
+          <b-button variant="danger" @click="cancel">
+              닫기
+          </b-button>
+      </template>
+    </b-modal>
+
     <!-- 열람 요청 -->
     <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청">
       <b-form-group label="요청 사유">
@@ -124,7 +147,7 @@
           </template>
 
           <template slot="takeout" scope="props">
-            <b-button v-if="props.rowData.takeout_status === 'permitted'" @click="openVideoModal(props.rowData)"> 반출 </b-button>
+            <b-button v-if="props.rowData.takeout_status === 'permitted'" @click="clickTakeout(props.rowData)"> 반출 </b-button>
             <b-button v-else disabled> 반출 </b-button>
           </template>
         </vuetable>
@@ -167,6 +190,7 @@ export default {
   },
   data() {
     return {
+      loadingModal:false, //반출 로딩 모달
       isLoad: false,
       sort: {
         column: "title",
@@ -301,6 +325,14 @@ export default {
     };
   },
   methods: {
+    //반출 버튼 클릭 이벤트
+    clickTakeout(data) {
+      if(data.takeout_link === null || data.takeout_link === '') {
+        // this.mqtt
+        this.loadingModal = true
+
+      }
+    },
     //열람시 기록 저장
     saveRecord(data) {
         api.saveHistory({
@@ -572,3 +604,33 @@ export default {
   }
 };
 </script>
+
+<style>
+
+.progress-bar {
+  height: 4px;
+  background-color: rgba(5, 114, 206, 0.2);
+  width: 100%;
+  overflow: hidden;
+}
+
+.progress-bar-value {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(5, 114, 206);
+  animation: indeterminateAnimation 1s infinite linear;
+  transform-origin: 0% 50%;
+}
+
+@keyframes indeterminateAnimation {
+  0% {
+    transform:  translateX(0) scaleX(0);
+  }
+  40% {
+    transform:  translateX(0) scaleX(0.4);
+  }
+  100% {
+    transform:  translateX(100%) scaleX(0.5);
+  }
+}
+</style>

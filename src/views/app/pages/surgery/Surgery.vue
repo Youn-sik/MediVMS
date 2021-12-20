@@ -204,7 +204,7 @@ export default {
             patient_status : "수술 완료",
             devices:this.currentSurgery.serial_numbers.join(','),
             date : moment().format('YYYY-MM-DD HH:mm:ss'),
-            video_link : `http://172.16.41.105:3000/stream/${currentSerial}_${startTime}.mp4`
+            video_link : `/stream/${currentSerial}_${startTime}/${currentSerial}_${startTime}.mp4`
           })
         },
 

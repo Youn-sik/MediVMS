@@ -59,7 +59,7 @@ const routes = [
         path: "pages",
         component: () =>
           import(/* webpackChunkName: "pages" */ "./views/app/pages"),
-        redirect: `${adminRoot}/pages/product`,
+        redirect: `${adminRoot}/pages`,
         children: [
           {
             path: "product",
@@ -67,16 +67,16 @@ const routes = [
               import(/* webpackChunkName : "product" */ "./views/app/pages/product"),
             redirect: `${adminRoot}/pages/product/data-list`,
             children: [
-              {
-                path: "data-list",
-                component: () =>
-                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
-              },
-              {
-                path: "history-list",
-                component: () =>
-                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
-              },
+              // {
+              //   path: "data-list",
+              //   component: () =>
+              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
+              // },
+              // {
+              //   path: "history-list",
+              //   component: () =>
+              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
+              // },
               // {
               //   path: "thumb-list",
               //   component: () =>
@@ -107,41 +107,8 @@ const routes = [
                 component: () =>
                   import(/* webpackChunkName: "product" */ "./views/app/pages/surgery/SergerReserv")
               },
-              {
-                path: "devices",
-                component: () =>
-                  import(/* webpackChunkName: "product" */ "./views/app/pages/devices/Devices")
-              },
-              {
-                path: "surgery-manage",
-                component: () =>
-                  import(/* webpackChunkName: "product" */ "./views/app/pages/surgery/Surgery_manage")
-              },
-              {
-                path: "settings",
-                component: () =>
-                  import(/* webpackChunkName: "product" */ "./views/app/pages/settings/Settings")
-              }
             ]
           },
-          // {
-          //   path: "profile",
-          //   component: () =>
-          //     import(/* webpackChunkName : "profile" */ "./views/app/pages/profile"),
-          //   redirect: `${adminRoot}/pages/profile/social`,
-          //   children: [
-          //     {
-          //       path: "social",
-          //       component: () =>
-          //         import(/* webpackChunkName: "profile" */ "./views/app/pages/profile/Social")
-          //     },
-          //     {
-          //       path: "portfolio",
-          //       component: () =>
-          //         import(/* webpackChunkName: "profile" */ "./views/app/pages/profile/Portfolio")
-          //     }
-          //   ]
-          // },
           // {
           //   path: "blog",
           //   component: () =>
@@ -216,6 +183,50 @@ const routes = [
             //       import(/* webpackChunkName: "blog" */ "./views/app/pages/blog/BlogDetail")
             //   }
             // ]
+          },
+        ]
+      },
+
+
+      {
+        path: "settings",
+        component: () =>
+          import(/* webpackChunkName : "product" */ "./views/app/pages/product"),
+        redirect: `${adminRoot}/pages/product/settings`,
+        children: [
+          {
+            path: "devices",
+            component: () =>
+              import(/* webpackChunkName: "product" */ "./views/app/pages/devices/Devices")
+          },
+          {
+            path: "surgery-manage",
+            component: () =>
+              import(/* webpackChunkName: "product" */ "./views/app/pages/surgery/Surgery_manage")
+          },
+          {
+            path: "settings",
+            component: () =>
+              import(/* webpackChunkName: "product" */ "./views/app/pages/settings/Settings")
+          },
+        ]
+      },
+
+      {
+        path: "data",
+        component: () =>
+          import(/* webpackChunkName : "product" */ "./views/app/pages/product"),
+        redirect: `${adminRoot}/pages/data/data-list`,
+        children: [
+          {
+            path: "data-list",
+            component: () =>
+              import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
+          },
+          {
+            path: "history-list",
+            component: () =>
+              import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
           },
         ]
       },

@@ -11,6 +11,8 @@
             :class="{ 'active' : (selectedParentMenu === item.id && viewingParentMenu === '') || viewingParentMenu === item.id}"
             :key="`parent_${index}`"
             :data-flag="item.id"
+
+            @click="goPage(item.to)"
           >
             <a v-if="item.newWindow" :href="item.to" rel="noopener noreferrer" target="_blank">
               <i :class="item.icon" />
@@ -152,6 +154,10 @@ export default {
       "addMenuClassname",
       "changeSelectedMenuHasSubItems",
     ]),
+    goPage(to) {
+      console.log(to)
+      this.$router.push(to)
+    },
     selectMenu() {
       const currentParentUrl = this.$route.path
         .split("/")

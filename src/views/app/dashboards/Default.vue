@@ -151,7 +151,7 @@ export default {
       surgeries : [],
       main : null,
       sub : null,
-      currentSurgery:0,
+      currentSurgery:null,
       mosaicChecked:true,
       broadcastSurgery:0,
       deviceChartData : null,
@@ -172,17 +172,17 @@ export default {
     this.surgeries = result
     let temp = JSON.parse(JSON.stringify(result[0]))
 
-    if(typeof(temp) === 'undefined') {
+    // if(typeof(temp) === 'undefined') {
       temp.device_names = []
       temp.live_urls = []
       temp.devices = []
       temp.isLives = []
-    }else {
-      temp.device_names = temp.device_names.split(',')
-      temp.live_urls = temp.live_urls.split(',')
-      temp.devices = temp.devices.split(',')
-      temp.isLives = temp.isLives.split(',')
-    }
+    // }else {
+    //   temp.device_names = temp.device_names.split(',')
+    //   temp.live_urls = temp.live_urls.split(',')
+    //   temp.devices = temp.devices.split(',')
+    //   temp.isLives = temp.isLives.split(',')
+    // }
 
     this.main = temp
 
@@ -222,7 +222,12 @@ export default {
     }
 
     // 스트리밍 서버있을때 용
-    let temp = await api.getConnectecDevices()
+    let temp
+    try{
+      temp = await api.getConnectecDevices()
+    } catch(e) {
+      temp = []
+    }
     // let temp = []
     this.activatedDevicesCount = temp.length
     this.deviceChartData = {

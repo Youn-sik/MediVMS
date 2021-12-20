@@ -26,7 +26,7 @@
     </router-link>
 
     <div class="navbar-right">
-      <div class="d-none d-md-inline-block align-middle mr-3">
+      <!-- <div class="d-none d-md-inline-block align-middle mr-3">
         <switches
           id="tool-mode-switch"
           v-model="isDarkActive"
@@ -35,7 +35,7 @@
           color="primary"
         />
         <b-tooltip target="tool-mode-switch" placement="left" title="Dark Mode"></b-tooltip>
-      </div>
+      </div> -->
       <b-button @click="logout" class="mr-3">로그 아웃</b-button>
     </div>
   </nav>

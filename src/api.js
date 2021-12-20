@@ -366,7 +366,30 @@ const api = {
                 error => reject(error)
             )
         })
-    }
+    },
+
+    getSettings() {
+        return new Promise((resolve, reject) => {
+            axios.get('/settings').then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+
+    updateSettings(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/settings',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
 }
 
 export default api

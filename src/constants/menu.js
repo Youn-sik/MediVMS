@@ -22,20 +22,20 @@ const data = {
   to: `${adminRoot}/pages/product/sergery-reserv`,
 },
 {
-  id: "surgery-data-lists",
+  id: "data",
   icon: "iconsminds-digital-drawing",
   label: "데이터 열람",
-  to: `${adminRoot}/pages`,
+  to: `${adminRoot}/data/data-list`,
   subs: [
     {
       id: "surgery-data-lists",
       label: "열람 목록",
-      to: `${adminRoot}/pages/product/data-list`,
+      to: `${adminRoot}/data/data-list`,
     },
     {
       id: "history",
       label: "열람 기록",
-      to: `${adminRoot}/pages/product/history-list`,
+      to: `${adminRoot}/data/history-list`,
     },
   ]
 },
@@ -67,25 +67,25 @@ const data = {
   id: "settings",
   icon: "simple-icon-settings",
   label: "설정",
-  to: `${adminRoot}/pages/product/settings`,
+  to: `${adminRoot}/settings/settings`,
   subs: [
     {
       id: "onoff",
       icon: "",
       label: "기타 설정",
-      to: `${adminRoot}/pages/product/settings`,
+      to: `${adminRoot}/settings/settings`,
     },
     {
       id: "surgries_manage",
       icon: "",
       label: "단말 관리",
-      to: `${adminRoot}/pages/product/devices`,
+      to: `${adminRoot}/settings/devices`,
     },
     {
       id: "sergery-reserv",
       icon: "",
       label: "수술실 관리",
-      to: `${adminRoot}/pages/product/surgery-manage`
+      to: `${adminRoot}/settings/surgery-manage`
     },
   ]
 },
