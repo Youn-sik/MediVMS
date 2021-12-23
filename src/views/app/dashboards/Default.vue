@@ -277,6 +277,19 @@ export default {
         }
       ]
     }
+
+    setInterval(() => {
+      // if(main){
+        let temp = JSON.parse(JSON.stringify(this.main.live_urls))
+
+        this.$set(this.main,'live_urls',[])
+
+        console.log("interval",this.main.live_urls)
+        setTimeout(() => {
+          this.$set(this.main,'live_urls',temp)
+        },500)
+      // }
+    },1000*60*5)
   },
 
   methods: {
