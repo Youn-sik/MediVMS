@@ -289,7 +289,7 @@ export default {
           this.$set(this.main,'live_urls',temp)
         },500)
       // }
-    },1000*60*5)
+    },1000*60*60*6)
   },
 
   methods: {
