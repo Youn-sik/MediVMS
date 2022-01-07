@@ -3,6 +3,12 @@ import moment from 'moment';
 import {base_url} from './server.json'
 axios.defaults.baseURL = `https://${base_url}:3000`
 
+let ipport = window.location.href.split('/')[2]
+let ip = ipport.split(":")[0]
+console.log(base_url, ip)
+if(base_url !== ip)
+    axios.defaults.baseURL = `https://${ip}:13000`
+
 const api = {
     getConnectecDevices(params) {
         return new Promise((resolve, reject) => {
