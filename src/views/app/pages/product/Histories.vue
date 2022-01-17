@@ -9,11 +9,14 @@
   <b-row>
     <b-colxx xxs="12">
       <b-card class="mb-4">
+        <b-dropdown id="ddown1" :text="perPage" variant="outline-secondary" style="float:right">
+            <b-dropdown-item @click="changePerPage(item)" v-for="(item,index) in perPageList" :key="index">{{item}}</b-dropdown-item>
+        </b-dropdown>
         <vuetable
             ref="vuetable"
-            :api-url="vuetableItems.apiUrl"
+            :api-url="vuetableItems.apiUrl + `?type=${$route.name}`"
             :fields="vuetableItems.fields"
-            :per-page="7"
+            :per-page="perPage"
             pagination-path
             @vuetable:pagination-data="onPaginationData"
           ></vuetable>
@@ -37,6 +40,7 @@ export default {
   },
   data () {
     return {
+      perPageList:[7,10,30,50,100],
       vuetableItems: {
         apiUrl: `https://${base_url}:3000/history`,
         fields: [
@@ -99,11 +103,24 @@ export default {
         ]
       },
       currentPage: 1,
-      perPage: 5,
+      perPage: 7,
       totalRows: 0,
     }
   },
   methods: {
+    // perpage 바꿨을때 이벤트
+    changePerPage(val) {
+      if(this.perPage !== val) {
+        this.perPage = val
+        // this.page = 1
+
+        // this.getRecords()
+        setTimeout(() => {
+          this.$refs.vuetable.refresh()
+        },0)
+      }
+    },
+
     onPaginationData (paginationData) {
       this.$refs.pagination.setPaginationData(paginationData)
     },

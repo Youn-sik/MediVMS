@@ -18,7 +18,7 @@ const data = {
 {
   id: "sergery-reserv",
   icon: "simple-icon-calendar",
-  label: "일정 예약",
+  label: "수술실 예약",
   to: `${adminRoot}/pages/product/sergery-reserv`,
 },
 {
@@ -30,12 +30,22 @@ const data = {
     {
       id: "surgery-data-lists",
       label: "열람 목록",
-      to: `${adminRoot}/data/data-list`,
+      to: `${adminRoot}/data/data-list/browse`,
+    },
+    {
+      id: "surgery-data-lists",
+      label: "반출 목록",
+      to: `${adminRoot}/data/data-list/takeout`,
     },
     {
       id: "history",
       label: "열람 기록",
-      to: `${adminRoot}/data/history-list`,
+      to: `${adminRoot}/data/history-list/browse`,
+    },
+    {
+      id: "history",
+      label: "반출 기록",
+      to: `${adminRoot}/data/history-list/takeout`,
     },
   ]
 },

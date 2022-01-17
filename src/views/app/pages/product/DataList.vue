@@ -110,44 +110,52 @@
     <b-colxx md="12">
       <b-card>
       <!-- this.$refs.vuetable.selectedTo 선택된 데이터 정보 -->
+        <b-dropdown id="ddown1" :text="String(perPage)" variant="outline-secondary" style="float:right">
+            <b-dropdown-item @click="changePerPage(item)" v-for="(item,index) in perPageList" :key="index">{{item}}</b-dropdown-item>
+        </b-dropdown>
         <vuetable
           ref="vuetable"
           :api-mode="false"
           :data="filteredItems"
-          :fields="fields"
+          :fields="$route.name === 'browse' ? browseFields : takeoutFields"
           :per-page="4"
+          :data-manager="dataManager"
           pagination-path
           @vuetable:pagination-data="onPaginationData"
         >
-          <template slot="browse_status" scope="props">
-            <p>{{props.rowData.browse_status === 'standby' ? "허가 대기중" :
+          <template v-if="$route.name === 'browse'" slot="browse_status" scope="props">
+            <p>{{props.rowData.expiration ? "영상 만료" :
+              props.rowData.browse_status === 'standby' ? "허가 대기중" :
               props.rowData.browse_status === 'permitted' ? "허용" :
               props.rowData.browse_status === 'denied' ? "거부" : "권한 없음"}}</p>
           </template>
 
-          <template slot="takeout_status" scope="props">
-            <p>{{props.rowData.takeout_status === 'standby' ? "허가 대기중" :
+          <template v-if="$route.name === 'takeout'" slot="takeout_status" scope="props">
+            <p>{{props.rowData.expiration ? "영상 만료" :
+              props.rowData.takeout_status === 'standby' ? "허가 대기중" :
               props.rowData.takeout_status === 'permitted' ? "허용" :
               props.rowData.takeout_status === 'denied' ? "거부" : "권한 없음"}}</p>
           </template>
 
-          <template slot="browse_request" scope="props">
-            <b-button v-if="props.rowData.browse_status === 'permitted'" disabled> 열람 요청 </b-button>
-            <b-button v-else @click="openBrowseRequestModal(props.rowData.id)"> 열람 요청 </b-button>
+          <template v-if="$route.name === 'browse'" slot="browse_request" scope="props">
+            <b-button v-if="(props.rowData.browse_status === null || props.rowData.browse_status === undefined)
+            && props.rowData.expiration === 0" @click="openBrowseRequestModal(props.rowData.id)"> 열람 요청 </b-button>
+            <b-button v-else disabled> 열람 요청 </b-button>
           </template>
 
-          <template slot="browse" scope="props">
-            <b-button v-if="props.rowData.browse_status === 'permitted'" @click="openVideoModal(props.rowData)"> 열람 </b-button>
+          <template v-if="$route.name === 'browse'" slot="browse" scope="props">
+            <b-button v-if="props.rowData.browse_status === 'permitted' && props.rowData.expiration === 0" @click="openVideoModal(props.rowData)"> 열람 </b-button>
             <b-button v-else disabled> 열람 </b-button>
           </template>
 
-          <template slot="takeout_request" scope="props">
-            <b-button v-if="props.rowData.takeout_status === 'permitted'" disabled> 반출 요청 </b-button>
-            <b-button v-else @click="openTakeoutRequestModal(props.rowData.id)"> 반출 요청 </b-button>
+          <template v-if="$route.name === 'takeout'" slot="takeout_request" scope="props">
+            <b-button v-if="(props.rowData.takeout_status === null || props.rowData.takeout_status === undefined)
+            && props.rowData.expiration === 0" @click="openTakeoutRequestModal(props.rowData.id)"> 반출 요청 </b-button>
+            <b-button v-else disabled> 반출 요청 </b-button>
           </template>
 
-          <template slot="takeout" scope="props">
-            <b-button v-if="props.rowData.takeout_status === 'permitted'" @click="clickTakeout(props.rowData)"> 반출 </b-button>
+          <template v-if="$route.name === 'takeout'" slot="takeout" scope="props">
+            <b-button v-if="props.rowData.takeout_status === 'permitted' && props.rowData.expiration === 0" @click="clickTakeout(props.rowData)"> 반출 </b-button>
             <b-button v-else disabled> 반출 </b-button>
           </template>
         </vuetable>
@@ -204,6 +212,9 @@ export default {
       endDate:"",
       currentProcessingStatus:0,
 
+      // perpage변경
+      perPageList:[4,10,30,50,100],
+
       //단말
       videoData:null,
       videoModal:false,
@@ -211,6 +222,10 @@ export default {
       devices:[],
       date:null,
       currentVideo:0,
+
+      // sort
+      sort:'id',
+      sortType:'desc',
 
       items: [],
       filteredItems:[],
@@ -221,8 +236,9 @@ export default {
         '수술실',
         '진료과'
       ],
-      fields: [
-        // 'date','sergery_name','department','doctor','surgery_desc','patient_status'
+
+      //열람 컬럼
+      browseFields: [
           {
             name: '__checkbox',
             titleClass: 'center aligned',
@@ -230,36 +246,42 @@ export default {
           },
           {
             name: 'date',
+            sortField: 'date',
             title: '수술 날짜',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
           {
             name: 'sergery_name',
+            sortField: 'sergery_name',
             title: '수술실',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
           {
             name: 'department',
+            sortField: 'department',
             title: '진료과',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
           {
             name: 'doctor',
+            sortField: 'doctor',
             title: '주치의',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
           {
             name: 'surgery_desc',
+            sortField: 'surgery_desc',
             title: '수술 내용',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
           {
             name: 'patient_status',
+            sortField: 'patient_status',
             title: '환자 상태',
             titleClass: '',
             dataClass: 'list-item-heading'
@@ -267,12 +289,7 @@ export default {
           {
             name: "__slot:browse_status",
             title: '열람 권한',
-            titleClass: '',
-            dataClass: 'list-item-heading'
-          },
-          {
-            name: "__slot:takeout_status",
-            title: '반출 권한',
+            sortField: 'accessStatus',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
@@ -285,6 +302,64 @@ export default {
           {
             name: "__slot:browse",
             title: '열람',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+        ],
+
+        //반출 컬럼
+        takeoutFields: [
+          {
+            name: '__checkbox',
+            titleClass: 'center aligned',
+            dataClass: 'center aligned'
+          },
+          {
+            name: 'date',
+            sortField: 'date',
+            title: '수술 날짜',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'sergery_name',
+            sortField: 'sergery_name',
+            title: '수술실',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'department',
+            sortField: 'department',
+            title: '진료과',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'doctor',
+            sortField: 'doctor',
+            title: '주치의',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'surgery_desc',
+            sortField: 'surgery_desc',
+            title: '수술 내용',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: 'patient_status',
+            sortField: 'patient_status',
+            title: '환자 상태',
+            titleClass: '',
+            dataClass: 'list-item-heading'
+          },
+          {
+            name: "__slot:takeout_status",
+            title: '반출 권한',
+            sortField: 'takeoutStatus',
             titleClass: '',
             dataClass: 'list-item-heading'
           },
@@ -325,20 +400,95 @@ export default {
     };
   },
   methods: {
+    dataManager(sortOrder, pagination) {
+      if(sortOrder.length) {
+        let sortInfo = sortOrder[0]
+          this.sortType = sortInfo.direction
+          this.sort = sortInfo.sortField
+        if(sortInfo.sortField === 'accessStatus') {
+          this.getSortedStatusRecords('access')
+        } else if(sortInfo.sortField === 'takeoutStatus') {
+          this.getSortedStatusRecords('takeout')
+        } else {
+          this.getRecords()
+        }
+      }
+    },
+
+    async getSortedStatusRecords(val) {
+        this.items = await api.getRecordAuth({
+          start:this.startDate === '' ? '' : moment(this.startDate).format("YYYY-MM-DD 00:00:00"),
+          end:this.endDate === '' ? '' : moment(this.endDate).format("YYYY-MM-DD 00:00:00"),
+          searchType:this.currentSearchType === '주치의' ? 'doctor' :
+          this.currentSearchType === '수술실' ? 'surgery_name' : 'department',
+          search:this.search ? this.search : '',
+          page:this.page,
+          per_page:this.perPage,
+          status : this.currentProcessingStatus === 0 ? '' :
+            this.currentProcessingStatus === 1 ? '수술 완료' :
+            this.currentProcessingStatus === 2 ? '수술 취소' :
+            this.currentProcessingStatus === 3 ? '입원' : '퇴원',
+          sort:'status',
+          sortType:this.sortType,
+          authType:val
+        })
+
+        this.filteredItems = this.items
+
+      this.items.data.forEach((record,index) => {
+
+        if(val === 'access') {
+          this.recordTakeout.data.forEach(access => {
+            if(record.id === access.record_id) {
+              this.items.data[index] = {
+                ...this.items.data[index],
+                takeout_status:access.status,
+                takeout_reason:access.reason,
+              }
+            }
+          })
+        } else if(val === 'takeout') {
+          this.recordAccess.data.forEach(access => {
+            if(record.id === access.record_id) {
+              this.items.data[index] = {
+                ...record,
+                browse_status:access.status,
+                browse_reason:access.reason,
+              }
+            }
+          })
+        }
+
+      });
+    },
+
+    // perpage 바꿨을때 이벤트
+    changePerPage(val) {
+      if(this.perPage !== val) {
+        this.perPage = val
+        this.page = 1
+
+        this.getRecords()
+      }
+    },
+
     //반출 버튼 클릭 이벤트
     clickTakeout(data) {
       if(data.takeout_link === null || data.takeout_link === '') {
         // this.mqtt
         this.loadingModal = true
 
+
       }
+      this.saveRecord(data)
     },
     //열람시 기록 저장
     saveRecord(data) {
         api.saveHistory({
             record_id:data.id,
             account_id:this.currentUser.id,
-            created_at:moment().format('YYYY-MM-DD HH:mm:ss')
+            created_at:moment().format('YYYY-MM-DD HH:mm:ss'),
+            type:this.$route.name
         })
     },
     //열람 요청, 반출 요청 form 초기화
@@ -417,7 +567,14 @@ export default {
       this.$refs.vuetable.changePage(page)
       this.page = page
 
-      await this.getRecords()
+      console.log(this.sort === 'accessStatus' || this.sort === 'takeoutStatus')
+      if(this.sort === 'accessStatus') {
+        await this.getSortedStatusRecords('access')
+      } else if(this.sort === 'takeoutStatus'){
+        await this.getSortedStatusRecords('takeout')
+      } else {
+        await this.getRecords()
+      }
     },
     changeSearchType(item) {
       this.currentSearchType = item
@@ -522,7 +679,9 @@ export default {
         status : this.currentProcessingStatus === 0 ? '' :
           this.currentProcessingStatus === 1 ? '수술 완료' :
           this.currentProcessingStatus === 2 ? '수술 취소' :
-          this.currentProcessingStatus === 3 ? '입원' : '퇴원'
+          this.currentProcessingStatus === 3 ? '입원' : '퇴원',
+        sort:this.sort,
+        sortType:this.sortType
       })
 
       //열람 권한 조회
@@ -598,10 +757,11 @@ export default {
     },
   },
   async mounted() {
+
     this.loadItems();
 
     this.getRecords()
-  }
+  },
 };
 </script>
 

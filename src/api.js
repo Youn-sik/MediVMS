@@ -5,9 +5,9 @@ axios.defaults.baseURL = `https://${base_url}:3000`
 
 let ipport = window.location.href.split('/')[2]
 let ip = ipport.split(":")[0]
-console.log(base_url, ip)
-if(base_url !== ip)
-    axios.defaults.baseURL = `https://${ip}:13000`
+
+// if(base_url !== ip)
+//     axios.defaults.baseURL = `https://${ip}:13000`
 
 const api = {
     getConnectecDevices(params) {
@@ -209,7 +209,18 @@ const api = {
 
     getRecords(params) {
         return new Promise((resolve, reject) => {
-            axios.get(`/getRecords?per_page=${params.per_page}&page=${params.page}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}`).then(
+            axios.get(`/getRecords?per_page=${params.per_page}&page=${params.page}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}&sort=${params.sort}&sortType=${params.sortType}`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    getRecordAuth(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/record_auth?per_page=${params.per_page}&page=${params.page}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}&sort=${params.sort}&sortType=${params.sortType}&authType=${params.authType}`).then(
                 res => {
                     resolve(res.data)
                 },

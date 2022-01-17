@@ -45,10 +45,10 @@
                           wrapper-class="surgery-date-picker"
                         ></datepicker>
 
-                        <b-button variant="primary" @click="today" class="ml-3 mr-3">오늘</b-button>
-                        <b-button variant="primary" @click="aWeek" class="mr-3">일주일</b-button>
-                        <b-button variant="primary" @click="aMonth" class="mr-3">한달</b-button>
-                        <b-button variant="primary" @click="twoMonth" class="mr-3">두달</b-button>
+                        <b-button variant="primary" @click="today" class="ml-3 mr-3">당일</b-button>
+                        <b-button variant="primary" @click="aWeek" class="mr-3">1주일</b-button>
+                        <b-button variant="primary" @click="aMonth" class="mr-3">1개월</b-button>
+                        <b-button variant="primary" @click="twoMonth" class="mr-3">2개월</b-button>
                       </b-colxx>
                     </b-row>
                   </b-td>

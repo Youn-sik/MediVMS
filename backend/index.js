@@ -150,7 +150,6 @@ app.get('/getAccounts', (req,res) => {
 })
 
 app.post('/login',(req,res) => {
-    console.log(req.body)
     connection.query(`SELECT *
     FROM accounts
     WHERE account = "${req.body.account}"
@@ -242,12 +241,14 @@ app.get('/getRecords', (req,res) => {
     let status = req.query.status;
     let searchType = req.query.searchType;
     let search = req.query.search
+    let sort = req.query.sort;
+    let sort_type = req.query.sortType
 
     connection.query(`
     SELECT
     count(*) as 'count'
     FROM records
-    WHERE expiration = 0
+    WHERE expiration IS NOT NULL
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
     ${status ? "AND patient_status = '" + status + "'" : ""}
     ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}`,function (err, rows, fields) {
@@ -255,15 +256,69 @@ app.get('/getRecords', (req,res) => {
 
         let last_page = parseInt(rows[0].count / per_page) + (rows[0].count % per_page > 0 ? 1 : 0)
         let count = rows[0].count
+
         connection.query(`
         SELECT *
         FROM records
-        WHERE expiration = 0
+        WHERE expiration IS NOT NULL
         ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
         ${status ? "AND patient_status = '" + status + "'" : ""}
         ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
-        ORDER BY id
-        DESC
+        ORDER BY ${sort}
+        ${sort_type}
+        LIMIT ${page*per_page},${per_page};
+        `, function (err, _rows, fields) {
+            res.send({
+                last_page,
+                from:page*per_page+1,
+                current_page:page+1,
+                per_page,
+                total:count,
+                data:_rows ? _rows : []
+            })
+        })
+    })
+})
+
+app.get('/record_auth',(req,res) => {
+    let per_page = parseInt(req.query.per_page);
+    let page = parseInt(req.query.page)-1;
+    let start = req.query.start;
+    let end = req.query.end;
+    let status = req.query.status;
+    let searchType = req.query.searchType;
+    let search = req.query.search
+    let sort = req.query.sort;
+    let sort_type = req.query.sortType
+    let auth_type = req.query.authType === 'access' ? 'record_access' :
+    req.query.authType === 'takeout' ? 'takeout_access' : ''
+    let statusName = req.query.authType === 'access' ? 'browse_status' :
+    req.query.authType === 'takeout' ? 'takeout_status' : ''
+
+    connection.query(`
+    SELECT
+    count(*) as 'count'
+    FROM records
+    WHERE expiration IS NOT NULL
+    ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
+    ${status ? "AND patient_status = '" + status + "'" : ""}
+    ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}`,function (err, rows, fields) {
+        if (err) next(err)
+
+        let last_page = parseInt(rows[0].count / per_page) + (rows[0].count % per_page > 0 ? 1 : 0)
+        let count = rows[0].count
+
+        connection.query(`
+        SELECT r.*, ra.status AS ${statusName}
+        FROM ${auth_type} AS ra
+        RIGHT JOIN records r
+        ON ra.record_id = r.id
+        WHERE expiration IS NOT NULL
+        ${start && end ? "AND r.date >= '" + start + "' AND r.date <= '" + end + "'" : ""}
+        ${status ? "AND patient_status = '" + status + "'" : ""}
+        ${searchType && search ? "AND r." + searchType + " LIKE '%" + search + "%'" : ""}
+        ORDER BY ${sort}
+        ${sort_type}
         LIMIT ${page*per_page},${per_page};
         `, function (err, _rows, fields) {
             res.send({
@@ -383,7 +438,7 @@ app.get('/schedule',(req,res) => {
     SELECT *
     FROM schedule
     WHERE is_record = 1
-    AND surgery_id = ${req.query.surgery_id}
+    ${parseInt(req.query.surgery_id) ? "AND surgery_id = " + req.query.surgery_id : ''}
 
     UNION ALL
 
@@ -392,7 +447,7 @@ app.get('/schedule',(req,res) => {
     WHERE start >= "${req.query.start}"
     AND end <= "${req.query.end}"
     ${parseInt(req.query.alltype) === 1? '' : `AND is_over = 0`}
-    AND surgery_id = ${req.query.surgery_id}
+    ${parseInt(req.query.surgery_id) ? "AND surgery_id = " + req.query.surgery_id : ''}
     ${req.query.search !== '' ? req.query.searchType === 'patient' ?
     "AND patient LIKE '%" + req.query.search + "%'" :
     "AND doctor LIKE '%" + req.query.search + "%'"
@@ -408,7 +463,7 @@ app.get('/schedule',(req,res) => {
 
 app.post('/schedule',(req,res) => {
     connection.query(`INSERT INTO schedule
-    VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}",${req.body.emergency},${req.body.surgery.surgery_id},0,0,"${req.body.patient}","${req.body.doctor}")`, function (err, rows, fields) {
+    VALUES (NULL,"${req.body.name}","${req.body.start}","${req.body.end}","${req.body.note}","${req.body.color}",${req.body.emergency},${req.body.surgery.surgery_id},0,0,"${req.body.patient}","${req.body.doctor}","${req.body.patient_code}","${req.body.patient_birthday}")`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -445,7 +500,55 @@ app.delete('/schedule',(req,res) => {
 })
 
 app.post('/history', (req,res) => {
-    connection.query(`INSERT INTO browsing_history
+    connection.query(`INSERT INTO history
+    VALUES (NULL,"${req.body.record_id}","${req.body.created_at}","${req.body.account_id}","${req.body.type}")`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.get('/history',(req,res) => {
+    let per_page = parseInt(req.query.per_page);
+    let page = parseInt(req.query.page)-1;
+    let temp = req.query.sort === '' ?  ['created_at','desc'] : req.query.sort.split('|')
+    let sort = temp[0];
+    let sort_type = temp[1];
+    let type = req.query.type
+
+    connection.query(`SELECT count(*) as "count" FROM history WHERE type = "${type}"`, function (err, rows, fields) {
+        if (err) throw err
+
+        let last_page = parseInt(rows[0].count / per_page) + (rows[0].count % per_page > 0 ? 1 : 0)
+        let count = rows[0].count
+        connection.query(`
+        SELECT *
+        FROM history
+        JOIN accounts
+        ON history.account_id = accounts.id
+        JOIN records
+        ON records.id = history.record_id
+        WHERE type = "${type}"
+        ORDER BY ${sort} ${sort_type}
+        LIMIT ${page*per_page},${per_page};
+
+        `, function (err, rows, fields) {
+            if (err) throw err
+
+            res.send({
+                last_page,
+                from:page*per_page+1,
+                current_page:page+1,
+                per_page,
+                total:count,
+                data:rows
+            })
+        })
+    })
+})
+
+app.post('/history', (req,res) => {
+    connection.query(`INSERT INTO history
     VALUES (NULL,"${req.body.record_id}","${req.body.created_at}","${req.body.account_id}")`, function (err, rows, fields) {
         if (err) throw err
 
@@ -460,18 +563,18 @@ app.get('/history',(req,res) => {
     let sort = temp[0];
     let sort_type = temp[1];
 
-    connection.query('SELECT count(*) as "count" FROM browsing_history', function (err, rows, fields) {
+    connection.query('SELECT count(*) as "count" FROM history', function (err, rows, fields) {
         if (err) throw err
 
         let last_page = parseInt(rows[0].count / per_page) + (rows[0].count % per_page > 0 ? 1 : 0)
         let count = rows[0].count
         connection.query(`
         SELECT *
-        FROM browsing_history
+        FROM history
         JOIN accounts
-        ON browsing_history.account_id = accounts.id
+        ON history.account_id = accounts.id
         JOIN records
-        ON records.id = browsing_history.record_id
+        ON records.id = history.record_id
         ORDER BY ${sort} ${sort_type}
         LIMIT ${page*per_page},${per_page};
 
@@ -510,7 +613,7 @@ app.get('/record_access', function(req,res) {
     ON record_id = records.id
     JOIN accounts
     ON user_id = accounts.id
-    WHERE expiration = 0
+    WHERE expiration IS NOT NULL
     ${user_id ? 'AND user_id = ' + user_id : ''}
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
     ${status ? "AND status = '" + status + "'" : ""}
@@ -544,7 +647,7 @@ app.get('/record_access', function(req,res) {
 
 app.post('/record_access', (req,res) => {
     connection.query(`INSERT INTO record_access
-    VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}")`, function (err, rows, fields) {
+    VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}", NULL)`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -555,7 +658,8 @@ app.patch('/record_access', (req,res) => {
     connection.query(`UPDATE record_access
     SET
     reason = "${req.body.reason}",
-    status = "${req.body.status}"
+    status = "${req.body.status}",
+    updated_at = "${moment().format("YYYY-MM-DD HH:mm:ss")}"
     WHERE id = ${req.body.id}`,
     function (err, rows, fields) {
         if (err) throw err
@@ -584,7 +688,7 @@ app.get('/takeout_access', function(req,res) {
     ON record_id = records.id
     JOIN accounts
     ON user_id = accounts.id
-    WHERE expiration = 0
+    WHERE expiration IS NOT NULL
     ${user_id ? 'AND user_id = ' + user_id : ''}
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
     ${status ? "AND status = '" + status + "'" : ""}
@@ -620,7 +724,8 @@ app.patch('/takeout_access', (req,res) => {
     connection.query(`UPDATE takeout_access
     SET
     reason = "${req.body.reason}",
-    status = "${req.body.status}"
+    status = "${req.body.status}",
+    updated_at = "${moment().format("YYYY-MM-DD HH:mm:ss")}"
     WHERE id = ${req.body.id}`,
     function (err, rows, fields) {
         if (err) throw err
@@ -631,7 +736,7 @@ app.patch('/takeout_access', (req,res) => {
 
 app.post('/takeout_access', (req,res) => {
     connection.query(`INSERT INTO takeout_access
-    VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}")`, function (err, rows, fields) {
+    VALUES (NULL,"${req.body.user_id}","${req.body.record_id}","${req.body.status}","${req.body.reason}","${req.body.created_at}", NULL)`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -671,11 +776,22 @@ app.patch('/settings',(req,res) => {
 
 // 30일 지난 record 삭제
 cron.schedule('0 4 * * *', () => {
-        let now = moment().subtract(30, 'days').format("YYYY-MM-DD HH:mm:ss")
+        let before30days = moment().subtract(30, 'days').format("YYYY-MM-DD HH:mm:ss")
+        let before7days = moment().subtract(7, 'days').format("YYYY-MM-DD HH:mm:ss")
 
         connection.query(`UPDATE records
         SET expiration = 1
-        WHERE date <= "${now}"`)
+        WHERE date <= "${before30days}"`)
+
+        connection.query(`UPDATE record_access
+        SET status = NULL
+        WHERE status = "permitted"
+        AND updated_at <= "${before7days}"`)
+
+        connection.query(`UPDATE takeout_access
+        SET status = NULL
+        WHERE status = "permitted"
+        AND updated_at <= "${before7days}"`)
     }, {
         timezone: "Asia/Seoul"
     }

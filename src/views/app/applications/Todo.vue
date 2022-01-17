@@ -8,7 +8,7 @@
                         <b-tr>
                             <b-td>대시보드</b-td>
                             <b-td>수술실 모니터링</b-td>
-                            <b-td>일정 예약</b-td>
+                            <b-td>수술실 예약</b-td>
                             <b-td>데이터 열람</b-td>
                             <b-td>열람 기록</b-td>
                             <b-td>권한 관리</b-td>
@@ -109,6 +109,7 @@
                 <b-table-simple>
                     <b-tbody striped>
                         <b-tr>
+                            <b-th rowspan="1">ID</b-th>
                             <b-th rowspan="1">이름</b-th>
                             <b-th rowspan="1">부서</b-th>
                             <b-th rowspan="1">사원 번호</b-th>
@@ -116,6 +117,7 @@
                         </b-tr>
                         <b-tr v-for="(account,index) in this.filteredList" :key="index">
                             <template v-if="currentUser.account !== account.account">
+                                <b-td rowspan="1" style="line-height:80px">{{account.account}}</b-td>
                                 <b-td rowspan="1" style="line-height:80px">{{account.name}}</b-td>
                                 <b-td rowspan="1" style="line-height:80px">{{account.department}}</b-td>
                                 <b-td rowspan="1" style="line-height:80px">{{account.employee_no}}</b-td>

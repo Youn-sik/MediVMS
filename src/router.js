@@ -34,25 +34,6 @@ const routes = [
               import(/* webpackChunkName: "dashboards" */ "./views/app/dashboards/Default"),
             // meta: { roles: [UserRole.Admin] },
           },
-          // {
-          //   path: "analytics",
-
-          //   component: () =>
-          //     import(/* webpackChunkName: "dashboards" */ "./views/app/dashboards/Analytics"),
-          //   // meta: { roles: [UserRole.Admin] },
-          // },
-          // {
-          //   path: "ecommerce",
-          //   component: () =>
-          //     import(/* webpackChunkName: "dashboards" */ "./views/app/dashboards/Ecommerce"),
-          //   // meta: { roles: [UserRole.Editor] },
-          // },
-          // {
-          //   path: "content",
-          //   component: () =>
-          //     import(/* webpackChunkName: "dashboards" */ "./views/app/dashboards/Content"),
-          //   // meta: { roles: [UserRole.Editor] },
-          // }
         ]
       },
       {
@@ -65,38 +46,8 @@ const routes = [
             path: "product",
             component: () =>
               import(/* webpackChunkName : "product" */ "./views/app/pages/product"),
-            redirect: `${adminRoot}/pages/product/data-list`,
+            redirect: `${adminRoot}/pages/product/surgeries`,
             children: [
-              // {
-              //   path: "data-list",
-              //   component: () =>
-              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
-              // },
-              // {
-              //   path: "history-list",
-              //   component: () =>
-              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
-              // },
-              // {
-              //   path: "thumb-list",
-              //   component: () =>
-              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/ThumbList")
-              // },
-              // {
-              //   path: "image-list",
-              //   component: () =>
-              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/ImageList")
-              // },
-              // {
-              //   path: "details",
-              //   component: () =>
-              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/Details")
-              // },
-              // {
-              //   path: "details-alt",
-              //   component: () =>
-              //     import(/* webpackChunkName: "product" */ "./views/app/pages/product/DetailsAlt")
-              // },
               {
                 path: "surgeries",
                 component: () =>
@@ -109,80 +60,11 @@ const routes = [
               },
             ]
           },
-          // {
-          //   path: "blog",
-          //   component: () =>
-          //     import(/* webpackChunkName : "blog" */ "./views/app/pages/blog"),
-          //   redirect: `${adminRoot}/pages/blog/blog-list`,
-          //   children: [
-          //     {
-          //       path: "blog-list",
-          //       component: () =>
-          //         import(/* webpackChunkName: "blog" */ "./views/app/pages/blog/BlogList")
-          //     },
-          //     {
-          //       path: "blog-detail",
-          //       component: () =>
-          //         import(/* webpackChunkName: "blog" */ "./views/app/pages/blog/BlogDetail")
-          //     }
-          //   ]
-          // },
-          // {
-          //   path: "miscellaneous",
-          //   component: () =>
-          //     import(/* webpackChunkName : "miscellaneous" */ "./views/app/pages/miscellaneous"),
-          //   redirect: `${adminRoot}/pages/miscellaneous/faq`,
-          //   children: [
-          //     {
-          //       path: "faq",
-          //       component: () =>
-          //         import(/* webpackChunkName: "miscellaneous" */ "./views/app/pages/miscellaneous/Faq")
-          //     },
-          //     {
-          //       path: "knowledge-base",
-          //       component: () =>
-          //         import(/* webpackChunkName: "miscellaneous" */ "./views/app/pages/miscellaneous/KnowledgeBase")
-          //     },
-          //     {
-          //       path: "search",
-          //       component: () =>
-          //         import(/* webpackChunkName: "miscellaneous" */ "./views/app/pages/miscellaneous/Search")
-          //     },
-          //     {
-          //       path: "prices",
-          //       component: () =>
-          //         import(/* webpackChunkName: "miscellaneous" */ "./views/app/pages/miscellaneous/Prices")
-          //     },
-          //     {
-          //       path: "mailing",
-          //       component: () =>
-          //         import(/* webpackChunkName: "miscellaneous" */ "./views/app/pages/miscellaneous/Mailing")
-          //     },
-          //     {
-          //       path: "invoice",
-          //       component: () =>
-          //         import(/* webpackChunkName: "miscellaneous" */ "./views/app/pages/miscellaneous/Invoice")
-          //     }
-          //   ]
-          // },
 
           {
             path: "grid",
             component: () =>
               import(/* webpackChunkName : "blog" */ "./views/app/pages/grid/Grid"),
-            // redirect: `${adminRoot}/pages/blog/blog-list`,
-            // children: [
-            //   {
-            //     path: "blog-list",
-            //     component: () =>
-            //       import(/* webpackChunkName: "blog" */ "./views/app/pages/blog/BlogList")
-            //   },
-            //   {
-            //     path: "blog-detail",
-            //     component: () =>
-            //       import(/* webpackChunkName: "blog" */ "./views/app/pages/blog/BlogDetail")
-            //   }
-            // ]
           },
         ]
       },
@@ -216,17 +98,47 @@ const routes = [
         path: "data",
         component: () =>
           import(/* webpackChunkName : "product" */ "./views/app/pages/product"),
-        redirect: `${adminRoot}/pages/data/data-list`,
+        redirect: `${adminRoot}/data/data-list`,
         children: [
           {
             path: "data-list",
             component: () =>
-              import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
+              import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList"),
+            redirect: `${adminRoot}/data/data-list/browse`,
+            children: [
+              {
+                path: "browse",
+                name: "browse",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
+              },
+              {
+                path: "takeout",
+                name: "takeout",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/DataList")
+              },
+            ]
           },
           {
             path: "history-list",
             component: () =>
-              import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
+              import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories"),
+            redirect: `${adminRoot}/data/history-list/browse`,
+            children: [
+              {
+                path: "browse",
+                name: "browse",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
+              },
+              {
+                path: "takeout",
+                name: "takeout",
+                component: () =>
+                  import(/* webpackChunkName: "product" */ "./views/app/pages/product/Histories")
+              },
+            ]
           },
         ]
       },
@@ -251,221 +163,8 @@ const routes = [
             component: () =>
               import(/* webpackChunkName: "applications" */ "./views/app/pages/permit/TakeoutPermit")
           },
-          // {
-          //   path: "survey",
-          //   component: () =>
-          //     import(/* webpackChunkName: "applications" */ "./views/app/applications/Survey")
-          // },
-          // {
-          //   path: "survey/:id",
-          //   component: () =>
-          //     import(/* webpackChunkName: "applications" */ "./views/app/applications/SurveyDetail"),
-          //   props: true
-          // },
-          // {
-          //   path: "chat",
-          //   component: () =>
-          //     import(/* webpackChunkName: "applications" */ "./views/app/applications/Chat")
-          // }
         ]
       },
-      // {
-      //   path: "ui",
-      //   component: () => import(/* webpackChunkName: "ui" */ "./views/app/ui"),
-      //   redirect: `${adminRoot}/ui/forms`,
-      //   children: [
-      //     {
-      //       path: "forms",
-      //       component: () =>
-      //         import(/* webpackChunkName : "forms" */ "./views/app/ui/forms"),
-      //       redirect: `${adminRoot}/ui/forms/layouts`,
-      //       children: [
-      //         {
-      //           path: "layouts",
-      //           component: () =>
-      //             import(/* webpackChunkName: "forms" */ "./views/app/ui/forms/Layouts")
-      //         },
-      //         {
-      //           path: "components",
-      //           component: () =>
-      //             import(/* webpackChunkName: "forms" */ "./views/app/ui/forms/Components")
-      //         },
-      //         {
-      //           path: "validations",
-      //           component: () =>
-      //             import(/* webpackChunkName: "forms" */ "./views/app/ui/forms/Validations")
-      //         },
-      //         {
-      //           path: "wizard",
-      //           component: () =>
-      //             import(/* webpackChunkName: "forms" */ "./views/app/ui/forms/Wizard")
-      //         },
-      //       ]
-      //     },
-      //     {
-      //       path: "datatables",
-      //       component: () =>
-      //         import(/* webpackChunkName : "datatables" */ "./views/app/ui/datatables"),
-      //       redirect: `${adminRoot}/ui/datatables/divided-table`,
-      //       children: [
-      //         {
-      //           path: "divided-table",
-      //           component: () =>
-      //             import(/* webpackChunkName: "datatables" */ "./views/app/ui/datatables/DividedTable")
-      //         },
-      //         {
-      //           path: "scrollable",
-      //           component: () =>
-      //             import(/* webpackChunkName: "datatables" */ "./views/app/ui/datatables/Scrollable")
-      //         },
-      //         {
-      //           path: "default",
-      //           component: () =>
-      //             import(/* webpackChunkName: "datatables" */ "./views/app/ui/datatables/Default")
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       path: "components",
-      //       component: () =>
-      //         import(/* webpackChunkName : "components" */ "./views/app/ui/components"),
-      //       redirect: `${adminRoot}/ui/components/alerts`,
-      //       children: [
-      //         {
-      //           path: "alerts",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Alerts")
-      //         },
-      //         {
-      //           path: "badges",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Badges")
-      //         },
-      //         {
-      //           path: "buttons",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Buttons")
-      //         },
-      //         {
-      //           path: "cards",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Cards")
-      //         },
-      //         {
-      //           path: "carousel",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Carousel")
-      //         },
-      //         {
-      //           path: "charts",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Charts")
-      //         },
-      //         {
-      //           path: "collapse",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Collapse")
-      //         },
-      //         {
-      //           path: "dropdowns",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Dropdowns")
-      //         },
-      //         {
-      //           path: "editors",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Editors")
-      //         },
-      //         {
-      //           path: "icons",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Icons")
-      //         },
-      //         {
-      //           path: "input-groups",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/InputGroups")
-      //         },
-      //         {
-      //           path: "jumbotron",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Jumbotron")
-      //         },
-      //         {
-      //           path: "maps",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Maps")
-      //         },
-      //         {
-      //           path: "modal",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Modal")
-      //         },
-      //         {
-      //           path: "navigation",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Navigation")
-      //         },
-      //         {
-      //           path: "popover-tooltip",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/PopoverTooltip")
-      //         },
-      //         {
-      //           path: "sortable",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Sortable")
-      //         },
-      //         {
-      //           path: "tables",
-      //           component: () =>
-      //             import(/* webpackChunkName: "components" */ "./views/app/ui/components/Tables")
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
-      // {
-      //   path: "menu",
-      //   component: () =>
-      //     import(/* webpackChunkName: "menu" */ "./views/app/menu"),
-      //   redirect: `${adminRoot}/menu/types`,
-      //   children: [
-      //     {
-      //       path: "types",
-      //       component: () =>
-      //         import(/* webpackChunkName : "menu-types" */ "./views/app/menu/Types")
-      //     },
-      //     {
-      //       path: "levels",
-      //       component: () =>
-      //         import(/* webpackChunkName : "menu-levels" */ "./views/app/menu/levels"),
-      //       redirect: `${adminRoot}/menu/levels/third-level-1`,
-      //       children: [
-      //         {
-      //           path: "third-level-1",
-      //           component: () =>
-      //             import(/* webpackChunkName: "menu-levels" */ "./views/app/menu/levels/Third-level-1")
-      //         },
-      //         {
-      //           path: "third-level-2",
-      //           component: () =>
-      //             import(/* webpackChunkName: "menu-levels" */ "./views/app/menu/levels/Third-level-2")
-      //         },
-      //         {
-      //           path: "third-level-3",
-      //           component: () =>
-      //             import(/* webpackChunkName: "menu-levels" */ "./views/app/menu/levels/Third-level-3")
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
-      // {
-      //   path: "blank-page",
-      //   component: () =>
-      //     import(/* webpackChunkName: "blank-page" */ "./views/app/blank-page")
-      // }
     ]
   },
   {
@@ -486,22 +185,6 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "user" */ "./views/user/Login")
       },
-      // {
-      //   path: "register",
-      //   component: () =>
-      //     import(/* webpackChunkName: "user" */ "./views/user/Register")
-      // },
-      // {
-      //   path: "forgot-password",
-      //   component: () =>
-      //     import(/* webpackChunkName: "user" */ "./views/user/ForgotPassword")
-      // },
-      // {
-      //   path: "reset-password",
-      //   component: () =>
-      //     import(/* webpackChunkName: "user" */ "./views/user/ResetPassword")
-      // },
-
     ]
   },
   {

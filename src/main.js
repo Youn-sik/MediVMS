@@ -35,6 +35,12 @@ import 'vue-datetime/dist/vue-datetime.css'
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
+// sweet_alert
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
+Vue.use(VueSweetalert2);
+
 Vue.use(Toast,{})
 
 Vue.use(Datetime)

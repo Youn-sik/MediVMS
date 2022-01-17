@@ -2,7 +2,7 @@
   <div v-if="surgeries.length" data-app class="schedule">
         <!-- more 모달 -->
         <b-modal v-model="moreModal" scrollable title="일일 스케쥴">
-            <v-calendar
+            <!-- <v-calendar
                 ref="daycalendar"
                 :events="events"
                 category-show-all
@@ -10,7 +10,38 @@
                 :start='startDay'
                 @click:event="showEventFromDay"
                 :dark="true"
-            ></v-calendar>
+            ></v-calendar> -->
+            <v-calendar
+                ref="daycalendar"
+                v-model="value"
+                :weekdays="weekday"
+                type="day"
+                :events="events"
+                :event-overlap-mode="mode"
+                @click:more="viewDay"
+                @click:date="viewDayFromDate"
+                @click:event="showEvent"
+                :event-overlap-threshold="30"
+                :event-color="getEventColor"
+                @mousedown:event="startDrag"
+                @mousedown:time="startTime"
+                @mousemove:time="mouseMove"
+                @mouseup:time="endDrag"
+                @mouseleave.native="cancelDrag"
+                :dark="true"
+            >
+                <template v-slot:event="{ event, timed, eventSummary }">
+                    <div
+                    class="v-event-draggable"
+                    v-html="eventSummary()"
+                    ></div>
+                    <div
+                    v-if="timed"
+                    class="v-event-drag-bottom"
+                    @mousedown.stop="extendBottom(event)"
+                    ></div>
+                </template>
+            </v-calendar>
             <v-menu
             v-model="selectedOpenFromDay"
             :close-on-content-click="false"
@@ -63,31 +94,37 @@
             v-model="addModal"
             id="modalright"
             ref="modalright"
-            :title="'일정 추가'"
+            :title="'수술 추가'"
             modal-class="modal-right"
         >
             <b-form>
-                <b-form-group label="일정 이름">
+                <b-form-group label="수술명">
                     <b-form-input v-model="newEvent.name" />
                 </b-form-group>
-                <b-form-group label="일정 시작 시간">
+                <b-form-group label="수술 시작 시간">
                     <datetime
                     type="datetime"
                     v-model="newEvent.start"
                     placeholder="날짜를 선택해주세요"
                     input-class="form-control"></datetime>
                 </b-form-group>
-                <b-form-group label="일정 종료 시간">
+                <b-form-group label="수술 종료 시간">
                     <datetime
                     type="datetime"
                     v-model="newEvent.end"
                     placeholder="날짜를 선택해주세요"
                     input-class="form-control"></datetime>
                 </b-form-group>
-                <b-form-group label="환자 이름">
+                <b-form-group label="환자명">
                     <b-form-input v-model="newEvent.patient" />
                 </b-form-group>
-                <b-form-group label="담당의 이름">
+                <b-form-group label="환자 코드">
+                    <b-form-input v-model="newEvent.patient_code" />
+                </b-form-group>
+                <b-form-group label="생년 월일">
+                    <b-form-input v-model="newEvent.patient_birthday" />
+                </b-form-group>
+                <b-form-group label="담당의 명">
                     <b-form-input v-model="newEvent.doctor" />
                 </b-form-group>
                 <b-form-group label="비고">
@@ -105,7 +142,7 @@
                     </vselect>
                 </b-form-group>
                 <b-form-group label="수술실">
-                    <vselect label="surgery_name" :options="surgeries" v-model="newEvent.surgery" dir="ltr" >
+                    <vselect label="surgery_name" :options="surgerySelection" v-model="newEvent.surgery" dir="ltr" >
                         <!-- <template slot="option" slot-scope="option">
                             <div class="d-center">
                                 <div style="display:inline-block; margin-right:5px;"></div>
@@ -138,31 +175,37 @@
             v-model="modModal"
             id="modalright"
             ref="modalright"
-            :title="'일정 수정'"
+            :title="'수술 수정'"
             modal-class="modal-right"
         >
             <b-form>
-                <b-form-group label="일정 이름">
+                <b-form-group label="수술명">
                     <b-form-input v-model="newEvent.name" />
                 </b-form-group>
-                <b-form-group label="일정 시작 시간">
+                <b-form-group label="수술 시작 시간">
                     <datetime
                     type="datetime"
                     v-model="newEvent.start"
                     placeholder="날짜를 선택해주세요"
                     input-class="form-control"></datetime>
                 </b-form-group>
-                <b-form-group label="일정 종료 시간">
+                <b-form-group label="수술 종료 시간">
                     <datetime
                     type="datetime"
                     v-model="newEvent.end"
                     placeholder="날짜를 선택해주세요"
                     input-class="form-control"></datetime>
                 </b-form-group>
-                <b-form-group label="환자 이름">
+                <b-form-group label="환자명">
                     <b-form-input v-model="newEvent.patient" />
                 </b-form-group>
-                <b-form-group label="담당의 이름">
+                <b-form-group label="환자 코드">
+                    <b-form-input v-model="newEvent.patient_code" />
+                </b-form-group>
+                <b-form-group label="생년 월일">
+                    <b-form-input v-model="newEvent.patient_birthday" />
+                </b-form-group>
+                <b-form-group label="담당의 명">
                     <b-form-input v-model="newEvent.doctor" />
                 </b-form-group>
                 <b-form-group label="비고">
@@ -180,7 +223,7 @@
                     </vselect>
                 </b-form-group>
                 <b-form-group label="수술실">
-                    <vselect label="surgery_name" :options="surgeries" v-model="newEvent.surgery" dir="ltr" >
+                    <vselect label="surgery_name" :options="surgerySelection" v-model="newEvent.surgery" dir="ltr" >
                         <template slot="option" slot-scope="option">
                             <div class="d-center">
                                 <!-- <img :src="option.owner.avatar_url" height="25" /> -->
@@ -190,16 +233,16 @@
                         </template>
                     </vselect>
                 </b-form-group>
-                <b-form-checkbox
+                <!-- <b-form-checkbox
                 id="emergency"
                 v-model="newEvent.emergency"
                 :value="1"
                 :unchecked-value="0"
                 name="emergency"
-                >
-                긴급 녹화&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다
-                </b-form-checkbox>
+                > -->
+                <!-- 긴급 녹화&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다 -->
+                <!-- </b-form-checkbox> -->
             </b-form>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelSaveEvent">
@@ -214,30 +257,9 @@
     <b-row>
         <b-colxx xl="12" lg="12" class="mb-4">
             <b-card>
-                <div style="width:80%; text-aligm:center; margin: 0 auto;">
-
-                    <b-input-group class="mb-1">
-                        <b-input-group-prepend>
-                            <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
-                                <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
-                            </b-dropdown>
-                        </b-input-group-prepend>
-                        <!-- <b-form-input/> -->
-                        <div
-                        class="search"
-                        ref="searchContainer"
-                        >
-                            <b-input
-                                placeholder="검색"
-                                @keypress.native.enter="searchClick"
-                                v-model="searchKeyword"
-                            />
-                            <span class="search-icon" @click="searchClick">
-                                <i class="simple-icon-magnifier"></i>
-                            </span>
-                        </div>
-
-                        <div style="text-aligm:center; margin: 0 auto; padding-left:28px;">
+                <!-- <div style=""> -->
+                    <div style="text-aligm:center; margin:0 auto;">
+                        <div style="width:202px; margin:0 auto;">
                             <b-button
                                 variant="outline-primary"
                                 icon
@@ -265,8 +287,34 @@
                                 >
                             </b-button>
                         </div>
+                    </div>
+                <!-- </div> -->
+                <div style="width:80%; text-aligm:center; margin: 0 auto;">
 
-                        <div style="text-aligm:center;">
+                    <b-input-group class="mb-1">
+                        <b-input-group-prepend>
+                            <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
+                                <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
+                            </b-dropdown>
+                        </b-input-group-prepend>
+                        <!-- <b-form-input/> -->
+                        <div
+                        class="search"
+                        ref="searchContainer"
+                        >
+                            <b-input
+                                placeholder="검색"
+                                @keypress.native.enter="searchClick"
+                                v-model="searchKeyword"
+                            />
+                            <span class="search-icon" @click="searchClick">
+                                <i class="simple-icon-magnifier"></i>
+                            </span>
+                        </div>
+
+                        <div style="margin:0 auto"></div>
+
+                        <div style="float:right; text-aligm:center;">
                             <b-button
                                 variant="outline-primary"
                                 icon
@@ -274,14 +322,41 @@
 
                                 @click="openAddModal"
                             >
-                                일정 추가
+                                예약
                             </b-button>
-                            <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
+                            <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary" style="width:107px;">
                                 <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
                             </b-dropdown>
-                            <b-dropdown id="surgeriesDropdown" :text="calendarType" variant="outline-secondary">
+                            <b-button
+                                :variant="calendarType === '일간' ? 'primary' : 'outline-primary'"
+                                icon
+                                class="ma-2"
+
+                                @click="changeCalendarType('일간')"
+                            >
+                                일간
+                            </b-button>
+                            <b-button
+                                :variant="calendarType === '주간' ? 'primary' : 'outline-primary'"
+                                icon
+                                class="ma-2"
+
+                                @click="changeCalendarType('주간')"
+                            >
+                                주간
+                            </b-button>
+                            <b-button
+                                :variant="calendarType === '월간' ? 'primary' : 'outline-primary'"
+                                icon
+                                class="ma-2"
+
+                                @click="changeCalendarType('월간')"
+                            >
+                                월간
+                            </b-button>
+                            <!-- <b-dropdown id="surgeriesDropdown" :text="calendarType" variant="outline-secondary">
                                 <b-dropdown-item @click="changeCalendarType(type,index)" v-for="(type,index) in calendarTypes" :key="index">{{ type }}</b-dropdown-item>
-                            </b-dropdown>
+                            </b-dropdown> -->
                         </div>
                     </b-input-group>
 
@@ -355,6 +430,9 @@
                                     class="v-event-drag-bottom"
                                     @mousedown.stop="extendBottom(event)"
                                     ></div>
+                                    <div style="padding-left: 6px;">
+                                        환자명 : {{event.patient}}
+                                    </div>
                                 </template>
                             </v-calendar>
                             <v-menu
@@ -440,9 +518,11 @@ export default {
                 name:'',
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().add(1,'hour').format('YYYY-MM-DDTHH:mm:ssZ'),
                 patient:'',
                 doctor:'',
+                patient_code:'',
+                patient_birthday:'',
                 surgery:null,
                 emergency:false,
             },
@@ -481,7 +561,7 @@ export default {
             ],
             searchKeyword:'',
             commitedSearchKeyword:'',
-            calendarType:"월간",
+            calendarType:"일간",
             calendarTypes:["월간","주간","일간"],
             dragEvent: null,
             dragStart: null,
@@ -489,6 +569,7 @@ export default {
             createStart: null,
             extendOriginal: null,
             sizeMod : false,
+            surgerySelection:[]
         }
     },
     methods:{
@@ -619,8 +700,10 @@ export default {
                 surgery:null,
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().add(1,'hour').format('YYYY-MM-DDTHH:mm:ssZ'),
                 patient:'',
+                patient_code:'',
+                patient_birthday:'',
                 doctor:'',
                 emergency:false,
             }
@@ -636,11 +719,13 @@ export default {
             this.newEvent = {
                 color:'',
                 name:'',
-                surgery:this.currentSurgery,
+                surgery:this.currentSurgery.surgery_id === 0 ? this.surgeries[1] : this.currentSurgery,
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().add(1,'hour').format('YYYY-MM-DDTHH:mm:ssZ'),
                 patient:'',
+                patient_code:'',
+                patient_birthday:'',
                 doctor:'',
                 emergency:false,
             }
@@ -720,10 +805,10 @@ export default {
             this.calendarType = val
         },
         async getSurgery() {
-          let result = await api.getSurgery()
-          this.surgeries = result
-
-          this.changeSurgery(result[this.currentSurgeryImdex])
+            let result = await api.getSurgery()
+            this.surgeries = [{surgery_id:0, surgery_name:'전체'}, ...result]
+            this.surgerySelection = result;
+            this.changeSurgery(this.surgeries[this.currentSurgeryImdex])
         },
         getEventColor (event) {
             return event.color
@@ -733,6 +818,7 @@ export default {
         },
 
         async getSchedule() {
+            console.log(this.currentSurgery)
             let start = moment(this.date).startOf('month').format('YYYY-MM-DD');
             let end = moment(this.date).endOf('month').format('YYYY-MM-DD 23:59:59');
             this.events = []
@@ -823,8 +909,10 @@ export default {
                 surgery:null,
                 timed:true,
                 start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-                end:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().add(1,'hour').format('YYYY-MM-DDTHH:mm:ssZ'),
                 patient:'',
+                patient_code:'',
+                patient_birthday:'',
                 doctor:'',
                 emergency:false
             }

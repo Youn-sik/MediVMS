@@ -138,6 +138,7 @@ export default {
             },
             {
                 name: "__slot:status",
+                sortField: 'status',
                 title: '요청 상태',
                 titleClass: '',
                 dataClass: 'list-item-heading'
