@@ -15,15 +15,15 @@
       >
         <mobile-menu-icon />
       </a>
-      <router-link class="navbar-koolsign-logo" :to="adminRoot">
+      <div class="navbar-koolsign-logo" style="cursor:pointer;" @click="moveHome">
         <span class="logo d-none d-xs-block"></span>
         <span class="logo-mobile d-block d-xs-none"></span>
-      </router-link>
+      </div>
     </div>
-    <router-link class="navbar-logo" :to="adminRoot">
+    <div class="navbar-logo" style="cursor:pointer;" @click="moveHome">
       <span class="logo d-none d-xs-block"></span>
       <span class="logo-mobile d-block d-xs-none"></span>
-    </router-link>
+    </div>
 
     <div class="navbar-right">
       <!-- <div class="d-none d-md-inline-block align-middle mr-3">
@@ -87,9 +87,6 @@ export default {
       if(parseInt(this.currentUser.schedule) === 1)
         this.navCount++
 
-      if(parseInt(this.currentUser.browse) === 1)
-        this.navCount++
-
       if(parseInt(this.currentUser.history) === 1)
         this.navCount++
 
@@ -117,6 +114,20 @@ export default {
   methods: {
     ...mapMutations(["changeSideMenuStatus", "changeSideMenuForMobile"]),
     ...mapActions(["setLang", "signOut"]),
+    moveHome() {
+      if(parseInt(this.currentUser.dashboard))
+          this.$router.push('/app/dashboards/default');
+      else if(parseInt(this.currentUser.surgery))
+          this.$router.push('/app/pages/product/surgeries');
+      else if(parseInt(this.currentUser.schedule))
+          this.$router.push('/app/pages/product/sergery-reserv');
+      else if(parseInt(this.currentUser.browse))
+          this.$router.push('/app/data');
+      else if(parseInt(this.currentUser.admin))
+          this.$router.push('/app/admin');
+      else if(parseInt(this.currentUser.setting))
+          this.$router.push('/app/settings');
+    },
     search() {
       this.$router.push(`${this.searchPath}?search=${this.searchKeyword}`);
       this.searchKeyword = "";

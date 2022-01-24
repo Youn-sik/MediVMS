@@ -39,16 +39,18 @@
                 :api-mode="false"
                 :data="items"
                 :fields="fields"
+                :data-manager="dataManager"
                 pagination-path
                 @vuetable:pagination-data="onPaginationData"
             >
                 <template slot="status" scope="props">
                     {{props.rowData.status === 'standby' ? '허가 대기중' :
                     props.rowData.status === 'permitted' ? '허가' :
-                    props.rowData.status === 'denied' ? '거부' : "권한 없음"}}
+                    props.rowData.status === 'denied' ? '거부' : "만료"}}
                 </template>
                 <template slot="browse" scope="props">
-                    <b-button @click="browsePermit(props.rowData)"> 열람 요청 </b-button>
+                    <b-button v-if="props.rowData.status === 'standby'" @click="browsePermit(props.rowData)"> 열람 요청 </b-button>
+                    <b-button v-else disabled> 열람 요청 </b-button>
                 </template>
             </vuetable>
             <vuetable-pagination-bootstrap
@@ -144,6 +146,13 @@ export default {
                 dataClass: 'list-item-heading'
             },
             {
+                name: "updated_at",
+                sortField: 'updated_at',
+                title: '처리 날짜',
+                titleClass: '',
+                dataClass: 'list-item-heading'
+            },
+            {
                 name: "__slot:browse",
                 title: '열람 요청',
                 titleClass: '',
@@ -168,10 +177,28 @@ export default {
                 value:"denied",
                 text:"반려"
             }
-        ]
+        ],
+        sortType:"desc",
+        sort:"id",
     }
   },
     methods: {
+        dataManager(sortOrder, pagination) { //sort event
+            if(sortOrder.length) {
+                let sortInfo = sortOrder[0]
+                this.sortType = sortInfo.direction
+                this.sort = sortInfo.sortField
+                // if(sortInfo.sortField === 'accessStatus') {
+                //     this.getSortedStatusRecords('access')
+                // } else if(sortInfo.sortField === 'takeoutStatus') {
+                //     this.getSortedStatusRecords('takeout')
+                // } else {
+                //     this.getRecords()
+                // }
+                this.getItems()
+            }
+        },
+
         async savePermit() {
             await api.parchRequestBrowse({reason:this.form.reason, status:this.form.status.value, id:this.currentTakeoutData.id})
             this.permitModal = false;
@@ -197,7 +224,9 @@ export default {
                 search:'',
                 status : 'standby',
                 page:this.currentPage,
-                per_page:this.perPage
+                per_page:this.perPage,
+                sort:this.sort,
+                sortType:this.sortType
             })
             this.items = temp
         },

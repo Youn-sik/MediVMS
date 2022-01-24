@@ -74,7 +74,7 @@ const routes = [
         path: "settings",
         component: () =>
           import(/* webpackChunkName : "product" */ "./views/app/pages/product"),
-        redirect: `${adminRoot}/pages/product/settings`,
+        redirect: `${adminRoot}/settings/settings`,
         children: [
           {
             path: "devices",
@@ -90,6 +90,11 @@ const routes = [
             path: "settings",
             component: () =>
               import(/* webpackChunkName: "product" */ "./views/app/pages/settings/Settings")
+          },
+          {
+            path: "doctor",
+            component: () =>
+              import(/* webpackChunkName: "product" */ "./views/app/pages/settings/Doctor")
           },
         ]
       },

@@ -6,8 +6,8 @@ axios.defaults.baseURL = `https://${base_url}:3000`
 let ipport = window.location.href.split('/')[2]
 let ip = ipport.split(":")[0]
 
-// if(base_url !== ip)
-//     axios.defaults.baseURL = `https://${ip}:13000`
+if(base_url !== ip && "localhost" !== ip)
+    axios.defaults.baseURL = `https://${ip}:13000`
 
 const api = {
     getConnectecDevices(params) {
@@ -143,7 +143,7 @@ const api = {
 
     getRecrodAccess(params) {
         return new Promise((resolve, reject) => {
-            axios.get(`/record_access?per_page=${params.per_page}&page=${params.page}&user_id=${params.user_id}&first=${params.first}&last=${params.last}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}`).then(
+            axios.get(`/record_access?per_page=${params.per_page}&page=${params.page}&user_id=${params.user_id}&first=${params.first}&last=${params.last}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}&sort=${params.sort}&sortType=${params.sortType}`).then(
                 res => {
                     resolve(res.data)
                 },
@@ -176,7 +176,7 @@ const api = {
 
     getTekeoutAccess(params) {
         return new Promise((resolve, reject) => {
-            axios.get(`/takeout_access?per_page=${params.per_page}&page=${params.page}&user_id=${params.user_id}&first=${params.first}&last=${params.last}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}`).then(
+            axios.get(`/takeout_access?per_page=${params.per_page}&page=${params.page}&user_id=${params.user_id}&first=${params.first}&last=${params.last}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}&sort=${params.sort}&sortType=${params.sortType}`).then(
                 res => {
                     resolve(res.data)
                 },
@@ -221,6 +221,17 @@ const api = {
     getRecordAuth(params) {
         return new Promise((resolve, reject) => {
             axios.get(`/record_auth?per_page=${params.per_page}&page=${params.page}&status=${params.status}&searchType=${params.searchType}&search=${params.search}&start=${params.start}&end=${params.end}&sort=${params.sort}&sortType=${params.sortType}&authType=${params.authType}`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    getSplitedRecords(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/splited_records?record_id=${params.record_id}`).then(
                 res => {
                     resolve(res.data)
                 },
@@ -407,6 +418,54 @@ const api = {
             )
         })
     },
+
+    getDoctors(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/doctor?page=${params.page}&per_page=${params.perPage}&search=${params.search}&searchType=${params.searchType}&sort=${params.sort}&sortType=${params.sortType}`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    addDoctors(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/doctor',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    updateDoctors(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/doctor',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    deleteDoctors(params) {
+        return new Promise((resolve, reject) => {
+            axios.delete('/doctor',{
+                data:{
+                    doctors : params.doctors
+                }}).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
 }
 
 export default api

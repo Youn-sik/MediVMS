@@ -182,7 +182,6 @@ app.patch('/setAuth',(req,res) => {
     surgery = ${req.body.surgery},
     schedule = ${req.body.schedule},
     browse = ${req.body.browse},
-    history = ${req.body.history},
     admin = ${req.body.admin},
     setting = ${req.body.setting}
     WHERE account = "${req.body.account}"`,
@@ -205,20 +204,28 @@ app.patch('/recordStart',(req,res) => {
 })
 
 app.patch('/recordStop',(req,res) => {
-    connection.query(`UPDATE surgery
-    SET record = 0, record_time = NULL
+    let endTime = moment().format("YYYY-MM-DD HH:mm:ss")
+    connection.query(`UPDATE records
+    SET end_date = "${endTime}"
     WHERE surgery_id = ${req.body.id}`,
     function (err, rows, fields) {
         if (err) throw err
 
-        res.send(rows)
+        connection.query(`UPDATE surgery
+        SET record = 0
+        WHERE surgery_id = ${req.body.id}`,
+        function (err, _rows, fields) {
+            if (err) throw err
+
+            res.send(_rows)
+        })
     })
 })
 
 app.post('/saveRecord', (req,res) => {
 
-    connection.query("INSERT INTO VMS.records (sergery_name, department, doctor, surgery_desc, patient_status, video_link, `date`, patient_name, devices, expiration)"+
-    `VALUES('${req.body.sergery_name}', '${req.body.department}', '${req.body.doctor}', '${req.body.surgery_desc}', '${req.body.patient_status}', '${req.body.video_link}', '${req.body.date}', '${req.body.patient_name}','${req.body.devices}',0);`,
+    connection.query("INSERT INTO VMS.records (surgery_id, sergery_name, department, doctor, surgery_desc, patient_status, video_link, `date`, patient_name, devices, expiration)"+
+    `VALUES(${req.body.surgery_id}, '${req.body.sergery_name}', '${req.body.department}', '${req.body.doctor}', '${req.body.surgery_desc}', '${req.body.patient_status}', '${req.body.video_link}', '${req.body.date}', '${req.body.patient_name}','${req.body.devices}',0);`,
     function (err, rows, fields) {
         if (err) throw err
 
@@ -231,6 +238,39 @@ app.post('/saveRecord', (req,res) => {
 
     //     res.send(rows)
     // })
+})
+
+app.get('/splited_records', (req,res) => {
+    let record_id = parseInt(req.query.record_id)
+
+    connection.query(`
+    SELECT sr.id,sr.video_link,sr.date,sr.takeout_link,sr.record_id,r.devices
+    FROM splited_records sr
+    JOIN records r
+    on sr.record_id = r.id
+    where sr.record_id = ${record_id}
+    `,function (err, rows, fields) {
+        if(err) next(err)
+
+        rows.forEach((e) => {
+            let devices = e.devices.split(',')
+            let files = []
+
+            // 각 시리얼 번호마다 영상 갯수 구한후 같이 JSON에 포함
+            devices.forEach((device) => {
+                try{
+                    // mpd 파일만 포함
+                    let temp = fs.readdirSync(`/var/www/VMS/backend/record/${device}_${e.video_link}`).filter(file => file.indexOf(".mpd") > -1)
+                    files = [...files, temp]
+                } catch {
+                    files = [...files]
+                }
+                e.files = files
+            })
+        })
+
+        res.send(rows)
+    })
 })
 
 app.get('/getRecords', (req,res) => {
@@ -268,13 +308,29 @@ app.get('/getRecords', (req,res) => {
         ${sort_type}
         LIMIT ${page*per_page},${per_page};
         `, function (err, _rows, fields) {
+            _rows.forEach((e) => {
+                let devices = e.devices.split(',')
+                let files = []
+
+                // 각 시리얼 번호마다 영상 갯수 구한후 같이 JSON에 포함
+                devices.forEach((device) => {
+                    try{
+                        // mpd 파일만 포함
+                        let temp = fs.readdirSync(`/var/www/VMS/backend/record/${device}_${e.video_link}`).filter(file => file.indexOf(".mpd") > -1)
+                        files = [...files, temp]
+                    } catch {
+                        files = [...files]
+                    }
+                })
+                e.files = files
+            })
             res.send({
                 last_page,
                 from:page*per_page+1,
                 current_page:page+1,
                 per_page,
                 total:count,
-                data:_rows ? _rows : []
+                data:_rows ? _rows : [],
             })
         })
     })
@@ -435,15 +491,19 @@ app.patch('/controlDevice',(req,res) => {
 
 app.get('/schedule',(req,res) => {
     connection.query(`
-    SELECT *
-    FROM schedule
+    SELECT s.id,s.name,s.start,s.end,s.note,s.color,s.emergency,s.surgery_id,s.is_record,s.is_over,s.patient,s.doctor,s.patient_code,s.patient_birthday,dr.id as did,dr.name as dname,dr.department,dr.rank,dr.employee_id
+    FROM schedule s
+    JOIN doctors dr
+    ON dr.id = doctor
     WHERE is_record = 1
     ${parseInt(req.query.surgery_id) ? "AND surgery_id = " + req.query.surgery_id : ''}
 
     UNION ALL
 
-    SELECT *
-    FROM schedule
+    SELECT s.id,s.name,s.start,s.end,s.note,s.color,s.emergency,s.surgery_id,s.is_record,s.is_over,s.patient,s.doctor,s.patient_code,s.patient_birthday,dr.id as did,dr.name as dname,dr.department,dr.rank,dr.employee_id
+    FROM schedule s
+    JOIN doctors dr
+    ON dr.id = doctor
     WHERE start >= "${req.query.start}"
     AND end <= "${req.query.end}"
     ${parseInt(req.query.alltype) === 1? '' : `AND is_over = 0`}
@@ -603,11 +663,13 @@ app.get('/record_access', function(req,res) {
     let last = parseInt(req.query.last)
     let user_id = parseInt(req.query.user_id)
 
+    let sort = req.query.sort
+    let sort_type = req.query.sortType
+
     let per_page = req.query.per_page;
     let page = req.query.page;
-
     connection.query(`
-    SELECT record_access.id, status,reason,created_at,sergery_name,records.department as department,doctor,surgery_desc,patient_status,video_link,date,patient_name,account,name,record_id,user_id
+    SELECT record_access.id, status,reason,created_at,sergery_name,records.department as department,doctor,surgery_desc,patient_status,video_link,date,patient_name,account,name,record_id,user_id,updated_at
     FROM record_access
     JOIN records
     ON record_id = records.id
@@ -616,12 +678,12 @@ app.get('/record_access', function(req,res) {
     WHERE expiration IS NOT NULL
     ${user_id ? 'AND user_id = ' + user_id : ''}
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
-    ${status ? "AND status = '" + status + "'" : ""}
+    -- ${status ? "AND status = '" + status + "'" : ""}
     ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
     ${first ? 'AND record_id >= ' + first : ''}
     ${last ? 'AND record_id <= ' + last : ''}
-    ORDER BY records.id
-    DESC
+    ORDER BY ${sort}
+    ${sort_type}
     ${per_page && page ? "LIMIT " + (parseInt(page)-1)*parseInt(per_page) + " , " + parseInt(per_page) : '' };
     `, function (err, rows, fields) {
 
@@ -678,11 +740,14 @@ app.get('/takeout_access', function(req,res) {
     let last = parseInt(req.query.last)
     let user_id = parseInt(req.query.user_id)
 
+    let sort = req.query.sort
+    let sort_type = req.query.sortType
+
     let per_page = req.query.per_page;
     let page = req.query.page;
 
     connection.query(`
-    SELECT takeout_access.id, status,reason,created_at,sergery_name,records.department as department,doctor,surgery_desc,patient_status,video_link,date,patient_name,account,name,record_id,user_id
+    SELECT takeout_access.id, status,reason,created_at,sergery_name,records.department as department,doctor,surgery_desc,patient_status,video_link,date,patient_name,account,name,record_id,user_id,updated_at
     FROM takeout_access
     JOIN records
     ON record_id = records.id
@@ -691,12 +756,12 @@ app.get('/takeout_access', function(req,res) {
     WHERE expiration IS NOT NULL
     ${user_id ? 'AND user_id = ' + user_id : ''}
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
-    ${status ? "AND status = '" + status + "'" : ""}
+    -- ${status ? "AND status = '" + status + "'" : ""}
     ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
     ${first ? 'AND record_id >= ' + first : ''}
     ${first ? 'AND record_id <= ' + last : ''}
-    ORDER BY records.id
-    DESC
+    ORDER BY ${sort}
+    ${sort_type}
     ${per_page && page ? "LIMIT " + (parseInt(page)-1)*parseInt(per_page) + " , " + parseInt(per_page) : '' };
     `, function (err, rows, fields) {
         if(per_page && page) { //페이징 사용시 db count 구함
@@ -774,6 +839,67 @@ app.patch('/settings',(req,res) => {
     })
 })
 
+app.get('/doctor', (req,res) => {
+    let searchType = req.query.searchType;
+    let search = req.query.search
+
+    let sort = req.query.sort
+    let sort_type = req.query.sortType
+
+    let per_page = req.query.per_page;
+    let page = req.query.page;
+
+    connection.query(`SELECT *
+    FROM doctors
+    ${searchType && search ? "WHERE " + searchType + " LIKE '%" + search + "%'" : ""}
+    ${per_page && page ? "LIMIT " + (parseInt(page)-1)*parseInt(per_page) + " , " + parseInt(per_page) : '' };`, function(err, rows, fields) {
+        if(err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.post('/doctor', (req,res) => {
+    connection.query(`INSERT INTO doctors
+    VALUES (NULL, "${req.body.name}","${req.body.department}","${req.body.rank}","${req.body.employee_id}")`, function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.patch('/doctor', (req,res) => {
+    connection.query(`UPDATE doctors
+    SET
+    name = "${req.body.name}",
+    department = "${req.body.department}"
+    rank = "${req.body.rank}"
+    employee_id = "${req.body.employee_id}"
+    WHERE id = ${req.body.id}`,
+    function (err, rows, fields) {
+        if (err) throw err
+
+        res.send(rows)
+    })
+})
+
+app.delete('/doctor', (req,res) => {
+    req.body.doctors.forEach(async e => {
+        let query = `
+        DELETE FROM doctors
+        WHERE id=${e};
+        `
+
+        console.log(query)
+
+        connection.query(query)
+    });
+
+    res.send({result:true})
+})
+
+
+
 // 30일 지난 record 삭제
 cron.schedule('0 4 * * *', () => {
         let before30days = moment().subtract(30, 'days').format("YYYY-MM-DD HH:mm:ss")
@@ -797,13 +923,39 @@ cron.schedule('0 4 * * *', () => {
     }
 );
 
-// const start = () => {
-//     app.listen(3000,'0.0.0.0')
-// }
 
-// start()
+// 서버 재시작 됐을경우 이어서 녹화
+function continueRecords () {
+    connection.query(`
+        SELECT *
+        FROM records
+        WHERE end_date IS NULL;
+    `,function (err, rows, fields) {
+        if (err) throw err
 
+        rows.forEach((e) => {
+            let deviceTime = moment().format("YYYYMMDDHHmmssSSS")
+            let serverTime = moment().format("YYYY-MM-DD HH:mm:ss")
+            let devices = e.devices.split(',')
 
+            connection.query(`UPDATE records
+            SET split = 2
+            WHERE id = ${e.id}`)
+
+            connection.query(`INSERT INTO splited_records VALUES (NULL, "${deviceTime}", "${serverTime}", NULL, ${e.id})`)
+
+            devices.forEach((device) => {
+                mqttClient.publish(``,JSON.stringify({
+                    serial_number:device,
+                    status:true,
+                    start_time:deviceTime
+                }))
+            })
+        })
+    })
+}
+
+continueRecords()
 
 const sslOptions = {
     key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),

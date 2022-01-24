@@ -96,6 +96,7 @@
             ref="modalright"
             :title="'수술 추가'"
             modal-class="modal-right"
+            :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true"
         >
             <b-form>
                 <b-form-group label="수술명">
@@ -124,17 +125,13 @@
                 <b-form-group label="생년 월일">
                     <b-form-input v-model="newEvent.patient_birthday" />
                 </b-form-group>
-                <b-form-group label="담당의 명">
+                <!-- <b-form-group label="담당의 명">
                     <b-form-input v-model="newEvent.doctor" />
-                </b-form-group>
-                <b-form-group label="비고">
-                    <b-form-input v-model="newEvent.note" />
-                </b-form-group>
-                <b-form-group label="색상">
-                    <vselect label="name" :options="colors" v-model="newEvent.color" dir="ltr" >
+                </b-form-group> -->
+                <b-form-group label="담당의 명">
+                    <vselect label="name" :options="doctors" v-model="newEvent.doctor" :reduce="doctor => doctor.id" dir="ltr" >
                         <template slot="option" slot-scope="option">
                             <div class="d-center">
-                                <!-- <img :src="option.owner.avatar_url" height="25" /> -->
                                 <div :class="'color-sample ' + option.name" style="display:inline-block; margin-right:5px;"></div>
                                 {{ option.name }}
                             </div>
@@ -150,6 +147,20 @@
                             </div>
                         </template> -->
                     </vselect>
+                </b-form-group>
+                <b-form-group label="색상">
+                    <vselect label="name" :options="colors" v-model="newEvent.color" dir="ltr" >
+                        <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <!-- <img :src="option.owner.avatar_url" height="25" /> -->
+                                <div :class="'color-sample ' + option.name" style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.name }}
+                            </div>
+                        </template>
+                    </vselect>
+                </b-form-group>
+                <b-form-group label="비고">
+                    <b-form-input v-model="newEvent.note" />
                 </b-form-group>
                 <!-- <b-form-checkbox
                 id="emergency"
@@ -205,17 +216,11 @@
                 <b-form-group label="생년 월일">
                     <b-form-input v-model="newEvent.patient_birthday" />
                 </b-form-group>
+
                 <b-form-group label="담당의 명">
-                    <b-form-input v-model="newEvent.doctor" />
-                </b-form-group>
-                <b-form-group label="비고">
-                    <b-form-input v-model="newEvent.note" />
-                </b-form-group>
-                <b-form-group label="색상">
-                    <vselect label="name" :options="colors" v-model="newEvent.color" dir="ltr" >
+                    <vselect label="name" :options="doctors" v-model="newEvent.doctor" :reduce="doctor => doctor.id" dir="ltr" >
                         <template slot="option" slot-scope="option">
                             <div class="d-center">
-                                <!-- <img :src="option.owner.avatar_url" height="25" /> -->
                                 <div :class="'color-sample ' + option.name" style="display:inline-block; margin-right:5px;"></div>
                                 {{ option.name }}
                             </div>
@@ -232,6 +237,20 @@
                             </div>
                         </template>
                     </vselect>
+                </b-form-group>
+                <b-form-group label="색상">
+                    <vselect label="name" :options="colors" v-model="newEvent.color" dir="ltr" >
+                        <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <!-- <img :src="option.owner.avatar_url" height="25" /> -->
+                                <div :class="'color-sample ' + option.name" style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.name }}
+                            </div>
+                        </template>
+                    </vselect>
+                </b-form-group>
+                <b-form-group label="비고">
+                    <b-form-input v-model="newEvent.note" />
                 </b-form-group>
                 <!-- <b-form-checkbox
                 id="emergency"
@@ -569,10 +588,24 @@ export default {
             createStart: null,
             extendOriginal: null,
             sizeMod : false,
-            surgerySelection:[]
+            surgerySelection:[],
+
+            doctors:[],
+            currentDoctor:[],
         }
     },
     methods:{
+        async getDoctors() {
+            this.doctors = await api.getDoctors({
+                page : 1,
+                perPage : 1000,
+                search : '',
+                searchType : 'name',
+                sort : 'id',
+                sortType : 'desc'
+            })
+        },
+
         startDrag ({ event, timed }) {
             if (event && timed) {
                 this.dragEvent = event
@@ -638,9 +671,9 @@ export default {
                 this.newEvent = {
                     ...this.newEvent,
                     ...this.createEvent,
+                    surgery:this.currentSurgery.surgery_id === 0 ? this.surgeries[1] : this.currentSurgery,
                     start:moment(this.createEvent.start).format('YYYY-MM-DDTHH:mm:ssZ'),
                     end:moment(this.createEvent.end).format('YYYY-MM-DDTHH:mm:ssZ'),
-                    surgery:this.currentSurgery
                 }
                 this.addModal = true
             }
@@ -919,11 +952,11 @@ export default {
         },
 
         async recordStart() {
-          let startTime = moment().format('YYYYMMDDHHmmss')
+          let startTime = moment().format('YYYYMMDDHHmmssSSS')
 
-          await api.recordStart({
-            id:this.currentSurgery.surgery_id
-          })
+        //   await api.recordStart({
+        //     id:this.currentSurgery.surgery_id
+        //   })
 
           let currentSerial = null
           this.currentSurgery.serial_numbers.forEach(e => {
@@ -944,39 +977,46 @@ export default {
             patient_status : "수술 완료",
             devices:this.currentSurgery.serial_numbers.join(','),
             date : moment().format('YYYY-MM-DD HH:mm:ss'),
-            video_link : `http://172.16.41.105:3000/stream/${currentSerial}_${startTime}.mp4`
+            video_link : `${currentSerial}_${startTime}`
           })
         },
 
         async patchSchedule(id) {
-            if(this.newEvent.emergency) {
-                this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD')
-                this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD')
-            } else {
-                this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
-                this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
+            if(confirm("정말 수정 하시겠습니까?")){
+                if(this.newEvent.emergency) {
+                    this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD')
+                    this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD')
+                } else {
+                    this.newEvent.start = moment(this.newEvent.start).format('YYYY-MM-DD HH:mm')
+                    this.newEvent.end = moment(this.newEvent.end).format('YYYY-MM-DD HH:mm')
+                }
+
+                await api.patchSchedule({...this.newEvent})
+
+                this.getSchedule()
+
+                this.modModal = false;
+
+                this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                    type:"patch"
+                }))
+
+                alert("수정 되었습니다.")
             }
-
-            await api.patchSchedule({...this.newEvent})
-
-            this.getSchedule()
-
-            this.modModal = false;
-
-            this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
-                type:"patch"
-            }))
         },
 
         async deleteSchedule(id) {
-            await api.deleteSchedule({id})
-            this.getSchedule()
-            this.selectedOpen = false
-            this.selectedOpenFromDay = false
+            if(confirm("정말 삭제 하시겠습니까?")){
+                await api.deleteSchedule({id})
+                this.getSchedule()
+                this.selectedOpen = false
+                this.selectedOpenFromDay = false
 
-            this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
-                type:"delete"
-            }))
+                this.mqttClient.publish(`/send/schedule/`, JSON.stringify({
+                    type:"delete"
+                }))
+                alert("삭제 되었습니다.")
+            }
         },
 
         changeSearchType(item) {
@@ -990,6 +1030,7 @@ export default {
         }
     },
     mounted () {
+        this.getDoctors()
         this.getSurgery()
 
         this.mqttClient = mqtt.connect(mqtt_url,{

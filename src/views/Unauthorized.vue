@@ -14,8 +14,8 @@
                   <router-link to="/">
                     <span class="logo-single" />
                   </router-link>
-                  <h6 class="mb-4">{{ $t("unauthorized.title") }}</h6>
-                  <p class="mb-0 text-muted text-small mb-0">{{ $t("unauthorized.detail") }}</p>
+                  <h6 class="mb-4">허가 되지 않은 접근 감지</h6>
+                  <p class="mb-0 text-muted text-small mb-0">접근 권한이 없어 해당 페이지에 접근 할 수 없습니다.</p>
                   <p class="display-1 font-weight-bold mb-5">503</p>
                   <b-button
                     type="submit"
@@ -23,7 +23,7 @@
                     size="lg"
                     class="btn-shadow"
                     @click="goBack"
-                  >{{ $t("pages.go-back-home") }}</b-button>
+                  >뒤로가기</b-button>
                 </div>
               </b-card>
             </b-colxx>
@@ -34,11 +34,29 @@
   </div>
 </template>
 <script>
-import { adminRoot } from '../constants/config';
+import {
+    mapGetters,
+} from "vuex";
+
 export default {
+  computed: {
+    ...mapGetters(["currentUser", "processing", "loginError"])
+  },
   methods: {
     goBack() {
-      this.$router.push(adminRoot);
+      // this.$router.go(-1);
+      if(parseInt(this.currentUser.dashboard))
+          this.$router.push('/dashboard');
+      else if(parseInt(this.currentUser.surgery))
+          this.$router.push('/app/pages/product/surgeries');
+      else if(parseInt(this.currentUser.schedule))
+          this.$router.push('/app/pages/product/sergery-reserv');
+      else if(parseInt(this.currentUser.browse))
+          this.$router.push('/app/data');
+      else if(parseInt(this.currentUser.admin))
+          this.$router.push('/app/admin');
+      else if(parseInt(this.currentUser.setting))
+          this.$router.push('/app/settings');
     },
   },
   mounted: function () {

@@ -120,7 +120,7 @@ export default {
     mounted() {
         this.videoData = this.data
 
-        this.date = moment(this.videoData.date).format('YYYYMMDDHHmmss')
+        this.date = moment(this.videoData.date).format('YYYYMMDDHHmmssSSS')
 
         this.devices = this.videoData.devices.split(',')
 

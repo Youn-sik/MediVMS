@@ -126,7 +126,6 @@ export default {
       parseInt(this.currentUser.surgery),
       parseInt(this.currentUser.schedule),
       parseInt(this.currentUser.browse),
-      parseInt(this.currentUser.history),
       parseInt(this.currentUser.admin),
       parseInt(this.currentUser.setting)]
 

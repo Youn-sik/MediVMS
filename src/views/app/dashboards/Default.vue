@@ -12,7 +12,7 @@
         </b-card>
       </b-colxx>
       <b-colxx xl="4" lg="12">
-        <b-card style="height:235px;" title="오늘 일정">
+        <b-card style="height:235px;" title="녹화 일정">
           <doughnut-chart v-if="eventsChartData" :data="eventsChartData" shadow />
         </b-card>
       </b-colxx>
@@ -28,7 +28,7 @@
                   수술실
                 </b-th>
                 <b-th class="text-center">
-                  수술실 상황
+                  수술 현황
                 </b-th>
                 <b-th class="text-center">
                   수술실 시작 시간
@@ -263,7 +263,7 @@ export default {
     }
 
     this.eventsChartData = {
-      labels: ['시작중', '대기'],
+      labels: ['녹화중', '대기'],
       datasets: [
         {
           label: '',

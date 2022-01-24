@@ -2,7 +2,8 @@
 <div>
   <b-row>
     <b-colxx xxs="12">
-      <piaf-breadcrumb heading="열람 기록"/>
+      <piaf-breadcrumb :heading=" $route.name === 'browse' ? '열람 기록' :
+      $route.name === 'takeout' ? '반출 기록' : ''"/>
       <div class="separator mb-5"></div>
     </b-colxx>
   </b-row>

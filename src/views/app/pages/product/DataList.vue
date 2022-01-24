@@ -76,8 +76,24 @@
             </b-tbody>
         </b-table-simple>
         <div style="width:744px; height:415px;">
-            <VideoPlayer
+            <SplitVideoPlayer
+                v-if="videoData.split === 1"
+                ref="videoPlayer"
                 :isHistory="true"
+                :recordStartDate="videoData.date"
+                :manifest-url="videoLink"
+            ></SplitVideoPlayer>
+            <SplitVideoPlayer
+                v-else-if="videoData.split === 2"
+                ref="videoPlayer"
+                :isHistory="true"
+                :recordStartDate="videoData.date"
+                :manifest-url="videoLink"
+            ></SplitVideoPlayer>
+            <VideoPlayer
+                v-else
+                :isHistory="true"
+                :recordStartDate="videoData.date"
                 :manifest-url="videoLink"
             ></VideoPlayer>
         </div>
@@ -138,7 +154,7 @@
           </template>
 
           <template v-if="$route.name === 'browse'" slot="browse_request" scope="props">
-            <b-button v-if="(props.rowData.browse_status === null || props.rowData.browse_status === undefined)
+            <b-button v-if="(props.rowData.browse_status === null || props.rowData.browse_status === undefined || props.rowData.browse_status === 'denied')
             && props.rowData.expiration === 0" @click="openBrowseRequestModal(props.rowData.id)"> 열람 요청 </b-button>
             <b-button v-else disabled> 열람 요청 </b-button>
           </template>
@@ -149,7 +165,7 @@
           </template>
 
           <template v-if="$route.name === 'takeout'" slot="takeout_request" scope="props">
-            <b-button v-if="(props.rowData.takeout_status === null || props.rowData.takeout_status === undefined)
+            <b-button v-if="(props.rowData.takeout_status === null || props.rowData.takeout_status === undefined || props.rowData.takeout_status === 'denied')
             && props.rowData.expiration === 0" @click="openTakeoutRequestModal(props.rowData.id)"> 반출 요청 </b-button>
             <b-button v-else disabled> 반출 요청 </b-button>
           </template>
@@ -178,6 +194,7 @@ import Vuetable from 'vuetable-2/src/components/Vuetable'
 import VuetablePaginationBootstrap from '../../../../components/Common/VuetablePaginationBootstrap'
 import moment from 'moment'
 import VideoPlayer from '../../../../components/Shaka/VideoPlayer.vue'
+import SplitVideoPlayer from '../../../../components/Shaka/SplitVideoPlayer.vue'
 import {base_url} from "../../../../server.json"
 
 export default {
@@ -186,6 +203,7 @@ export default {
     'vuetable' : Vuetable,
     'vuetable-pagination-bootstrap' : VuetablePaginationBootstrap,
     VideoPlayer,
+    SplitVideoPlayer
   },
   computed: {
     ...mapGetters({
@@ -536,12 +554,38 @@ export default {
 
       this.requestTakeoutModal = false
     },
-    openVideoModal(data) {
+    async openVideoModal(data) {
+      this.currentVideo = 0
       this.videoData = data
       this.devices = data.devices.split(',')
-      this.date = moment(data.date).format('YYYYMMDDHHmmss')
+      this.date = data.video_link
 
-      this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
+      if(data.split === 0) {
+        this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
+      } else if(data.split === 1) {
+        this.split = 1
+        let files = []
+        data.files.forEach((file) => {
+          files = files.concat(file)
+        })
+
+        this.videoLink = files
+      } else if(data.split === 2) {
+        this.split = 2
+        let files = []
+
+        let splitedList = await api.getSplitedRecords({
+          record_id : data.id
+        })
+
+        splitedList.forEach((e) => {
+          e.files.forEach((file) => {
+            files = files.concat(file)
+          })
+        })
+
+        this.videoLink = files
+      }
 
       this.videoModal = true
 
@@ -700,7 +744,9 @@ export default {
             this.currentProcessingStatus === 2 ? '수술 취소' :
             this.currentProcessingStatus === 3 ? '입원' : '퇴원',
           per_page : '',
-          page : ''
+          page : '',
+          sort:this.sort,
+          sortType:this.sortType
         })
 
         //반출 권한 조회
@@ -718,7 +764,9 @@ export default {
             this.currentProcessingStatus === 2 ? '수술 취소' :
             this.currentProcessingStatus === 3 ? '입원' : '퇴원',
           per_page : '',
-          page : ''
+          page : '',
+          sort:this.sort,
+          sortType:this.sortType
         })
 
         //조건에 맞는 권한이 존재하면 id 비교후 합치기

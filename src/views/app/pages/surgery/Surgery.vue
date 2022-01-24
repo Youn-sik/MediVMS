@@ -51,16 +51,16 @@
             <b-table-simple>
               <b-tbody striped>
                 <b-tr>
-                  <b-th rowspan="1" width="20%">이름</b-th>
-                  <b-th rowspan="1" width="20%">나이</b-th>
-                  <b-th rowspan="1" width="20%">성별</b-th>
-                  <b-th rowspan="1" width="20%">상태</b-th>
+                  <b-th rowspan="1" width="20%">환자 코드</b-th>
+                  <b-th rowspan="1" width="20%">환자 명</b-th>
+                  <b-th rowspan="1" width="20%">생년월일</b-th>
+                  <b-th rowspan="1" width="20%"></b-th>
                 </b-tr>
                 <b-tr>
+                  <b-td colspan="1">{{currentSchedule.patient_code}}</b-td>
                   <b-td colspan="1">{{currentSchedule.patient}}</b-td>
-                  <b-td colspan="1">{{currentSchedule.patient_age}}</b-td>
-                  <b-td colspan="1">{{currentSchedule.patient_sex}}</b-td>
-                  <b-td colspan="1">{{currentSchedule.patient_status}}</b-td>
+                  <b-td colspan="1">{{currentSchedule.patient_birthday}}</b-td>
+                  <b-td colspan="1"></b-td>
                 </b-tr>
               </b-tbody>
             </b-table-simple>
@@ -71,16 +71,16 @@
             <b-table-simple>
               <b-tbody striped>
                 <b-tr>
-                  <b-th rowspan="1" width="20%">사진</b-th>
+                  <b-th rowspan="1" width="20%">사번</b-th>
                   <b-th rowspan="1" width="20%">이름</b-th>
-                  <b-th rowspan="1" width="20%">진료과목</b-th>
-                  <b-th rowspan="1" width="20%"></b-th>
+                  <b-th rowspan="1" width="20%">진료과</b-th>
+                  <b-th rowspan="1" width="20%">직급</b-th>
                 </b-tr>
                 <b-tr>
-                  <b-td colspan="1"></b-td>
-                  <b-td colspan="1">{{currentSchedule.doctor}}</b-td>
-                  <b-td colspan="1"></b-td>
-                  <b-td colspan="1"></b-td>
+                  <b-td colspan="1">{{currentSchedule.employee_id}}</b-td>
+                  <b-td colspan="1">{{currentSchedule.dname}}</b-td>
+                  <b-td colspan="1">{{currentSchedule.department}}</b-td>
+                  <b-td colspan="1">{{currentSchedule.rank}}</b-td>
                 </b-tr>
               </b-tbody>
             </b-table-simple>
@@ -179,7 +179,7 @@ export default {
         },
 
         async recordStart() { //녹화 시작 함수
-          let startTime = moment().format('YYYYMMDDHHmmss')
+          let startTime = moment().format('YYYYMMDDHHmmssSSS')
 
           await api.recordStart({
             id:this.currentSurgery.surgery_id
@@ -196,6 +196,7 @@ export default {
           });
 
           await api.saveRecord({
+            surgery_id : this.currentSurgery.surgery_id,
             sergery_name : this.currentSurgery.surgery_name,
             department : '임시 정보',
             doctor : '임시 정보',
@@ -204,7 +205,7 @@ export default {
             patient_status : "수술 완료",
             devices:this.currentSurgery.serial_numbers.join(','),
             date : moment().format('YYYY-MM-DD HH:mm:ss'),
-            video_link : `/stream/${currentSerial}_${startTime}/${currentSerial}_${startTime}.mp4`
+            video_link : `${startTime}`
           })
         },
 
@@ -227,7 +228,6 @@ export default {
           let end = moment().endOf('month').format("YYYY-MM-DD 23:59:59")
           this.schedules = await api.getSchedule({surgery_id:this.currentSurgery.surgery_id,start,end,alltype:0,searchType:'',search:''})
 
-          console.log(this.schedules)
           if(this.schedules.length) {
             this.currentSchedule = this.schedules[0]
           } else {

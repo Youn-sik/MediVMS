@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-colxx xxs="12">
-      <h3>{{ '열람검색' }}</h3>
+      <h3>{{ '검색' }}</h3>
       <div class="top-right-button-container">
         <b-button-group>
         </b-button-group>
