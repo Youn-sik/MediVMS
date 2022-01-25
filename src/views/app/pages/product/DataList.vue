@@ -76,7 +76,6 @@
             </b-tbody>
         </b-table-simple>
         <div style="width:744px; height:415px;">
-          {{videoLink}}
             <SplitVideoPlayer
                 v-if="videoData.split === 1"
                 ref="videoPlayer"
@@ -196,6 +195,7 @@ import VuetablePaginationBootstrap from '../../../../components/Common/VuetableP
 import moment from 'moment'
 import VideoPlayer from '../../../../components/Shaka/VideoPlayer.vue'
 import SplitVideoPlayer from '../../../../components/Shaka/SplitVideoPlayer.vue'
+import AssembleVideoPlayer from '../../../../components/Shaka/AssembleVideoPlayer.vue'
 import {base_url} from "../../../../server.json"
 
 export default {
@@ -240,6 +240,8 @@ export default {
       devices:[],
       date:null,
       currentVideo:0,
+      splitedList:[],
+      timeList:[],
 
       // sort
       sort:'id',
@@ -567,22 +569,28 @@ export default {
 
         this.videoLink = data.files[0]
       } else if(data.split === 2) {
-        this.split = 2
-        let files = []
 
-        let splitedList = await api.getSplitedRecords({
+        this.split = 2
+
+        this.videoLink = data.files[0]
+
+        this.timeList = Array(data.files[0].length).fill(data.date)
+
+        this.splitedList = await api.getSplitedRecords({
           record_id : data.id
         })
 
-        splitedList.forEach((e) => {
-          e.files.forEach((file) => {
-            files = files.concat(file)
-          })
+        let list = []
+
+        this.splitedList.forEach((e) => {
+          let time = Array(e.files[0].length).fill(e.date)
+          this.timeList = this.timeList.concat(time)
+          list = list.concat(e.files[0])
         })
 
-        this.videoLink = files
+        this.videoLink = this.videoLink.concat(list)
       }
-
+      console.log(this.timeList)
       this.videoModal = true
 
       this.saveRecord(data)
@@ -595,7 +603,15 @@ export default {
       } else if(this.videoData.split === 1) {
         this.videoLink = this.videoData.files[this.currentVideo]
       } else if(this.videoData.split === 2) {
-        // this.videoLink = this.videoData.files[this.currentVideo]
+        this.videoLink = this.videoData.files[this.currentVideo]
+
+        let list = []
+
+        this.splitedList.forEach((e) => {
+          list = list.concat(e.files[this.currentVideo])
+        })
+
+        this.videoLink = this.videoLink.concat(list)
       }
 
     },
@@ -608,7 +624,15 @@ export default {
         // this.$set(this.videoLink, this.currentVideo, this.videoData.files[this.currentVideo])
         this.videoLink = this.videoData.files[this.currentVideo]
       } else if(this.videoData.split === 2) {
-        // this.videoLink = this.videoData.files[this.currentVideo]
+        this.videoLink = this.videoData.files[this.currentVideo]
+
+        let list = []
+
+        this.splitedList.forEach((e) => {
+          list = list.concat(e.files[this.currentVideo])
+        })
+
+        this.videoLink = this.videoLink.concat(list)
       }
     },
     onPaginationData (paginationData) {
