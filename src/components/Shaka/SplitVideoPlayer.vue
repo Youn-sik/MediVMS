@@ -74,17 +74,11 @@ computed: {
             .format("YYYY-MM-DD HH:mm:ss");
     }
 },
-// watch: {
-//   'manifestUrl': function() {
-//     this.player
-//       .load(this.manifestUrl)
-//       .then(() => {
-//         // This runs if the asynchronous load is successful.
-//         console.log('The video has now been loaded!');
-//       })
-//       .catch(this.onError); // onError is executed if the asynchronous load fails
-//   },
-// },
+watch: {
+  'manifestUrl': function() {
+    this.loadVideo()
+  },
+},
 data() {
     return {
         player: null,
@@ -102,131 +96,60 @@ data() {
     };
 },
 mounted() {
-    this.date = this.recordStartDate; // 시작 날짜 초기화
-
-    const shaka = require("shaka-player/dist/shaka-player.ui.js");
-
-    // player 초기화
-    this.manifestUrl.forEach((e,i) => {
-        let player = new shaka.Player(this.$refs["videoPlayer"+i][0]);
-        const ui = new shaka.ui.Overlay(
-            player,
-            this.$refs['videoContainer'+i][0],
-            this.$refs['videoPlayer'+i][0]
-        );
-
-        ui.getControls();
-
-        // 첫번째 영상은 무조건 block으로 보이게 하기
-        if(i === 0)
-            this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "block";
-        console.log(e)
-        player
-        .load(`https://${base_url}:3000/stream/${e.replace('.mpd','')}/${e}`)
-        .then(() => {
-            console.log("The video"+i+" has now been loaded")
-
-            // 마지막 영상 길이, 총 영상 길이 가져오기 이전 영상은 1시간 고정
-            // if(this.manifestUrl.length === i+1) {
-            //     this.lastVideoTime = player.g.duration
-            //     this.totalVideoTime = i * 60 * 60 + this.lastVideoTime
-            // }
-
-            this.totalVideoTime += player.g.duration
-
-            // player.g.addEventListener("timeupdate", event => {
-            //     this.currentTime = parseInt(event.target.currentTime);
-            //     let scala = (this.currentPlayerNumber*60*60 + event.target.currentTime) / this.totalVideoTime
-            //     this.$refs.timeline__progress.style.transform = "scaleX("+scala+")"
-            // });
-
-            player.g.addEventListener("ended", () => {
-                // 날짜 초기화
-                this.currentTime++;
-                this.date = moment(this.date)
-                    .add(this.currentTime, "seconds")
-                    .format("YYYY-MM-DD HH:mm:ss");
-                this.currentTime = 0;
-
-
-                if(this.currentPlayerNumber === this.manifestUrl.length-1)
-                    return 0;
-
-                // display 변경
-                this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "none";
-                this.$refs['videoContainer'+(++this.currentPlayerNumber)][0].style.display = "block";
-
-                // 영상 재생
-                this.$refs['videoPlayer'+this.currentPlayerNumber][0].play()
-            });
-
-        }).catch(err => {
-            console.log("error : " + err)
-        });
-    });
-
-    // player1
-    // this.player = new shaka.Player(this.$refs.videoPlayer);
-    // const ui = new shaka.ui.Overlay(
-    //     this.player,
-    //     this.$refs.videoContainer,
-    //     this.$refs.videoPlayer
-    // );
-
-    // ui.getControls();
-
-    // this.player
-    // .load(this.urls[0])
-    // .then(() => {
-    //     // This runs if the asynchronous load is successful.
-    //     console.log("The video has now been loaded!");
-    //     this.player.g.play();
-
-    //     // 시간 업데이트
-    //     this.player.g.addEventListener("timeupdate", event => {
-    //         this.currentTime = parseInt(event.target.currentTime);
-    //     });
-
-    //     // 첫번째 영상이 끝났을때
-    //     this.player.g.addEventListener("ended", () => {
-    //         // 날짜 초기화
-    //         this.currentTime++;
-    //         this.date = moment(this.date)
-    //             .add(this.currentTime, "seconds")
-    //             .format("YYYY-MM-DD HH:mm:ss");
-    //         this.currentTime = 0;
-
-    //         // display 변경
-    //         this.$refs.videoContainer.style.display = "none";
-    //         this.$refs.videoContainer2.style.display = "block";
-
-    //         // player2 start
-    //         this.player2.g.play();
-    //     });
-    // })
-    // .catch(this.onError); // onError is executed if the asynchronous load fails.
-
-    // // player2
-    // this.player2 = new shaka.Player(this.$refs.videoPlayer2);
-    // const ui2 = new shaka.ui.Overlay(
-    //     this.player2,
-    //     this.$refs.videoContainer2,
-    //     this.$refs.videoPlayer2
-    // );
-    // ui2.getControls();
-    // this.player2
-    // .load(this.urls[1])
-    // .then(() => {
-    //     // This runs if the asynchronous load is successful.
-    //     console.log("The video has now been loaded!");
-
-    //     this.player2.g.addEventListener("timeupdate", event => {
-    //         this.currentTime = parseInt(event.target.currentTime);
-    //     });
-    // })
-    // .catch(this.onError); // onError is executed if the asynchronous load fails.
+    this.loadVideo()
 },
 methods: {
+    loadVideo() {
+        this.date = this.recordStartDate; // 시작 날짜 초기화
+
+        const shaka = require("shaka-player/dist/shaka-player.ui.js");
+
+        // player 초기화
+        this.manifestUrl.forEach((e,i) => {
+            let player = new shaka.Player(this.$refs["videoPlayer"+i][0]);
+            const ui = new shaka.ui.Overlay(
+                player,
+                this.$refs['videoContainer'+i][0],
+                this.$refs['videoPlayer'+i][0]
+            );
+
+            ui.getControls();
+
+            // 첫번째 영상은 무조건 block으로 보이게 하기
+            if(i === 0)
+                this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "block";
+            player
+            .load(`https://${base_url}:3000/stream/${e.replace('.mpd','')}/${e}`)
+            .then(() => {
+                console.log("The video"+i+" has now been loaded")
+
+                this.totalVideoTime += player.g.duration
+
+                player.g.addEventListener("ended", () => {
+                    // 날짜 초기화
+                    this.currentTime++;
+                    this.date = moment(this.date)
+                        .add(this.currentTime, "seconds")
+                        .format("YYYY-MM-DD HH:mm:ss");
+                    this.currentTime = 0;
+
+
+                    if(this.currentPlayerNumber === this.manifestUrl.length-1)
+                        return 0;
+
+                    // display 변경
+                    this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "none";
+                    this.$refs['videoContainer'+(++this.currentPlayerNumber)][0].style.display = "block";
+
+                    // 영상 재생
+                    this.$refs['videoPlayer'+this.currentPlayerNumber][0].play()
+                });
+
+            }).catch(err => {
+                console.log("error : " + err)
+            });
+        });
+    },
     clickTimeLine(e) {
         let timelineBoundingClientRect = this.$refs.timeline.getBoundingClientRect()
 

@@ -76,6 +76,7 @@
             </b-tbody>
         </b-table-simple>
         <div style="width:744px; height:415px;">
+          {{videoLink}}
             <SplitVideoPlayer
                 v-if="videoData.split === 1"
                 ref="videoPlayer"
@@ -210,7 +211,6 @@ export default {
       currentUser: "currentUser",
     }),
     isSelectedAll() {
-      console.log(this.selectedItems.length >= this.filteredItems.length)
       return this.selectedItems.length >= this.filteredItems.length;
     },
   },
@@ -564,12 +564,8 @@ export default {
         this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
       } else if(data.split === 1) {
         this.split = 1
-        let files = []
-        data.files.forEach((file) => {
-          files = files.concat(file)
-        })
 
-        this.videoLink = files
+        this.videoLink = data.files[0]
       } else if(data.split === 2) {
         this.split = 2
         let files = []
@@ -594,16 +590,27 @@ export default {
     prevSurgery() {
       this.currentVideo--
 
-      this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
+      if(this.videoData.split === 0) {
+        this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
+      } else if(this.videoData.split === 1) {
+        this.videoLink = this.videoData.files[this.currentVideo]
+      } else if(this.videoData.split === 2) {
+        // this.videoLink = this.videoData.files[this.currentVideo]
+      }
+
     },
     nextSurgery() {
       this.currentVideo++
 
-      this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
+      if(this.videoData.split === 0) {
+        this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
+      } else if(this.videoData.split === 1) {
+        // this.$set(this.videoLink, this.currentVideo, this.videoData.files[this.currentVideo])
+        this.videoLink = this.videoData.files[this.currentVideo]
+      } else if(this.videoData.split === 2) {
+        // this.videoLink = this.videoData.files[this.currentVideo]
+      }
     },
-    // currentVideo() {
-    //   this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
-    // },
     onPaginationData (paginationData) {
       this.$refs.pagination.setPaginationData(paginationData)
     },
@@ -611,7 +618,6 @@ export default {
       this.$refs.vuetable.changePage(page)
       this.page = page
 
-      console.log(this.sort === 'accessStatus' || this.sort === 'takeoutStatus')
       if(this.sort === 'accessStatus') {
         await this.getSortedStatusRecords('access')
       } else if(this.sort === 'takeoutStatus'){
@@ -704,7 +710,6 @@ export default {
       this.endDate = val
     },
     async searchClick(val) {
-      console.log(val)
       this.search = val
       await this.getRecords()
     },
@@ -795,7 +800,6 @@ export default {
         // }
       }
       this.filteredItems = this.items
-      console.log(this.filteredItems)
     }
 
   },
