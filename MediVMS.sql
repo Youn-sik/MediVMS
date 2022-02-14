@@ -36,7 +36,6 @@ CREATE TABLE `accounts` (
   `surgery` tinyint(1) NOT NULL DEFAULT 0,
   `schedule` tinyint(1) NOT NULL DEFAULT 0,
   `browse` tinyint(1) NOT NULL DEFAULT 0,
-  `history` tinyint(1) NOT NULL DEFAULT 0,
   `admin` tinyint(1) NOT NULL DEFAULT 0,
   `setting` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
@@ -49,36 +48,8 @@ CREATE TABLE `accounts` (
 
 LOCK TABLES `accounts` WRITE;
 /*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES (1,'admin','12345','0','0','전준희','외과',1,'',1,1,1,1,1,1,1),(2,'surgery','12345','0',NULL,'전준희2','외과',2,'[]',0,0,0,1,0,0,0),(3,'schedule','12345','0',NULL,'전준희3','외과',3,'[]',0,0,0,1,0,0,0);
+INSERT INTO `accounts` VALUES (1,'admin','12345','0','0','전준희','외과',1,'',1,1,1,1,1,1),(2,'surgery','12345','0',NULL,'전준희2','외과',2,'[]',0,0,0,1,0,0),(3,'schedule','12345','0',NULL,'전준희3','외과',3,'[]',0,0,0,1,0,0);
 /*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `browsing_history`
---
-
-DROP TABLE IF EXISTS `browsing_history`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `browsing_history` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `record_id` int(11) NOT NULL,
-  `created_at` varchar(100) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `browsing_history_FK` (`record_id`) USING BTREE,
-  KEY `browsing_history_FK_1` (`account_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `browsing_history`
---
-
-LOCK TABLES `browsing_history` WRITE;
-/*!40000 ALTER TABLE `browsing_history` DISABLE KEYS */;
-INSERT INTO `browsing_history` VALUES (1,1,'2021-12-08 15:36:54',1),(2,9,'2021-12-16 10:04:12',1),(3,9,'2021-12-16 10:04:25',1),(4,9,'2021-12-16 10:05:40',1),(5,9,'2021-12-16 10:29:04',1),(6,21,'2022-01-12 16:31:08',1),(7,21,'2022-01-12 16:47:19',1),(8,21,'2022-01-12 16:47:27',1),(9,21,'2022-01-12 17:06:16',1),(10,21,'2022-01-12 17:06:21',1);
-/*!40000 ALTER TABLE `browsing_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -117,6 +88,33 @@ INSERT INTO `devices` VALUES (39,'1-1','1','rtsp://172.16.33.201:9096',1,NULL,1,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `doctors`
+--
+
+DROP TABLE IF EXISTS `doctors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `doctors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `department` varchar(100) DEFAULT NULL,
+  `rank` varchar(100) DEFAULT NULL,
+  `employee_id` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `doctors`
+--
+
+LOCK TABLES `doctors` WRITE;
+/*!40000 ALTER TABLE `doctors` DISABLE KEYS */;
+INSERT INTO `doctors` VALUES (4,'1','1','1','1'),(5,'2','2','2','2'),(6,'3','3','3','3'),(7,'4','4','4','4');
+/*!40000 ALTER TABLE `doctors` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `grid_layouts`
 --
 
@@ -140,6 +138,35 @@ LOCK TABLES `grid_layouts` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `history`
+--
+
+DROP TABLE IF EXISTS `history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `record_id` int(11) NOT NULL,
+  `created_at` varchar(100) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `type` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `browsing_history_FK` (`record_id`) USING BTREE,
+  KEY `browsing_history_FK_1` (`account_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `history`
+--
+
+LOCK TABLES `history` WRITE;
+/*!40000 ALTER TABLE `history` DISABLE KEYS */;
+INSERT INTO `history` VALUES (1,1,'2021-12-08 15:36:54',1,'browse'),(2,9,'2021-12-16 10:04:12',1,'browse'),(3,9,'2021-12-16 10:04:25',1,'browse'),(4,9,'2021-12-16 10:05:40',1,'browse'),(5,9,'2021-12-16 10:29:04',1,'browse'),(6,21,'2022-01-12 16:31:08',1,'browse'),(7,21,'2022-01-12 16:47:19',1,'browse'),(8,21,'2022-01-12 16:47:27',1,'browse'),(9,21,'2022-01-12 17:06:16',1,'browse'),(10,21,'2022-01-12 17:06:21',1,'browse'),(11,21,'2022-01-14 13:23:25',1,'browse'),(12,21,'2022-01-14 17:12:54',1,'browse'),(13,21,'2022-01-17 10:28:11',1,'browse'),(14,21,'2022-01-17 16:25:23',1,'takeout'),(15,21,'2022-01-17 16:25:35',1,'takeout'),(16,21,'2022-01-17 16:25:36',1,'takeout'),(17,36,'2022-01-20 15:05:57',1,'browse'),(18,36,'2022-01-20 15:16:38',1,'browse'),(19,36,'2022-01-20 15:37:44',1,'browse'),(20,36,'2022-01-20 15:44:35',1,'browse'),(21,36,'2022-01-20 15:46:12',1,'browse'),(22,36,'2022-01-20 17:58:02',1,'browse'),(23,36,'2022-01-21 10:18:01',1,'browse'),(24,36,'2022-01-21 10:25:00',1,'browse'),(25,36,'2022-01-21 10:32:15',1,'browse'),(26,36,'2022-01-21 10:52:37',1,'browse'),(27,36,'2022-01-21 10:53:15',1,'browse'),(28,36,'2022-01-21 10:54:05',1,'browse'),(29,36,'2022-01-21 10:54:23',1,'browse'),(30,36,'2022-01-21 10:54:58',1,'browse'),(31,36,'2022-01-21 10:55:26',1,'browse'),(32,36,'2022-01-21 10:55:50',1,'browse'),(33,36,'2022-01-21 11:05:46',1,'browse'),(34,36,'2022-01-21 11:26:06',1,'browse'),(35,36,'2022-01-21 11:26:39',1,'browse'),(36,37,'2022-01-21 11:30:30',1,'takeout'),(37,36,'2022-01-21 11:56:14',1,'browse'),(38,36,'2022-01-21 12:21:14',1,'browse'),(39,36,'2022-01-21 16:43:38',1,'browse'),(40,36,'2022-01-21 16:52:07',1,'browse'),(41,36,'2022-01-21 17:14:33',1,'browse'),(42,36,'2022-01-24 02:40:27',1,'browse'),(43,36,'2022-01-24 10:44:54',1,'browse'),(44,36,'2022-01-24 10:45:17',1,'browse'),(45,36,'2022-01-24 10:46:48',1,'browse'),(46,36,'2022-01-24 10:47:59',1,'browse'),(47,36,'2022-01-24 15:11:59',1,'browse'),(48,36,'2022-01-24 17:44:32',1,'browse'),(49,36,'2022-01-24 17:45:37',1,'browse'),(50,36,'2022-01-24 17:48:45',1,'browse'),(51,36,'2022-01-24 17:48:56',1,'browse'),(52,36,'2022-01-24 17:49:39',1,'browse'),(53,36,'2022-01-24 17:49:41',1,'browse'),(54,36,'2022-01-24 17:50:01',1,'browse'),(55,36,'2022-01-24 18:16:40',1,'browse'),(56,36,'2022-01-24 18:17:33',1,'browse'),(57,36,'2022-01-24 18:17:52',1,'browse'),(58,36,'2022-01-24 18:18:28',1,'browse'),(59,36,'2022-01-24 18:19:21',1,'browse'),(60,36,'2022-01-24 18:21:44',1,'browse'),(61,36,'2022-01-24 18:22:51',1,'browse'),(62,36,'2022-01-24 18:23:21',1,'browse'),(63,36,'2022-01-25 09:23:49',1,'browse'),(64,36,'2022-01-25 09:27:45',1,'browse'),(65,36,'2022-01-25 10:01:47',1,'browse'),(66,36,'2022-01-25 10:16:58',1,'browse'),(67,36,'2022-01-25 10:17:27',1,'browse'),(68,36,'2022-01-25 10:48:50',1,'browse'),(69,36,'2022-01-25 15:12:43',1,'browse'),(70,36,'2022-01-25 15:16:30',1,'browse'),(71,36,'2022-01-25 15:28:22',1,'browse'),(72,36,'2022-01-25 15:33:19',1,'browse'),(73,36,'2022-01-25 15:35:12',1,'browse'),(74,36,'2022-01-25 16:11:50',1,'browse'),(75,36,'2022-01-25 16:20:34',1,'browse'),(76,36,'2022-01-26 22:33:17',1,'browse'),(77,37,'2022-01-26 22:33:42',1,'takeout'),(78,36,'2022-01-26 22:34:00',1,'browse'),(79,36,'2022-01-27 08:40:08',1,'browse'),(80,37,'2022-02-14 10:08:51',1,'browse');
+/*!40000 ALTER TABLE `history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `record_access`
 --
 
@@ -150,13 +177,14 @@ CREATE TABLE `record_access` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `record_id` int(11) NOT NULL,
-  `status` varchar(100) NOT NULL,
+  `status` varchar(100) DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL,
   `created_at` varchar(100) DEFAULT NULL,
+  `updated_at` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `record_access_FK` (`user_id`) USING BTREE,
   KEY `record_access_FK_1` (`record_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +193,7 @@ CREATE TABLE `record_access` (
 
 LOCK TABLES `record_access` WRITE;
 /*!40000 ALTER TABLE `record_access` DISABLE KEYS */;
-INSERT INTO `record_access` VALUES (1,1,1,'permitted','test','2021-12-08 15:36:24'),(2,1,21,'permitted','승인 사유 2','2022-01-12 16:29:07'),(3,1,20,'standby','123','2022-01-12 17:05:02'),(4,1,20,'standby','321','2022-01-12 17:05:30');
+INSERT INTO `record_access` VALUES (14,1,37,'permitted','test','2022-02-14 10:01:35','2022-02-14 01:08:46');
 /*!40000 ALTER TABLE `record_access` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,6 +206,7 @@ DROP TABLE IF EXISTS `records`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `records` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `surgery_id` int(11) DEFAULT NULL,
   `sergery_name` varchar(100) NOT NULL,
   `department` varchar(100) NOT NULL,
   `doctor` varchar(100) NOT NULL,
@@ -189,8 +218,12 @@ CREATE TABLE `records` (
   `expiration` tinyint(1) NOT NULL DEFAULT 0,
   `devices` varchar(100) DEFAULT NULL,
   `takeout_link` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
+  `split` tinyint(1) DEFAULT 0,
+  `end_date` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `records_FK` (`surgery_id`),
+  CONSTRAINT `records_FK` FOREIGN KEY (`surgery_id`) REFERENCES `surgery` (`surgery_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +232,7 @@ CREATE TABLE `records` (
 
 LOCK TABLES `records` WRITE;
 /*!40000 ALTER TABLE `records` DISABLE KEYS */;
-INSERT INTO `records` VALUES (1,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/1_20211203171822.mp4','2021-12-03 17:18:22','임시 정보',1,'1',NULL),(2,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/3_20211210105107.mp4','2021-12-10 10:51:07','임시 정보',1,'2,3',NULL),(3,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/3_20211210105111.mp4','2021-12-10 10:51:11','임시 정보',1,'2,3',NULL),(4,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/4_20211213172420.mp4','2021-12-13 17:24:20','임시 정보',1,'1,2,3,4',NULL),(5,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/4_20211213175808.mp4','2021-12-13 17:58:08','임시 정보',1,'1,2,3,4',NULL),(6,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/4_20211213180127.mp4','2021-12-13 18:01:27','임시 정보',1,'1,2,3,4',NULL),(7,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/4_20211213180720.mp4','2021-12-13 18:07:20','임시 정보',1,'1,2,3,4',NULL),(8,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/4_20211213183037.mp4','2021-12-13 18:30:38','임시 정보',1,'1,2,3,4',NULL),(9,'6','임시 정보','임시 정보','임시 정보','수술 완료','http://172.16.41.105:3000/stream/null_20211215155749.mp4','2021-12-15 15:57:49','임시 정보',0,'',NULL),(10,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','/stream/3_20211217175109/3_20211217175109.mp4','2021-12-17 17:51:09','임시 정보',0,'4,1,2,3',NULL),(11,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','/stream/3_20211217175308/3_20211217175308.mp4','2021-12-17 17:53:08','임시 정보',0,'4,1,2,3',NULL),(12,'수술실 #2','임시 정보','임시 정보','임시 정보','수술 완료','/stream/8_20211217175332/8_20211217175332.mp4','2021-12-17 17:53:32','임시 정보',0,'5,6,7,8',NULL),(13,'수술실 #3','임시 정보','임시 정보','임시 정보','수술 완료','/stream/11_20211217175426/11_20211217175426.mp4','2021-12-17 17:54:26','임시 정보',0,'12,9,10,11',NULL),(14,'수술실 #4','임시 정보','임시 정보','임시 정보','수술 완료','/stream/15_20211217175559/15_20211217175559.mp4','2021-12-17 17:56:00','임시 정보',0,'16,13,14,15',NULL),(15,'수술실 #5','임시 정보','임시 정보','임시 정보','수술 완료','/stream/20_20211217175606/20_20211217175606.mp4','2021-12-17 17:56:06','임시 정보',0,'17,18,19,20',NULL),(16,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','/stream/1_20211220123112/1_20211220123112.mp4','2021-12-20 12:31:12','임시 정보',0,'2,3,4,1',NULL),(17,'수술실 #2','임시 정보','임시 정보','임시 정보','수술 완료','/stream/7_20211220123431/7_20211220123431.mp4','2021-12-20 12:34:31','임시 정보',0,'8,5,6,7',NULL),(18,'수술실 #3','임시 정보','임시 정보','임시 정보','수술 완료','/stream/11_20211220123547/11_20211220123547.mp4','2021-12-20 12:35:47','임시 정보',0,'12,9,10,11',NULL),(19,'수술실 #4','임시 정보','임시 정보','임시 정보','수술 완료','/stream/16_20211220123552/16_20211220123552.mp4','2021-12-20 12:35:53','임시 정보',0,'13,14,15,16',NULL),(20,'수술실 #5','임시 정보','임시 정보','임시 정보','수술 완료','/stream/18_20211220123722/18_20211220123722.mp4','2021-12-20 12:37:22','임시 정보',0,'19,20,17,18',NULL),(21,'수술실 #2','임시 정보','임시 정보','임시 정보','수술 완료','/stream/8_20220112155701/8_20220112155701.mp4','2022-01-12 15:57:01','임시 정보',0,'5,6,7,8',NULL),(22,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','/stream/4_20220112172513/4_20220112172513.mp4','2022-01-12 17:25:13','임시 정보',0,'1,2,3,4',NULL);
+INSERT INTO `records` VALUES (36,1,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','20220120144822803','2022-01-20 14:48:22','임시 정보',0,'1,2,3,4',NULL,2,'2022-01-21 02:24:40'),(37,1,'수술실 #1','임시 정보','임시 정보','임시 정보','수술 완료','20220121112437272','2022-01-21 11:24:37','임시 정보',0,'1,2,3,4',NULL,0,'2022-01-21 02:24:40');
 /*!40000 ALTER TABLE `records` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,12 +255,14 @@ CREATE TABLE `schedule` (
   `is_record` tinyint(1) DEFAULT 0,
   `is_over` tinyint(1) DEFAULT 0,
   `patient` varchar(100) DEFAULT NULL,
-  `doctor` varchar(100) DEFAULT NULL,
+  `doctor` int(11) DEFAULT NULL,
   `patient_code` varchar(100) DEFAULT NULL,
   `patient_birthday` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `schedule_FK` (`surgery_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
+  KEY `schedule_FK` (`surgery_id`) USING BTREE,
+  KEY `doctor_FK` (`doctor`),
+  CONSTRAINT `doctor_FK` FOREIGN KEY (`doctor`) REFERENCES `doctors` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,7 +271,7 @@ CREATE TABLE `schedule` (
 
 LOCK TABLES `schedule` WRITE;
 /*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
-INSERT INTO `schedule` VALUES (1,'Event #0','2021-12-03 03:00','2021-12-03 09:45','1','blue',0,1,0,1,'1','1',NULL,NULL),(2,'Event #0','2021-12-08 03:15:00','2021-12-08 08:00:00','1','blue',0,1,0,0,'1','1',NULL,NULL),(3,'Event #2','2021-12-10 07:00:00','2021-12-10 11:00:00','1','blue',0,1,0,1,'1','1',NULL,NULL),(4,'Event #3','2021-12-10 16:00:00','2021-12-10 18:15:00','2','blue',0,1,0,1,'2','2',NULL,NULL),(8,'Event #0','2021-12-13 03:00','2021-12-13 07:00','undefined','blue',0,3,0,0,'','',NULL,NULL),(10,'녹화','2021-12-13 18:30','2021-12-15 18:30','3','deep-purple',0,1,0,1,'1','2',NULL,NULL),(11,'Event #0','2021-12-15 03:30','2021-12-15 11:30','1','blue',0,6,0,1,'1','1',NULL,NULL),(13,'2rec','2021-12-17 17:49','2021-12-17 17:49','2','indigo',0,2,0,1,'2','2',NULL,NULL),(15,'3rec','2021-12-17 17:54','2021-12-17 17:54','3','deep-purple',0,3,0,1,'3','3',NULL,NULL),(16,'4rec','2021-12-17 17:55','2021-12-22 17:55','4','cyan',0,4,0,1,'4','4',NULL,NULL),(18,'1rec','2021-12-20 12:30','2021-12-22 12:30','1','blue',0,1,0,1,'1','1',NULL,NULL),(19,'2rec','2021-12-20 12:34','2021-12-22 12:34','2','indigo',0,2,0,1,'2','2',NULL,NULL),(20,'3rec','2021-12-20 12:35','2021-12-22 12:35','3','deep-purple',0,3,1,0,'3','3',NULL,NULL),(21,'4rec','2021-12-20 12:35','2021-12-22 12:35','4','cyan',0,4,1,0,'4','4',NULL,NULL),(22,'5rec','2021-12-20 12:36','2021-12-22 12:36','5','green',0,5,0,1,'5','5',NULL,NULL),(24,'Event #1','2022-01-12 12:15:00','2022-01-12 18:15:00','1','blue',0,2,0,1,'1','1',NULL,NULL),(25,'Event #1','2022-01-12 03:00:00','2022-01-12 07:15:00','1','blue',0,1,0,1,'1','1',NULL,NULL),(27,'1','2022-01-13 16:14','2022-01-13 16:16','1','blue',0,1,0,0,'1','1','1','1');
+INSERT INTO `schedule` VALUES (38,'Event #0','2022-01-19 07:00:00','2022-01-19 12:30:00','1','blue',0,1,0,1,'1',4,'1','1'),(45,'Event #1','2022-01-20 10:30:00','2022-01-20 14:30:00','1','blue',0,1,0,1,'1',4,'1','1'),(46,'Event #2','2022-01-16 00:45:00','2022-01-16 07:00:00','1','blue',0,1,0,1,'1번',4,'1번','1');
 /*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -263,8 +298,37 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,1,0,0,1);
+INSERT INTO `settings` VALUES (1,1,1,0,1);
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `splited_records`
+--
+
+DROP TABLE IF EXISTS `splited_records`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `splited_records` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `video_link` varchar(255) NOT NULL,
+  `date` varchar(100) NOT NULL,
+  `takeout_link` varchar(255) DEFAULT NULL,
+  `record_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `splited_records_FK` (`record_id`),
+  CONSTRAINT `splited_records_FK` FOREIGN KEY (`record_id`) REFERENCES `records` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `splited_records`
+--
+
+LOCK TABLES `splited_records` WRITE;
+/*!40000 ALTER TABLE `splited_records` DISABLE KEYS */;
+INSERT INTO `splited_records` VALUES (3,'20220120054826874','2022-01-20 05:48:26',NULL,36);
+/*!40000 ALTER TABLE `splited_records` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -290,7 +354,7 @@ CREATE TABLE `surgery` (
 
 LOCK TABLES `surgery` WRITE;
 /*!40000 ALTER TABLE `surgery` DISABLE KEYS */;
-INSERT INTO `surgery` VALUES (1,'수술실 #1',0,NULL,''),(2,'수술실 #2',0,NULL,''),(3,'수술실 #3',1,'2021-12-20 12:35:47',''),(4,'수술실 #4',1,'2021-12-20 12:35:52',''),(5,'수술실 #5',0,NULL,''),(6,'6',0,NULL,'6');
+INSERT INTO `surgery` VALUES (1,'수술실 #1',0,'2022-01-21 11:24:37',''),(2,'수술실 #2',0,NULL,''),(3,'수술실 #3',0,'2021-12-20 12:35:47',''),(4,'수술실 #4',0,'2021-12-20 12:35:52',''),(5,'수술실 #5',0,NULL,''),(6,'6',0,NULL,'6');
 /*!40000 ALTER TABLE `surgery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,10 +403,11 @@ CREATE TABLE `takeout_access` (
   `status` varchar(100) DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL,
   `created_at` varchar(100) DEFAULT NULL,
+  `updated_at` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `takeout_access_FK` (`user_id`) USING BTREE,
   KEY `takeout_access_FK_1` (`record_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,7 +416,6 @@ CREATE TABLE `takeout_access` (
 
 LOCK TABLES `takeout_access` WRITE;
 /*!40000 ALTER TABLE `takeout_access` DISABLE KEYS */;
-INSERT INTO `takeout_access` VALUES (1,1,9,'permitted','ㅅㄷㄴㅅ','2021-12-16 10:03:59'),(2,1,8,'standby','ㅅㄷㄴㅅ','2021-12-16 10:04:16');
 /*!40000 ALTER TABLE `takeout_access` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -364,4 +428,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-13  8:40:13
+-- Dump completed on 2022-02-14  4:45:34

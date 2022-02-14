@@ -38,18 +38,6 @@
                 ></b-form-input>
             </b-form-group>
 
-            <!-- <b-form-group
-                id="input-group-1"
-                label="단말기 위치:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-4"
-                v-model="form.device_location"
-                required
-                ></b-form-input>
-            </b-form-group> -->
-
             <b-form-group
                 id="input-group-1"
                 label="비고:"
@@ -69,19 +57,6 @@
             >
                 <v-select v-model="selectedSurgery" :options="surgeries" label="surgery_name" value="surgery_id"/>
              </b-form-group>
-
-            <!-- <b-form-group
-                id="input-group-1"
-                label="단말 타입:"
-                label-for="input-1"
-            >
-                <b-input-group  class="mb-3">
-                    <b-form-select v-model="form.target" :options="options"  plain  />
-                    <b-input-group-append>
-                        <b-button variant="outline-secondary">{{ '타입 목록' }}</b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-form-group> -->
 
           <template #modal-footer="{ ok, cancel, hide }">
             <b-button variant="danger" @click="cancelAdd">
@@ -131,18 +106,6 @@
                 ></b-form-input>
             </b-form-group>
 
-            <!-- <b-form-group
-                id="input-group-1"
-                label="단말기 위치:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-4"
-                v-model="form.device_location"
-                required
-                ></b-form-input>
-            </b-form-group> -->
-
             <b-form-group
                 id="input-group-1"
                 label="비고:"
@@ -164,18 +127,6 @@
                 <v-select v-model="selectedSurgery" :options="surgeries" label="surgery_name" value="surgery_id"/>
              </b-form-group>
 
-            <!-- <b-form-group
-                id="input-group-1"
-                label="단말 타입:"
-                label-for="input-1"
-            >
-                <b-input-group  class="mb-3">
-                    <b-form-select v-model="form.target" :options="options"  plain  />
-                    <b-input-group-append>
-                        <b-button variant="outline-secondary">{{ '타입 목록' }}</b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-form-group> -->
           <template #modal-footer="{ ok, cancel, hide }">
             <b-button variant="danger" @click="cancelUpdate">
               취소
@@ -229,9 +180,6 @@
             <b-colxx xxs="12">
             <piaf-breadcrumb :heading="'단말기 목록'"/>
             <div style="float:right;">
-                <!-- <b-button variant="outline-secondary" class="mr-3" v-if="bootstrapTable.selected.length === 1" @click="clickControl">단말 제어</b-button>
-                <b-button variant="outline-secondary" class="mr-3" v-else disabled @click="clickControl">단말 제어</b-button> -->
-
                 <b-button variant="outline-secondary" class="mr-3" @click="()=>{this.addModal=true}">추가</b-button>
 
                 <b-button variant="outline-secondary" class="mr-3" v-if="bootstrapTable.selected.length === 1" @click="clickUpdate">수정</b-button>
