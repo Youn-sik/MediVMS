@@ -252,23 +252,6 @@ app.get('/splited_records', (req,res) => {
     `,function (err, rows, fields) {
         if(err) next(err)
 
-        rows.forEach((e) => {
-            let devices = e.devices.split(',')
-            let files = []
-
-            // 각 시리얼 번호마다 영상 갯수 구한후 같이 JSON에 포함
-            devices.forEach((device) => {
-                try{
-                    // mpd 파일만 포함
-                    let temp = fs.readdirSync(`/var/www/VMS/backend/record/${device}_${e.video_link}`).filter(file => file.indexOf(".mpd") > -1)
-                    files = [...files, temp]
-                } catch {
-                    files = [...files]
-                }
-                e.files = files
-            })
-        })
-
         res.send(rows)
     })
 })
@@ -308,22 +291,6 @@ app.get('/getRecords', (req,res) => {
         ${sort_type}
         LIMIT ${page*per_page},${per_page};
         `, function (err, _rows, fields) {
-            _rows.forEach((e) => {
-                let devices = e.devices.split(',')
-                let files = []
-
-                // 각 시리얼 번호마다 영상 갯수 구한후 같이 JSON에 포함
-                devices.forEach((device) => {
-                    try{
-                        // mpd 파일만 포함
-                        let temp = fs.readdirSync(`/var/www/VMS/backend/record/${device}_${e.video_link}`).filter(file => file.indexOf(".mpd") > -1)
-                        files = [...files, temp]
-                    } catch {
-                        files = [...files]
-                    }
-                })
-                e.files = files
-            })
             res.send({
                 last_page,
                 from:page*per_page+1,

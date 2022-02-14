@@ -7,38 +7,41 @@
     </div>
 
     <div
-    v-for="(url, index) in manifestUrl"
+    v-for="(url, index) in [0,1]"
     :key="index"
     :ref="'videoContainer' + index"
     :class="'video' + index"
     style="z-index:99; display:none; z-index:1"
-    >
+    >  
         <video
             style="width:100%; height:100%;"
             :id="'video' + index"
             :ref="'videoPlayer' + index"
             preload="auto"
             muted
+            autoplay
             class=""
-            :poster="posterUrl"
+        ></video>
+    </div>
+
+    <div
+    :ref="'videoContainerlast'"
+    :class="'videolast'"
+    style="z-index:99; display:none; z-index:1"
+    > 
+        <video
+            style="width:100%; height:100%;"
+            :id="'videolast'"
+            :ref="'videoPlayerlast'"
+            preload="auto"
+            muted
+            class=""
         ></video>
     </div>
 
     <div class="timeline" ref="timeline" @click="clickTimeLine" style="position: relative; top:-6px; z-index:10">
-        <!-- <div class="timeline__drag" ref="timeline__drag"></div> -->
         <span class="timeline__progress" ref="timeline__progress"></span>
     </div>
-    <!-- <div ref="videoContainer2" class="video2" style="display:none; z-index:99;">
-    <video
-        style="width:100%; height:100%;"
-        id="video2"
-        ref="videoPlayer2"
-        preload="auto"
-        muted
-        class=""
-        :poster="posterUrl"
-    ></video>
-    </div> -->
 </div>
 </template>
 
@@ -74,15 +77,15 @@ computed: {
             .format("YYYY-MM-DD HH:mm:ss");
     }
 },
-watch: {
-  'manifestUrl': function() {
-    this.loadVideo()
-  },
-},
 data() {
     return {
+        preload:true,
         player: null,
         player2: null,
+        ui:null,
+        ui2:null,
+        lastPlayer:null,
+        lastUi:null,
         currentPlayerNumber:0,
         currentTime: 0,
         date: "",
@@ -96,70 +99,131 @@ data() {
     };
 },
 mounted() {
-    this.loadVideo()
+    this.date = this.recordStartDate; // 시작 날짜 초기화
+
+    const shaka = require("shaka-player/dist/shaka-player.ui.js");
+
+    this.player = new shaka.Player(this.$refs["videoPlayer"+this.currentPlayerNumber][0]);
+
+    this.ui = new shaka.ui.Overlay(
+        this.player,
+        this.$refs['videoContainer'+this.currentPlayerNumber][0],
+        this.$refs['videoPlayer'+this.currentPlayerNumber][0]
+    );
+
+    this.ui.getControls();
+
+    // 첫번째 영상은 무조건 block으로 보이게 하기
+    if(this.currentPlayerNumber === 0)
+        this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "block";
+
+    this.playerLoad('player')
+    
+
+    this.player2 = new shaka.Player(this.$refs["videoPlayer"+1][0]);
+    this.ui2 = new shaka.ui.Overlay(
+        this.player2,
+        this.$refs['videoContainer'+1][0],
+        this.$refs['videoPlayer'+1][0]
+    );
+
+    this.ui2.getControls();
+
+
+    //마지막 영상 플레이어
+    this.lastPlayer = new shaka.Player(this.$refs["videoPlayerlast"]);
+    this.lastUi = new shaka.ui.Overlay(
+        this.lastPlayer,
+        this.$refs['videoContainerlast'],
+        this.$refs['videoPlayerlast']
+    );
+
+    this.lastUi.getControls();
+
+    this.lastPlayer
+    .load(`http://${base_url}:3000/stream/`+this.manifestUrl[this.manifestUrl.length - 1])
+    .then(() => {
+        this.lastVideoTime = this.lastPlayer.g.duration
+        this.totalVideoTime = 60*60*(this.manifestUrl.length - 1) + this.lastVideoTime
+        this.lastPlayer.unload()
+    })
 },
 methods: {
-    loadVideo() {
-        this.date = this.recordStartDate; // 시작 날짜 초기화
-
-        const shaka = require("shaka-player/dist/shaka-player.ui.js");
-
-        // player 초기화
-        this.manifestUrl.forEach((e,i) => {
-            let player = new shaka.Player(this.$refs["videoPlayer"+i][0]);
-            const ui = new shaka.ui.Overlay(
-                player,
-                this.$refs['videoContainer'+i][0],
-                this.$refs['videoPlayer'+i][0]
-            );
-
-            ui.getControls();
-
-            // 첫번째 영상은 무조건 block으로 보이게 하기
-            if(i === 0)
-                this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "block";
-            player
-            .load(`https://${base_url}:3000/stream/${e.replace('.mpd','')}/${e}`)
-            .then(() => {
-                console.log("The video"+i+" has now been loaded")
-
-                this.totalVideoTime += player.g.duration
-
-                player.g.addEventListener("ended", () => {
-                    // 날짜 초기화
-                    this.currentTime++;
-                    this.date = moment(this.date)
-                        .add(this.currentTime, "seconds")
-                        .format("YYYY-MM-DD HH:mm:ss");
-                    this.currentTime = 0;
+    playerLoad(val,seconds = null) { //player load 함수
+        this[val]
+        .load(`http://${base_url}:3000/stream/`+this.manifestUrl[this.currentPlayerNumber])
+        .then(() => {
 
 
-                    if(this.currentPlayerNumber === this.manifestUrl.length-1)
-                        return 0;
+            if(seconds){//초가 지정되면 해당 위치로 이동
+                this[val].g.currentTime = seconds
+            }
 
-                    // display 변경
-                    this.$refs['videoContainer'+this.currentPlayerNumber][0].style.display = "none";
-                    this.$refs['videoContainer'+(++this.currentPlayerNumber)][0].style.display = "block";
+            this[val].g.addEventListener("timeupdate", e => {
+                if(parseInt(e.target.currentTime) !== 0){
+                    this.currentTime = parseInt(e.target.currentTime)
+                    let scala = ((this.preload ? this.currentPlayerNumber : this.currentPlayerNumber-1)*60*60 + this.currentTime) / this.totalVideoTime
+                    this.$refs.timeline__progress.style.transform = `scaleX(${scala})`
+                }
+            })
 
-                    // 영상 재생
-                    this.$refs['videoPlayer'+this.currentPlayerNumber][0].play()
-                });
-
-            }).catch(err => {
-                console.log("error : " + err)
+            this[val].g.addEventListener("play", () => { //play 할시 다음 영상 로딩 하는 로직
+                if(this.preload){
+                    this.currentPlayerNumber++;
+                    this.preload = false //play될때 마다 실행 되는걸 막기위해 처음 한번만 실행 후 현재 영상이 end될때 까지 실행 X
+                    if(val === 'player') {
+                        this.playerLoad('player2')
+                    } else {
+                        this.playerLoad('player')
+                    }
+                }
             });
+
+            // this[val].g.addEventListener("canplay", () => { //play 할시 다음 영상 로딩 하는 로직
+            //     if(this.preload){
+            //         this.currentPlayerNumber++;
+            //         this.preload = false //play될때 마다 실행 되는걸 막기위해 처음 한번만 실행 후 현재 영상이 end될때 까지 실행 X
+            //         if(val === 'player') {
+            //             this.playerLoad('player2')
+            //         } else {
+            //             this.playerLoad('player')
+            //         }
+            //     }
+            // });
+
+            this[val].g.addEventListener("ended", () => { //현재 영상 끝나면 다음 영상 재생후 현재 player unload
+                this.preload = true //현재 영상의 다다음 영상을 로딩할수 있도록 false로 변경
+                if(val === 'player') {
+                    this.$refs['videoContainer'+0][0].style.display = "none";
+                    this.$refs['videoContainer'+1][0].style.display = "block";
+                    // this.player2.g.play()
+                } else {
+                    this.$refs['videoContainer'+1][0].style.display = "none";
+                    this.$refs['videoContainer'+0][0].style.display = "block";
+                    // this.player.g.play()
+                }
+
+                this.currentTime++
+                this.date = moment(this.date).add(this.currentTime,"seconds").format("YYYY-MM-DD HH:mm:ss")
+
+                // this.playerUnload(val)
+            });
+
+        }).catch(err => {
+            console.log("error : " + err)
         });
+    },
+    playerUnload(val) {
+        this[val].unload()
     },
     clickTimeLine(e) {
         let timelineBoundingClientRect = this.$refs.timeline.getBoundingClientRect()
 
         let timelineWidth = timelineBoundingClientRect.width
 
-        let clickedPosX = e.screenX - timelineBoundingClientRect.x
+        let clickedPosX = e.clientX - timelineBoundingClientRect.x
 
         let percentage = clickedPosX/timelineWidth;
-
-        console.log(this.totalVideoTime,percentage)
 
         let time = moment(this.recordStartDate)
         .add(this.totalVideoTime * percentage, "seconds")
@@ -171,44 +235,37 @@ methods: {
         console.error("Error code", error.code, "object", error);
     },
     moveVideoTime(val) {
+        this.preload = true
+
         let recordTime = moment(this.recordStartDate)
         let detectedTime = moment(val)
 
-        let diff = moment.duration((detectedTime.diff(recordTime)))
-        let videoIndex = diff.hours()
-        let seconds = diff.minutes() * 60 + diff.seconds()
+        let diff_minutes = detectedTime.diff(recordTime,'minutes')
+        let diff_seconds = detectedTime.diff(recordTime,'seconds')
 
-        if(videoIndex === this.manifestUrl.length){
-            videoIndex--;
-            seconds += 60*60
+        let videoIndex = parseInt(diff_minutes/60)
+        let seconds = diff_seconds - videoIndex * 60 * 60
+
+        this.currentPlayerNumber = videoIndex
+
+        let scala = (this.currentPlayerNumber*60*60 + seconds) / this.totalVideoTime
+        this.$refs.timeline__progress.style.transform = `scaleX(${scala})`
+
+        this.date = moment(this.recordStartDate)
+            .add(diff_seconds - seconds, "seconds")
+            .format("YYYY-MM-DD HH:mm:ss")
+
+        if(videoIndex/2 === 0){//짝수면 1번 플레이어
+            this.playerUnload('player2')
+            this.playerLoad('player',seconds)
+            this.$refs['videoContainer'+0][0].style.display = "block";
+            this.$refs['videoContainer'+1][0].style.display = "none";
+        } else {//홀수면 2번 플레이어
+            this.playerUnload('player')
+            this.playerLoad('player2',seconds)
+            this.$refs['videoContainer'+1][0].style.display = "block";
+            this.$refs['videoContainer'+0][0].style.display = "none";
         }
-
-        this.manifestUrl.forEach((e,i) => {
-            if( i === videoIndex){
-                // this.$refs['videoPlayer'+videoIndex][0].currentTime = seconds;
-
-                this.currentPlayerNumber = videoIndex
-
-                this.currentTime = diff.hours() * 60 * 60 + diff.minutes() * 60;
-                this.date = moment(this.recordStartDate)
-                    .add(this.currentTime, "seconds")
-                    .format("YYYY-MM-DD HH:mm:ss");
-                this.currentTime = diff.seconds()
-
-                console.log(  this.$refs['videoPlayer'+videoIndex][0].duration, seconds )
-
-                this.$refs['videoPlayer'+videoIndex][0].currentTime = seconds
-
-                let scala = (this.currentPlayerNumber*60*60 + seconds) / this.totalVideoTime
-                this.$refs.timeline__progress.style.transform = "scaleX("+scala+")"
-
-                this.$refs['videoContainer'+videoIndex][0].style.display = "block";
-                this.$refs['videoPlayer'+videoIndex][0].play()
-            } else {
-                this.$refs['videoContainer'+i][0].style.display = "none";
-                this.$refs['videoPlayer'+i][0].pause()
-            }
-        })
     }
 }
 };

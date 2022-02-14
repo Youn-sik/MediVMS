@@ -75,7 +75,7 @@
                 </b-tr>
             </b-tbody>
         </b-table-simple>
-        <div style="width:744px; height:415px;">
+        <div style="width:744px; height:415px;" v-if="videoBool">
             <SplitVideoPlayer
                 v-if="videoData.split === 1"
                 ref="videoPlayer"
@@ -83,13 +83,13 @@
                 :recordStartDate="videoData.date"
                 :manifest-url="videoLink"
             ></SplitVideoPlayer>
-            <SplitVideoPlayer
+            <AssembleVideoPlayer
                 v-else-if="videoData.split === 2"
                 ref="videoPlayer"
                 :isHistory="true"
                 :recordStartDate="videoData.date"
                 :manifest-url="videoLink"
-            ></SplitVideoPlayer>
+            ></AssembleVideoPlayer>
             <VideoPlayer
                 v-else
                 :isHistory="true"
@@ -204,7 +204,8 @@ export default {
     'vuetable' : Vuetable,
     'vuetable-pagination-bootstrap' : VuetablePaginationBootstrap,
     VideoPlayer,
-    SplitVideoPlayer
+    SplitVideoPlayer,
+    AssembleVideoPlayer
   },
   computed: {
     ...mapGetters({
@@ -242,6 +243,7 @@ export default {
       currentVideo:0,
       splitedList:[],
       timeList:[],
+      videoBool:true,
 
       // sort
       sort:'id',
@@ -557,11 +559,11 @@ export default {
       this.requestTakeoutModal = false
     },
     async openVideoModal(data) {
+      this.videoBool = true
       this.currentVideo = 0
       this.videoData = data
       this.devices = data.devices.split(',')
       this.date = data.video_link
-
       if(data.split === 0) {
         this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`
       } else if(data.split === 1) {
@@ -569,71 +571,76 @@ export default {
 
         this.videoLink = data.files[0]
       } else if(data.split === 2) {
+        this.videoLink = []
 
         this.split = 2
-
-        this.videoLink = data.files[0]
-
-        this.timeList = Array(data.files[0].length).fill(data.date)
+        this.videoLink.push(`${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`)
+        this.timeList.push(data.date)
 
         this.splitedList = await api.getSplitedRecords({
           record_id : data.id
         })
 
         let list = []
-
         this.splitedList.forEach((e) => {
-          let time = Array(e.files[0].length).fill(e.date)
-          this.timeList = this.timeList.concat(time)
-          list = list.concat(e.files[0])
+          this.timeList.push(e.date)
+          this.videoLink.push(`${this.devices[0]}_${e.video_link}/${this.devices[0]}_${e.video_link}.mpd`)
         })
 
         this.videoLink = this.videoLink.concat(list)
       }
-      console.log(this.timeList)
       this.videoModal = true
 
       this.saveRecord(data)
     },
     prevSurgery() {
       this.currentVideo--
+      this.videoBool = false
 
       if(this.videoData.split === 0) {
         this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
       } else if(this.videoData.split === 1) {
         this.videoLink = this.videoData.files[this.currentVideo]
       } else if(this.videoData.split === 2) {
-        this.videoLink = this.videoData.files[this.currentVideo]
+        this.videoLink = []
+
+        this.videoLink.push(`${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`)
+        this.timeList.push(this.videoData.date)
 
         let list = []
-
         this.splitedList.forEach((e) => {
-          list = list.concat(e.files[this.currentVideo])
+          this.timeList.push(e.date)
+          this.videoLink.push(`${this.devices[this.currentVideo]}_${e.video_link}/${this.devices[this.currentVideo]}_${e.video_link}.mpd`)
         })
 
         this.videoLink = this.videoLink.concat(list)
       }
+      setTimeout(()=>{this.videoBool = true},0)
 
     },
     nextSurgery() {
       this.currentVideo++
+      this.videoBool = false;
 
       if(this.videoData.split === 0) {
         this.videoLink = `https://${base_url}:3000/stream/${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`
       } else if(this.videoData.split === 1) {
-        // this.$set(this.videoLink, this.currentVideo, this.videoData.files[this.currentVideo])
         this.videoLink = this.videoData.files[this.currentVideo]
       } else if(this.videoData.split === 2) {
-        this.videoLink = this.videoData.files[this.currentVideo]
+        this.videoLink = []
+
+        this.videoLink.push(`${this.devices[this.currentVideo]}_${this.date}/${this.devices[this.currentVideo]}_${this.date}.mpd`)
+        this.timeList.push(this.videoData.date)
 
         let list = []
-
         this.splitedList.forEach((e) => {
-          list = list.concat(e.files[this.currentVideo])
+          this.timeList.push(e.date)
+          this.videoLink.push(`${this.devices[this.currentVideo]}_${e.video_link}/${this.devices[this.currentVideo]}_${e.video_link}.mpd`)
         })
 
         this.videoLink = this.videoLink.concat(list)
       }
+      setTimeout(()=>{this.videoBool = true},0)
     },
     onPaginationData (paginationData) {
       this.$refs.pagination.setPaginationData(paginationData)
