@@ -62,7 +62,7 @@ DROP TABLE IF EXISTS `devices`;
 CREATE TABLE `devices` (
   `device_id` int(11) NOT NULL AUTO_INCREMENT,
   `device_name` varchar(100) NOT NULL,
-  `Serial_number` varchar(100) NOT NULL,
+  `serial_number` varchar(100) NOT NULL,
   `live_url` varchar(250) NOT NULL,
   `surgery_id` int(11) DEFAULT NULL,
   `grid_layout_id` int(11) DEFAULT NULL,

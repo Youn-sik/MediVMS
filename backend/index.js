@@ -80,7 +80,7 @@ app.get('/surgery',(req,res) => {
         "group_concat(D.device_name) as device_names,"+
         "group_concat(D.live_url order by D.live_url desc) as live_urls, "+
         "group_concat(D.isLive) as isLives, "+
-        "group_concat(D.Serial_number) as serial_numbers, "+
+        "group_concat(D.serial_number) as serial_numbers, "+
         "count(D.device_id) as numberOfDevices "+
         "From devices D inner join surgery as S on D.surgery_id =S.surgery_id "+
         "group by S.surgery_id", function (err, _rows, fields) {
@@ -272,6 +272,7 @@ app.get('/getRecords', (req,res) => {
     count(*) as 'count'
     FROM records
     WHERE expiration IS NOT NULL
+    AND end_date is NOT NULL
     ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
     ${status ? "AND patient_status = '" + status + "'" : ""}
     ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}`,function (err, rows, fields) {
@@ -284,6 +285,7 @@ app.get('/getRecords', (req,res) => {
         SELECT *
         FROM records
         WHERE expiration IS NOT NULL
+        AND end_date is NOT NULL
         ${start && end ? "AND date >= '" + start + "' AND date <= '" + end + "'" : ""}
         ${status ? "AND patient_status = '" + status + "'" : ""}
         ${searchType && search ? "AND " + searchType + " LIKE '%" + search + "%'" : ""}
@@ -423,7 +425,7 @@ app.patch('/updateDevice',(req,res) => {
     SET
     device_name = "${req.body.device_name}",
     live_url = "${req.body.live_url}",
-    Serial_number = "${req.body.Serial_number}",
+    serial_number = "${req.body.serial_number}",
     surgery_id = ${req.body.surgery_id},
     note = "${req.body.note}"
     WHERE device_id = ${req.body.device_id}`,
@@ -436,8 +438,8 @@ app.patch('/updateDevice',(req,res) => {
 
 app.post('/addDevice',(req,res) => {
     connection.query("INSERT INTO VMS.devices"+
-    "(device_name, live_url, Serial_number, surgery_id, note)"+
-    `VALUES("${req.body.device_name}", "${req.body.live_url}", "${req.body.Serial_number}", ${req.body.surgery_id}, "${req.body.note}");`, function (err, rows, fields) {
+    "(device_name, live_url, serial_number, surgery_id, note)"+
+    `VALUES("${req.body.device_name}", "${req.body.live_url}", "${req.body.serial_number}", ${req.body.surgery_id}, "${req.body.note}");`, function (err, rows, fields) {
         if (err) throw err
 
         res.send(rows)
@@ -839,8 +841,8 @@ app.patch('/doctor', (req,res) => {
     connection.query(`UPDATE doctors
     SET
     name = "${req.body.name}",
-    department = "${req.body.department}"
-    rank = "${req.body.rank}"
+    department = "${req.body.department}",
+    doctors.rank = "${req.body.rank}",
     employee_id = "${req.body.employee_id}"
     WHERE id = ${req.body.id}`,
     function (err, rows, fields) {

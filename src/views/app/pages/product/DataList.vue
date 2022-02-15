@@ -563,6 +563,8 @@ export default {
       this.currentVideo = 0
       this.videoData = data
       this.devices = data.devices.split(',')
+      this.devices.sort()
+
       this.date = data.video_link
       if(data.split === 0) {
         this.videoLink = `https://${base_url}:3000/stream/${this.devices[0]}_${this.date}/${this.devices[0]}_${this.date}.mpd`

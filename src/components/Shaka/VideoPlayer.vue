@@ -17,22 +17,12 @@
 
 <script>
 export default {
-  props: {
-    manifestUrl: {
-      type: String,
-      required: true
-    },
-    posterUrl: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    style: {
-      type: String,
-      required: false,
-      default: ''
-    },
-  },
+  props: [
+    "manifestUrl",
+    "posterUrl",
+    "style",
+    "isHistory"
+  ],
   watch: {
     'manifestUrl': function() {
       this.player
@@ -58,6 +48,19 @@ export default {
       this.$refs.videoPlayer
     );
     ui.getControls();
+    if(this.isHistory){
+      this.player.configure({
+          drm: {
+              clearKeys: {
+                  // replace keyid and key  with those used during video encryption
+                  // 'keyid': 'key',
+                  'e90efe76ce02353a8ea327ba4d2dfc37':'c959e6ae2cb17c7116eb4a739ceb505b',
+              }
+          }
+      });
+    }
+    if(!this.manifestUrl)
+      return 0;
     this.player
       .load(this.manifestUrl)
       .then(() => {
@@ -65,6 +68,8 @@ export default {
         console.log('The video has now been loaded!');
       })
       .catch(this.onError); // onError is executed if the asynchronous load fails.
+
+    this.player.trickPlay(-2)
   },
   methods: {
     onError(error) {

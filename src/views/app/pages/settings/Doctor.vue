@@ -245,7 +245,8 @@ export default {
       await api.updateDoctors(this.form)
       await this.getItems()
 
-      this.addModal = false
+
+      this.modModal = false
 
       this.form = {
         name:'',

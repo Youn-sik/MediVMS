@@ -228,7 +228,7 @@
                     </vselect>
                 </b-form-group>
                 <b-form-group label="수술실">
-                    <vselect label="surgery_name" :options="surgerySelection" v-model="newEvent.surgery" dir="ltr" >
+                    <vselect label="surgery_name" :options="surgerySelection.slice(0)" v-model="newEvent.surgery" dir="ltr" >
                         <template slot="option" slot-scope="option">
                             <div class="d-center">
                                 <!-- <img :src="option.owner.avatar_url" height="25" /> -->
@@ -264,7 +264,7 @@
                 <!-- </b-form-checkbox> -->
             </b-form>
             <template #modal-footer="{ ok, cancel, hide }">
-                <b-button variant="danger" @click="cancelSaveEvent">
+                <b-button variant="danger" @click="cancelModEvent">
                     취소
                 </b-button>
                 <b-button @click="patchSchedule">
@@ -278,7 +278,7 @@
             <b-card>
                 <!-- <div style=""> -->
                     <div style="text-aligm:center; margin:0 auto;">
-                        <div style="width:202px; margin:0 auto;">
+                        <div style="width:220px; margin:0 auto; text-align:center;">
                             <b-button
                                 variant="outline-primary"
                                 icon
@@ -747,6 +747,26 @@ export default {
             this.modModal = false;
 
             this.events.pop()
+        },
+        cancelModEvent() {
+            this.newEvent = {
+                color:'',
+                name:'',
+                surgery:null,
+                timed:true,
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().add(1,'hour').format('YYYY-MM-DDTHH:mm:ssZ'),
+                patient:'',
+                patient_code:'',
+                patient_birthday:'',
+                doctor:'',
+                emergency:false,
+            }
+
+            this.emergency = false;
+
+            this.addModal = false;
+            this.modModal = false;
         },
         openAddModal() {
             this.newEvent = {

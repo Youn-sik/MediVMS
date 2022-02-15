@@ -33,7 +33,7 @@
             >
                 <b-form-input
                 id="input-3"
-                v-model="form.Serial_number"
+                v-model="form.serial_number"
                 required
                 ></b-form-input>
             </b-form-group>
@@ -101,7 +101,7 @@
             >
                 <b-form-input
                 id="input-3"
-                v-model="form.Serial_number"
+                v-model="form.serial_number"
                 required
                 ></b-form-input>
             </b-form-group>
@@ -243,7 +243,7 @@ export default {
             selectedSurgery:{},
             form:{
                 device_name:'',
-                Serial_number:'',
+                serial_number:'',
                 live_url:'',
                 device_location:'',
                 note:'',
@@ -266,7 +266,7 @@ export default {
                 fields: [
                 { key: 'device_name', label: '단말기 이름', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
                 { key: 'live_url', label: '단말기 Live Url', sortable: false, tdClass: 'text-muted' },
-                { key: 'Serial_number', label: '시리얼 넘버', sortable: false, tdClass: 'text-muted' },
+                { key: 'serial_number', label: '시리얼 넘버', sortable: false, tdClass: 'text-muted' },
                 { key: 'device_location', label: '단말기 위치', sortable: false, tdClass: 'text-muted' },
                 { key: 'note', label: '비고', sortable: false, tdClass: 'text-muted' },
                 // { key: 'target', label: '타입', sortable: false, tdClass: 'text-muted' }
@@ -332,7 +332,7 @@ export default {
             cancelUpdate() {
                 this.form = {
                     device_name:'',
-                    Serial_number:'',
+                    serial_number:'',
                     live_url:'',
                     device_location:'',
                     note:'',
@@ -361,8 +361,8 @@ export default {
                     target : this.target
                 })
 
-                this.mqttClient.publish(`/control/detect/target/${this.bootstrapTable.selected[0].Serial_number}`,JSON.stringify({
-                    serial_number : this.bootstrapTable.selected[0].Serial_number,
+                this.mqttClient.publish(`/control/detect/target/${this.bootstrapTable.selected[0].serial_number}`,JSON.stringify({
+                    serial_number : this.bootstrapTable.selected[0].serial_number,
                     target : this.target
                 }))
 
@@ -374,7 +374,7 @@ export default {
             cancelAdd() {
                 this.form = {
                     device_name:'',
-                    Serial_number:'',
+                    serial_number:'',
                     live_url:'',
                     device_location:'',
                     note:'',
@@ -388,7 +388,7 @@ export default {
                     alert('단말기 이름을 입력해주세요')
                 } else if(this.form.live_url === '') {
                     alert('단말기 Live Url를 입력해주세요')
-                } else if(this.form.Serial_number === '') {
+                } else if(this.form.serial_number === '') {
                     alert("시리얼 넘버를 입력해주세요")
                 }
                 // else if(this.form.device_location === '') {
@@ -402,8 +402,8 @@ export default {
                         let _splitedUrl = splitedUrl[1].split('//')
                         let ip = _splitedUrl[1]
 
-                        this.mqttClient.publish(`/control/detect/target/${this.bootstrapTable.selected[0].Serial_number}`,JSON.stringify({
-                            serial_number : this.bootstrapTable.selected[0].Serial_number,
+                        this.mqttClient.publish(`/control/detect/target/${this.bootstrapTable.selected[0].serial_number}`,JSON.stringify({
+                            serial_number : this.bootstrapTable.selected[0].serial_number,
                             target : this.target
                         }))
                     }
@@ -411,7 +411,7 @@ export default {
                     this.dataProvider()
                     this.form = {
                         device_name:'',
-                        Serial_number:'',
+                        serial_number:'',
                         live_url:'',
                         device_location:'',
                         note:'',
@@ -432,15 +432,15 @@ export default {
                     alert('단말기 이름을 입력해주세요')
                 } else if(this.form.live_url === '') {
                     alert('단말기 Live Url를 입력해주세요')
-                } else if(this.form.Serial_number === '') {
+                } else if(this.form.serial_number === '') {
                     alert("시리얼 넘버를 입력해주세요")
                 } else if(this.form.device_location === '') {
                     alert("단말기 위치를 입력해주세요")
                 } else {
                     let result = await api.updateDevice({...this.form,surgery_id : this.selectedSurgery.surgery_id})
-                    // this.mqttClient.publish(`/control/detect/${this.bootstrapTable.selected[0].Serial_number}`,JSON.stringify({
+                    // this.mqttClient.publish(`/control/detect/${this.bootstrapTable.selected[0].serial_number}`,JSON.stringify({
                     //     type:this.form.target,
-                    //     serial_number:this.bootstrapTable.selected[0].Serial_number,
+                    //     serial_number:this.bootstrapTable.selected[0].serial_number,
                     // }))
 
                     this.dataProvider()
