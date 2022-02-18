@@ -94,9 +94,6 @@ export default {
     methods: {
         onError(error) {
             console.error("Error code", error.code, "object", error);
-        },
-        moveVideoTime(val) {
-            this.player.g.currentTime = val;
         }
     }
 };
