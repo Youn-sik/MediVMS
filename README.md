@@ -1,6 +1,7 @@
 # VMS 문서
 
 ### 사용 프로그램 목록
+
 ```
 node
 pm2
@@ -10,6 +11,7 @@ emqx
 ```
 
 ### node 설치
+
 ```
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
@@ -19,6 +21,7 @@ sudo apt-get install build-essential
 ```
 
 ### pm2 설치
+
 ```
 npm install pm2 -g
 
@@ -28,6 +31,7 @@ pm2 set pm2-logrotate:compress true
 ```
 
 ### mariadb 설치
+
 ```
 apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://mirror.yongbok.net/mariadb/repo/10.5/ubuntu bionic main'
@@ -35,6 +39,7 @@ apt install mariadb-server
 ```
 
 ### mariadb 계정 설정
+
 ```
 CREATE DATABASE VMS;
 CREATE USER 'kool'@'localhost' IDENTIFIED BY 'master';
@@ -43,16 +48,19 @@ FLUSH PRIVILEGES;
 ```
 
 ### mariadb 복원
+
 ```
 mysql -u kool -p VMS < MediVMS.sql
 ```
 
 ### nginx 설치
+
 ```
 sudo apt install nginx
 ```
 
 ### nginx 설정
+
 ```
 sudo mkdir /etc/nginx/ssl
 sudo cp /var/www/VMS/nginx* /etc/nginx/ssl
@@ -61,6 +69,7 @@ sudo ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/defa
 ```
 
 ### emqx 설치
+
 ```
 sudo apt update && sudo apt install -y \
     apt-transport-https \
@@ -82,6 +91,7 @@ sudo apt install emqx
 ```
 
 ### emqx 최적화 설정
+
 ```
 echo ""
     echo "Tuning system..."
@@ -113,14 +123,17 @@ echo ""
 ```
 
 ### emqx 최대 페킷 사이즈 설정
+
 ```
 vim /etc/emqx/emqx.conf
-    
+
 mqtt.max_packet_size = 50MB
 ```
 
 ### 빌드파일 생성, 백엔드 서버 시작
-빌드전 server.json, webrtcstreamer.js 
+
+빌드전 server.json, webrtcstreamer.js 파일의 IP 확인
+
 ```
 cd /var/www/VMS
 npm i
@@ -131,4 +144,3 @@ npm i
 pm2 start index.js
 pm2 startup
 ```
-
