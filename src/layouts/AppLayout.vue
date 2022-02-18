@@ -35,9 +35,6 @@ export default {
   },
   computed: {
     ...mapGetters(["getMenuType","currentUser"]),
-    // hrefCheck: () => {
-    //   return window.location.href.indexOf('grid') > -1
-    // }
 
   },
   mounted() {

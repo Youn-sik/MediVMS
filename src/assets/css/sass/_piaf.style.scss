@@ -2155,7 +2155,7 @@ button {
   bottom: 0;
   padding-top: $navbar-height;
   z-index: 4;
-  height: calc(100% - #{$navbar-height});
+  height: calc(100%);
   transition: border-radius $menu-collapse-time;
 
   .ps-container {
@@ -2165,7 +2165,7 @@ button {
 
   .main-menu {
     width: $main-menu-width;
-    height: calc(100% - #{$navbar-height});
+    height: calc(100%);
     background: $foreground-color;
     z-index: 3;
     position: fixed;
@@ -2967,6 +2967,10 @@ body.default-transition main {
   .menu-hidden main {
     margin-left: $main-margin-lg;
   }
+
+  .navbar {
+    margin-left: $main-margin-lg;
+  }
 }
 
 @include respond-below(lg) {
@@ -2980,7 +2984,14 @@ body.default-transition main {
   .menu-hidden main {
     margin-left: $main-margin-md;
   }
+
+  .navbar {
+    margin-left: $main-margin-lg;
+  }
 }
+// .navbar {
+//   margin-left: $main-margin +  $main-menu-width-md;
+// }
 
 /* 16.Cards*/
 .card {
