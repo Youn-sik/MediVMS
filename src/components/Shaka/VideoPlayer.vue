@@ -40,21 +40,11 @@ export default {
                 .format("YYYY-MM-DD HH:mm:ss");
         }
     },
-    watch: {
-        manifestUrl: function() {
-            this.player
-                .load(this.manifestUrl)
-                .then(() => {
-                    // This runs if the asynchronous load is successful.
-                    console.log("The video has now been loaded!");
-                })
-                .catch(this.onError); // onError is executed if the asynchronous load fails
-        }
-    },
     data() {
         return {
             player: null,
-            currentTime: 0
+            currentTime: 0,
+            statusCheckInterval: null
         };
     },
     mounted() {
@@ -85,12 +75,21 @@ export default {
                 this.player.g.addEventListener("timeupdate", e => {
                     this.currentTime = parseInt(e.target.currentTime);
                 });
-                // This runs if the asynchronous load is successful.
+
+                //영상 초반 1~2초대 재생 안되는 문제 해결하기 위한 코드
+                this.statusCheckInterval = setInterval(() => {
+                    //원인 파악이 안됨 띄어넘기로 해결
+                    if (this.player.g.readyState === 1)
+                        this.player.g.currentTime += 3;
+                }, 1000);
+
                 console.log("The video has now been loaded!");
             })
             .catch(this.onError); // onError is executed if the asynchronous load fails.
-
-        this.player.trickPlay(-2);
+    },
+    destroyed() {
+        this.player.unload();
+        clearInterval(this.statusCheckInterval);
     },
     methods: {
         onError(error) {
