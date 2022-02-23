@@ -1,7 +1,8 @@
 <template>
     <div class="h-100" v-if="!isLogin">
         <router-view :mqttClient="mqttClient" />
-        <div style="position:fixed; left: 0; z-index:2; right: 0; top:0px">
+        <!-- <color-switcher></color-switcher> -->
+        <!-- <div style="position:fixed; left: 0; z-index:2; right: 0; top:0px">
             <b-alert
                 style="width:20%; margin: 0 auto; color:white; background:rgb(255,70,78);"
                 :show="dismissCountDown"
@@ -12,7 +13,7 @@
             >
                 <p>출입 금지자가 감지 되었습니다.</p>
             </b-alert>
-        </div>
+        </div> -->
     </div>
 </template>
 

@@ -45,7 +45,7 @@ Table of Contents
 
 */
 
-.reservBtn:hover{
+.reservBtn:hover {
   cursor: pointer;
 }
 
@@ -53,10 +53,10 @@ Table of Contents
 @import url("https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700");
 
 $main-menu-item-height: 110px;
-$main-menu-width: 120px;
-$main-menu-width-lg: 110px;
-$main-menu-width-md: 100px;
-$main-menu-width-xs: 90px;
+$main-menu-width: 265px;
+$main-menu-width-lg: 265px;
+$main-menu-width-md: 265px;
+$main-menu-width-xs: 265px;
 
 $sub-menu-width: 230px;
 $sub-menu-width-lg: 230px;
@@ -1869,7 +1869,7 @@ button {
     .logo {
       width: 100%;
       height: 100%;
-      background: url('/assets/logos/medivms.png') no-repeat;
+      background: url("/assets/logos/medivms.png") no-repeat;
       background-size: contain;
       background-position: center center;
     }
@@ -2198,7 +2198,6 @@ button {
       }
 
       a {
-        height: $main-menu-item-height;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -2210,11 +2209,11 @@ button {
         color: $primary-color;
         transition: color $menu-collapse-time;
         transition: background $menu-collapse-time;
-
-        &:hover,
-        &:focus {
-          color: $theme-color-1;
-        }
+      }
+      &:hover,
+      &:focus {
+        background: #dfe0e2;
+        font-weight: 700;
       }
 
       i {
@@ -2222,21 +2221,22 @@ button {
         line-height: 42px;
       }
 
-      &.active a {
-        color: $theme-color-1;
+      &.active {
+        background: #dfe0e2;
+        font-weight: 700;
       }
 
-      &.active:after {
-        content: " ";
-        background: $theme-color-1;
-        border-radius: 10px;
-        position: absolute;
-        width: 6px;
-        height: 90px;
-        top: 50%;
-        transform: translateY(-50%);
-        left: 0;
-      }
+      // &.active:after {
+      //   content: " ";
+      //   background: $theme-color-1;
+      //   border-radius: 10px;
+      //   position: absolute;
+      //   width: 6px;
+      //   height: 90px;
+      //   top: 50%;
+      //   transform: translateY(-50%);
+      //   left: 0;
+      // }
 
       &:last-of-type {
         a {
@@ -2956,6 +2956,40 @@ body.default-transition main {
   margin-left: $main-margin;
 }
 
+.navbar {
+  z-index: 1000;
+  margin-left: $sub-menu-width + $main-menu-width + $main-margin;
+  margin-right: $main-margin;
+  transition: margin-left $menu-collapse-time;
+
+  @include respond-below(xl) {
+    margin-left: $sub-menu-width-lg + $main-menu-width-lg + $main-margin-lg;
+    margin-right: $main-margin-lg;
+  }
+
+  @include respond-below(lg) {
+    margin-left: $sub-menu-width-md + $main-menu-width-md + $main-margin-md;
+    margin-right: $main-margin-md;
+  }
+
+  @include respond-below(sm) {
+    margin-left: $sub-menu-width-xs + $main-menu-width-xs + $main-margin-xs;
+    margin-right: $main-margin-xs;
+  }
+}
+
+.sub-hidden.navbar {
+  margin-left: $main-menu-width + $main-margin;
+}
+
+.main-hidden.sub-hidden.navbar {
+  margin-left: $main-margin;
+}
+
+.menu-mobile.navbar {
+  margin-left: $main-margin-xs;
+}
+
 @include respond-below(xl) {
   .sub-hidden main,
   .menu-sub-hidden main,
@@ -2968,7 +3002,15 @@ body.default-transition main {
     margin-left: $main-margin-lg;
   }
 
-  .navbar {
+  // .navbar {
+  //   margin-left: $sub-menu-width + $main-menu-width-lg + $main-margin-lg;
+  // }
+
+  .menu-sub-hidden.navbar {
+    margin-left: $main-menu-width-lg + $main-margin-lg;
+  }
+
+  .main-hidden.menu-sub-hidden.navbar {
     margin-left: $main-margin-lg;
   }
 }
@@ -2985,8 +3027,25 @@ body.default-transition main {
     margin-left: $main-margin-md;
   }
 
-  .navbar {
-    margin-left: $main-margin-lg;
+  // .navbar {
+  //   margin-left: $sub-menu-width + $main-menu-width-md + $main-margin-md;
+  // }
+
+  .menu-sub-hidden.navbar {
+    margin-left: $main-menu-width-md + $main-margin-md;
+  }
+
+  .main-hidden.menu-sub-hidden.navbar {
+    margin-left: $main-margin-md;
+  }
+}
+@include respond-below(sm) {
+  .menu-sub-hidden.navbar {
+    margin-left: $main-menu-width-xs + $main-margin-xs;
+  }
+
+  .main-hidden.menu-sub-hidden.navbar {
+    margin-left: $main-margin-xs;
   }
 }
 // .navbar {
@@ -3108,49 +3167,49 @@ body.default-transition main {
 
 /* 17.Dashboard*/
 
-.sub-cameras{
+.sub-cameras {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width:20%;
-  height:80%;
+  width: 20%;
+  height: 80%;
   position: relative;
-  left:75%;
-  top: -95%
+  left: 75%;
+  top: -95%;
 }
 
-.sub-camera{
-  width:100%;
+.sub-camera {
+  width: 100%;
   // box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 
-.already-displayed{
-  color:white;
+.already-displayed {
+  color: white;
   font-size: 20px;
   text-align: center;
-  margin-top:25%;
+  margin-top: 25%;
 }
 
 .main-live {
-  width:100%;
-  height:441px;
-  background:black
+  width: 100%;
+  height: 441px;
+  background: black;
 }
 
-.surgery-date-picker{
+.surgery-date-picker {
   display: inline-block;
 }
 
-.main-live-info{
+.main-live-info {
   text-align: center;
 }
 
-.move-video-buttons{
+.move-video-buttons {
   text-align: center;
 }
 
 #sub-live-radio-group {
-  margin:0 auto;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -5193,7 +5252,7 @@ input:-webkit-autofill {
   .form-side {
     width: 100%;
     padding: 80px;
-    padding-top:0px;
+    padding-top: 0px;
   }
 
   @include respond-below(md) {
@@ -7902,7 +7961,7 @@ footer.page-footer {
 
 .search {
   position: relative;
-  input{
+  input {
     height: 40px;
   }
   .search-icon {
@@ -7924,16 +7983,16 @@ footer.page-footer {
 }
 
 #surgeriesDropdown {
-  float:right;
+  float: right;
 }
 
-#statusDropdown{
-  float:right;
+#statusDropdown {
+  float: right;
 }
 
 .webRtc {
-  width:100%;
-  height:100;
+  width: 100%;
+  height: 100;
 }
 
 input:-webkit-autofill,
@@ -7948,7 +8007,6 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px $foreground-color inset !important;
 }
 
-
 .form-control.focus {
   background-color: #232223 !important;
   color: #8f8f8f !important;
@@ -7960,7 +8018,7 @@ select:-webkit-autofill:focus {
 }
 
 .b-form-spinbutton.flex-column output {
-  margin:0 auto !important;
+  margin: 0 auto !important;
 }
 
 // .form-control.focus button {
@@ -7969,92 +8027,91 @@ select:-webkit-autofill:focus {
 //   font-size: 0.76em !important;
 // }
 
-
 // vuetify css
 .v-calendar-weekly__day .v-btn {
-  background-color:rgba(0,0,0,0) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
 }
 
 .v-event-timed {
-  color:white !important;
+  color: white !important;
 }
 
 .v-present .v-btn {
-  background-color:#272727 !important;
+  background-color: #272727 !important;
 }
 
 .v-calendar .cyan {
-  background-color: #00bcd4!important;
-  border-color: #00bcd4!important;
+  background-color: #00bcd4 !important;
+  border-color: #00bcd4 !important;
 }
 
 .v-calendar .deep-purple {
-  background-color: #673ab7!important;
-  border-color: #673ab7!important;
+  background-color: #673ab7 !important;
+  border-color: #673ab7 !important;
 }
 
 .v-calendar .indigo {
-  background-color: #3f51b5!important;
-  border-color: #3f51b5!important;
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
 }
 
 .v-calendar .orange {
-  background-color: #ff9800!important;
-  border-color: #ff9800!important;
+  background-color: #ff9800 !important;
+  border-color: #ff9800 !important;
 }
 
 .v-calendar .blue {
-  background-color: #2196f3!important;
-  border-color: #2196f3!important;
+  background-color: #2196f3 !important;
+  border-color: #2196f3 !important;
 }
 
 .v-calendar .green {
-  background-color: #4caf50!important;
-  border-color: #4caf50!important;
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
 }
 
 .v-calendar .indigo {
-  background-color: #3F51B5!important;
-  border-color: #3F51B5!important;
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
 }
 
 .schedule .cyan {
-  background-color: #00bcd4!important;
-  border-color: #00bcd4!important;
+  background-color: #00bcd4 !important;
+  border-color: #00bcd4 !important;
 }
 
 .schedule .deep-purple {
-  background-color: #673ab7!important;
-  border-color: #673ab7!important;
+  background-color: #673ab7 !important;
+  border-color: #673ab7 !important;
 }
 
 .schedule .indigo {
-  background-color: #3f51b5!important;
-  border-color: #3f51b5!important;
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
 }
 
 .schedule .orange {
-  background-color: #ff9800!important;
-  border-color: #ff9800!important;
+  background-color: #ff9800 !important;
+  border-color: #ff9800 !important;
 }
 
 .schedule .blue {
-  background-color: #2196f3!important;
-  border-color: #2196f3!important;
+  background-color: #2196f3 !important;
+  border-color: #2196f3 !important;
 }
 
 .schedule .green {
-  background-color: #4caf50!important;
-  border-color: #4caf50!important;
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
 }
 
 .schedule .indigo {
-  background-color: #3F51B5!important;
-  border-color: #3F51B5!important;
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
 }
 
 .v-event-more {
-  margin-left:1px;
+  margin-left: 1px;
 }
 
 .v-menu__content .v-card .v-card__text {
@@ -8066,7 +8123,7 @@ select:-webkit-autofill:focus {
 }
 
 .v-toolbar__content button {
-  color:white !important;
+  color: white !important;
 }
 
 .theme--dark.v-calendar-weekly .v-calendar-weekly__day {
@@ -8074,20 +8131,20 @@ select:-webkit-autofill:focus {
   border-bottom: 1px solid #9e9e9e !important;
 }
 
-.emergency{
-  background:#E02401;
+.emergency {
+  background: #e02401;
 }
 
-.started{
-  background:#54c147;
+.started {
+  background: #54c147;
 }
 
-.standby{
-  background:#FFB319;
+.standby {
+  background: #ffb319;
 }
 
-.standard{
-  background:#C8C6C6;
+.standard {
+  background: #c8c6c6;
 }
 
 .schedule-list .card-body {
@@ -8105,7 +8162,7 @@ select:-webkit-autofill:focus {
 }
 
 .surgeryTable .card-body {
-  padding:0px !important;
+  padding: 0px !important;
 }
 
 .v-event-draggable {
@@ -8135,7 +8192,7 @@ select:-webkit-autofill:focus {
     width: 16px;
     margin-left: -8px;
     opacity: 0.8;
-    content: '';
+    content: "";
   }
 
   &:hover::after {

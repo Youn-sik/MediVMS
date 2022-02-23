@@ -2,7 +2,7 @@
     <div>
         <b-row>
             <b-colxx xl="4" lg="12">
-                <b-card style="height:235px;" title="단말 현황">
+                <b-card style="height:300px;" title="단말 현황">
                     <doughnut-chart
                         v-if="deviceChartData"
                         :data="deviceChartData"
@@ -11,7 +11,7 @@
                 </b-card>
             </b-colxx>
             <b-colxx xl="4" lg="12">
-                <b-card style="height:235px;" title="수술 현황">
+                <b-card style="height:300px;" title="수술 현황">
                     <doughnut-chart
                         v-if="surgeryChartData"
                         :data="surgeryChartData"
@@ -20,7 +20,7 @@
                 </b-card>
             </b-colxx>
             <b-colxx xl="4" lg="12">
-                <b-card style="height:235px;" title="녹화 일정">
+                <b-card style="height:300px;" title="녹화 일정">
                     <doughnut-chart
                         v-if="eventsChartData"
                         :data="eventsChartData"
@@ -64,7 +64,7 @@
                             <b-tr
                                 v-for="(surgery, index) in surgeries"
                                 :key="index"
-                                style="height:30px"
+                                style=" height:70px;"
                             >
                                 <b-td class="text-center">
                                     {{ surgery.surgery_name }}
@@ -88,19 +88,23 @@
                                 <b-td class="text-center">
                                     {{ surgery.note }}
                                 </b-td>
-                                <b-td class="text-center">
-                                    <b-button
+                                <b-td class="text-center" style="padding:0px;">
+                                    <a
+                                        href="#"
+                                        class="play"
                                         v-if="currentSurgery !== index"
-                                        variant="outline-primary"
-                                        icon
-                                        class="ma-2"
                                         @click="clickBroad(index)"
                                     >
-                                        시청
-                                    </b-button>
-                                    <div style="padding:9px 0 9px 0" v-else>
-                                        시청중...
-                                    </div>
+                                        <!-- <img
+                                            height="10"
+                                            src="/assets/img/play.svg"
+                                    /> -->
+                                    </a>
+                                    <a href="#" v-else class="play"
+                                        ><img
+                                            height="30"
+                                            src="/assets/img/play-hover.svg"
+                                    /></a>
                                 </b-td>
                             </b-tr>
                         </b-table-simple>
@@ -252,11 +256,8 @@ export default {
             datasets: [
                 {
                     label: "",
-                    borderColor: [colors.themeColor2, colors.themeColor3],
-                    backgroundColor: [
-                        colors.themeColor2_10,
-                        colors.themeColor3_10
-                    ],
+                    borderColor: ["#00cc00", "#172757"],
+                    backgroundColor: ["#00cc00", "#172757"],
                     borderWidth: 2,
                     data: [
                         this.activatedDevicesCount,
@@ -271,11 +272,8 @@ export default {
             datasets: [
                 {
                     label: "",
-                    borderColor: [colors.themeColor2, colors.themeColor3],
-                    backgroundColor: [
-                        colors.themeColor2_10,
-                        colors.themeColor3_10
-                    ],
+                    borderColor: ["#0066ff", "#172757"],
+                    backgroundColor: ["#0066ff", "#172757"],
                     borderWidth: 2,
                     data: [this.activatedSurgeriesCount, this.surgeries.length]
                 }
@@ -287,11 +285,8 @@ export default {
             datasets: [
                 {
                     label: "",
-                    borderColor: [colors.themeColor2, colors.themeColor3],
-                    backgroundColor: [
-                        colors.themeColor2_10,
-                        colors.themeColor3_10
-                    ],
+                    borderColor: ["#ff9900", "#172757"],
+                    backgroundColor: ["#ff9900", "#172757"],
                     borderWidth: 2,
                     data: [this.recordingEvent, this.standardEvent]
                 }

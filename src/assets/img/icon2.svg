@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.02" height="21.496" viewBox="0 0 20.02 21.496">
+    <g data-name="Layer 2">
+        <g data-name="Layer 1" transform="translate(0 -.004)">
+            <path data-name="패스 20504" d="M7 3.76a2.84 2.84 0 0 1 3-3" style="stroke:#009cdf;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px"/>
+            <path data-name="패스 20505" d="M13 3.76a2.84 2.84 0 0 0-3-3" style="stroke:#009cdf;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px"/>
+            <rect data-name="사각형 2228" width="18.52" height="14.61" rx="4.63" transform="translate(.75 6.14)" style="stroke:#172757;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px"/>
+            <path data-name="선 1" transform="translate(10.01 10.39)" style="stroke:#009cdf;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px" d="M0 0v6.11"/>
+            <path data-name="선 2" transform="translate(6.96 13.44)" style="stroke:#009cdf;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px" d="M0 0h6.1"/>
+        </g>
+    </g>
+</svg>

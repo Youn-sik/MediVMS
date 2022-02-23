@@ -1,10 +1,221 @@
+@charset "UTF-8";
 @import "./_mixins.scss";
 @import "./_piaf.style.scss";
 @import "./_plugins.scss";
 
-/** your custom css code **/
-/*
-html {
-    background-color: $theme-color-1 !important;
+@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+@font-face {
+  font-family: "Noto Sans CJK KR";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/assets/fonts/NotoSansKR-Regular.woff2") format("woff2"),
+    url("/assets/fonts/NotoSansKR-Regular.woff") format("woff"),
+    url("/assets/fonts/NotoSansKR-Regular.otf") format("opentype");
 }
-*/
+
+@font-face {
+  font-family: "Noto Sans CJK KR";
+  font-style: normal;
+  font-weight: 700;
+  src: url("/assets/fonts/NotoSansKR-Bold.woff2") format("woff2"),
+    url("/assets/fonts/NotoSansKR-Bold.woff") format("woff"),
+    url("/assets/fonts/NotoSansKR-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "roboto";
+  font-style: normal;
+  font-weight: 400;
+  src: url(/assets/fonts/Roboto-Regular.eot);
+  src: url(/assets/fonts/Roboto-Regular.eot?#iefix) format("embedded-opentype"),
+    url(/assets/fonts/Roboto-Regular.woff2) format("woff2"),
+    url(/assets/fonts/Roboto-Regular.woff) format("woff"),
+    url(/assets/fonts/Roboto-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "roboto";
+  font-style: normal;
+  font-weight: 700;
+  src: url(/assets/fonts/Roboto-bold.eot);
+  src: url(/assets/fonts/Roboto-bold.eot?#iefix) format("embedded-opentype"),
+    url(/assets/fonts/Roboto-bold.woff2) format("woff2"),
+    url(/assets/fonts/Roboto-bold.woff) format("woff"),
+    url(/assets/fonts/Roboto-bold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "roboto";
+  font-style: normal;
+  font-weight: 900;
+  src: url(/assets/fonts/Roboto-black.eot);
+  src: url(/assets/fonts/Roboto-black.eot?#iefix) format("embedded-opentype"),
+    url(/assets/fonts/Roboto-black.woff2) format("woff2"),
+    url(/assets/fonts/Roboto-black.woff) format("woff"),
+    url(/assets/fonts/Roboto-black.ttf) format("truetype");
+}
+
+/** your custom css code **/
+
+html {
+  background-color: white;
+}
+
+body {
+  font-family: "Noto Sans CJK KR", sans-serif;
+  color: #333333;
+  background-color: white;
+}
+
+.sidebar {
+  height: 100vh !important;
+  padding-top: 0px;
+  padding-bottom: 100px;
+  box-shadow: none !important;
+}
+
+.sidebar .main-menu {
+  height: 100vh !important;
+  background: url(/assets/img/bg.svg) !important;
+}
+
+.sidebar .sub-menu {
+  height: 100vh !important;
+  box-shadow: none !important;
+}
+
+.navbar {
+  z-index: 3;
+  background-color: #f0f0f0;
+  border-radius: 0.25rem;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%) !important;
+}
+
+.hide-button {
+  position: fixed;
+  top: 83px;
+  left: 250px;
+}
+
+.navbar-logo {
+  width: 210px;
+  height: 80px;
+  margin: 0 auto;
+
+  .logo {
+    width: 100%;
+    height: 100%;
+    background: url("/assets/logos/medivms.png") no-repeat;
+    background-size: contain;
+    background-position: center center;
+  }
+
+  .logo-mobile {
+    width: 100%;
+    height: 100%;
+    background: url($logo-path-mobile) no-repeat;
+    background-position: center center;
+  }
+
+  @include respond-below(sm) {
+    width: 80px;
+  }
+
+  @include respond-below(xxs) {
+    width: 20px;
+  }
+}
+
+.list-unstyled li {
+  cursor: pointer;
+  margin: 30px 15px 30px 0;
+  height: 53px;
+  width: 11.5vw;
+  line-height: 53px;
+  background: #f7f7f7;
+  border-radius: 0 20px 20px 0;
+  font-family: "Noto Sans CJK KR";
+  font-weight: 400;
+  font-size: 16px;
+  color: #333333;
+  text-align: left;
+  padding-left: 20px;
+  -ms-user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.list-unstyled li a {
+  border-bottom: none !important;
+}
+
+.navname {
+  vertical-align: 30px;
+  text-align: left !important;
+  padding: 0 !important;
+  line-height: 53px !important;
+}
+
+.navicon {
+  padding: 0px !important;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px !important;
+  margin: 0 10px 0 0;
+  border-radius: 10px;
+  vertical-align: 23px;
+  text-align: left !important;
+}
+
+.navicon img {
+  padding: 0 10px 4px 10px;
+  vertical-align: 0;
+}
+
+.card {
+  border: solid 1px #e7e7e7;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%) !important;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.surgeryTable th {
+  display: table-cell;
+  vertical-align: inherit;
+  font-weight: bold;
+  text-align: -internal-center;
+  font-size: 15px;
+}
+
+.surgeryTable td {
+  display: table-cell;
+  vertical-align: inherit;
+  text-align: -internal-center;
+  font-size: 15px;
+}
+
+.play {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  content: url(/assets/img/play.svg);
+}
+
+.play:hover {
+  content: url(/assets/img/play-hover.svg);
+}
+
+.play:focus {
+  content: url(/assets/img/play-hover.svg);
+}
+// .main-menu {
+//   box-shadow: 7px 6px 26px -1px rgba(0, 0, 0, 0.38);
+// }

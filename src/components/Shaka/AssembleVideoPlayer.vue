@@ -149,7 +149,7 @@ export default {
 
         this.lastPlayer
             .load(
-                `http://${base_url}:3000/stream/` +
+                `https://${base_url}:3000/stream/` +
                     this.manifestUrl[this.manifestUrl.length - 1]
             )
             .then(() => {
@@ -165,7 +165,7 @@ export default {
             //player load 함수
             this[val]
                 .load(
-                    `http://${base_url}:3000/stream/` +
+                    `https://${base_url}:3000/stream/` +
                         this.manifestUrl[this.currentPlayerNumber]
                 )
                 .then(() => {
