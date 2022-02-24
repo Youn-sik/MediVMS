@@ -84,7 +84,7 @@
             </div> -->
             <a
                 href="#"
-                class="menu-button d-none d-md-block hide-button"
+                :class="menuType + ' menu-button d-none d-md-block hide-button'"
                 @click.prevent.stop="
                     changeSideMenuStatus({
                         step: menuClickCount + 1,

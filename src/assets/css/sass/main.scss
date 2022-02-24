@@ -96,7 +96,7 @@ body {
 .hide-button {
   position: fixed;
   top: 83px;
-  left: 250px;
+  left: 255px;
 }
 
 .navbar-logo {
@@ -238,6 +238,33 @@ body {
   border-radius: 20px;
 }
 
-// .main-menu {
-//   box-shadow: 7px 6px 26px -1px rgba(0, 0, 0, 0.38);
-// }
+.menu-default.menu-button {
+  content: url(/assets/img/hide2.svg);
+}
+
+.menu-default.sub-hidden.menu-button {
+  content: url(/assets/img/hide.svg);
+}
+
+.menu-default.main-hidden.sub-hidden.menu-button {
+  content: url(/assets/img/hide.svg);
+}
+
+.main-menu {
+  width: 14.58vw;
+}
+
+.sub-menu {
+  background-color: #172757 !important;
+  width: 9.25vw;
+  left: 250px !important;
+}
+
+.sub-menu li {
+  background-color: #172757 !important;
+  color: #dfe0e2 !important;
+}
+
+.sub-menu li a {
+  color: #dfe0e2 !important;
+}

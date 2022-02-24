@@ -2,33 +2,37 @@
     <div v-if="surgeries.length">
         <b-row>
             <b-colxx xl="8" lg="12" class="mb-4">
-                <piaf-breadcrumb :heading="'수술실'" />
-                <b-dropdown
-                    id="surgeriesDropdown"
-                    :text="currentSurgery.surgery_name"
-                    variant="outline-secondary"
-                >
-                    <b-dropdown-item
-                        @click="changeSurgery(surgery, index)"
-                        v-for="(surgery, index) in surgeries"
-                        :key="index"
-                        >{{ surgery.surgery_name }}</b-dropdown-item
-                    >
-                </b-dropdown>
-                <div class="separator mb-5"></div>
-                <b-row>
-                    <b-colxx
-                        v-for="(device, index) in currentSurgery.devices"
-                        :key="index"
-                        xxs="6"
-                        class="mb-4"
-                    >
-                        <WebRtcPlayer
-                            :liveurl="device.live_url"
-                            :id="'surgeryLive' + index"
-                        />
-                    </b-colxx>
-                </b-row>
+                <b-card>
+                    <b-card-title>
+                        {{ currentSurgery.surgery_name }}
+                        <b-dropdown
+                            id="surgeriesDropdown"
+                            :text="currentSurgery.surgery_name"
+                            variant="outline-secondary"
+                        >
+                            <b-dropdown-item
+                                @click="changeSurgery(surgery, index)"
+                                v-for="(surgery, index) in surgeries"
+                                :key="index"
+                                >{{ surgery.surgery_name }}</b-dropdown-item
+                            >
+                        </b-dropdown>
+                    </b-card-title>
+
+                    <b-row>
+                        <b-colxx
+                            v-for="(device, index) in currentSurgery.devices"
+                            :key="index"
+                            xxs="6"
+                            class="mb-4"
+                        >
+                            <WebRtcPlayer
+                                :liveurl="device.live_url"
+                                :id="'surgeryLive' + index"
+                            />
+                        </b-colxx>
+                    </b-row>
+                </b-card>
             </b-colxx>
             <b-colxx xl="4" lg="12" class="mb-4">
                 <piaf-breadcrumb :heading="'정보'" />
