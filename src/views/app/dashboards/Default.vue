@@ -64,6 +64,9 @@
                             <b-tr
                                 v-for="(surgery, index) in surgeries"
                                 :key="index"
+                                :class="
+                                    currentSurgery !== index ? '' : 'selected'
+                                "
                                 style=" height:70px;"
                             >
                                 <b-td class="text-center">
@@ -88,23 +91,21 @@
                                 <b-td class="text-center">
                                     {{ surgery.note }}
                                 </b-td>
-                                <b-td class="text-center" style="padding:0px;">
+                                <b-td
+                                    class="text-center"
+                                    v-if="currentSurgery !== index"
+                                    style="padding:0px;"
+                                >
                                     <a
                                         href="#"
                                         class="play"
-                                        v-if="currentSurgery !== index"
                                         @click="clickBroad(index)"
                                     >
-                                        <!-- <img
-                                            height="10"
-                                            src="/assets/img/play.svg"
-                                    /> -->
                                     </a>
-                                    <a href="#" v-else class="play"
-                                        ><img
-                                            height="30"
-                                            src="/assets/img/play-hover.svg"
-                                    /></a>
+                                </b-td>
+
+                                <b-td class="text-center" v-else>
+                                    <a href="#" class="playing"> /></a>
                                 </b-td>
                             </b-tr>
                         </b-table-simple>
@@ -112,26 +113,25 @@
                 </b-card>
             </b-colxx>
             <b-colxx sm="12" xl="5" lg="5">
-                <!-- 카메라 -->
-                <b-row v-if="main">
-                    <b-colxx
-                        :class="currentSize"
-                        v-for="(video, index) in main"
-                        :key="index"
-                    >
-                        <WebRtcPlayer
-                            video
-                            :liveurl="video.live_url"
-                            :id="'surgeryLive' + index"
-                        ></WebRtcPlayer>
-                        <!-- <VideoPlayer
-                v-else
-                :isHistory="false"
-                :manifest-url="video"
-                style="height:100%;"
-              /> -->
-                    </b-colxx>
-                </b-row>
+                <b-card style="max-height:100%; height:100%;">
+                    <b-card-title v-if="currentSurgery >= 0">
+                        {{ surgeries[currentSurgery].surgery_name }}
+                    </b-card-title>
+                    <!-- 카메라 -->
+                    <b-row v-if="main" class="dash-videos">
+                        <b-colxx
+                            :class="currentSize"
+                            v-for="(video, index) in main"
+                            :key="index"
+                        >
+                            <WebRtcPlayer
+                                video
+                                :liveurl="video.live_url"
+                                :id="'surgeryLive' + index"
+                            ></WebRtcPlayer>
+                        </b-colxx>
+                    </b-row>
+                </b-card>
             </b-colxx>
         </b-row>
         <!-- <b-row>
@@ -181,7 +181,7 @@ export default {
             surgeries: [],
             main: null,
             sub: null,
-            currentSurgery: null,
+            currentSurgery: -1,
             mosaicChecked: true,
             broadcastSurgery: 0,
             deviceChartData: null,

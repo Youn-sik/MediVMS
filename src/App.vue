@@ -98,9 +98,9 @@ export default {
 </script>
 
 <style>
-button {
+/* button {
     color: white !important;
-}
+} */
 
 .Vue-Toastification__toast--error .Vue-Toastification__toast-body {
     /* color:#ffc107 !important; */

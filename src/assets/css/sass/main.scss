@@ -209,13 +209,35 @@ body {
   content: url(/assets/img/play.svg);
 }
 
-.play:hover {
+.playing {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
   content: url(/assets/img/play-hover.svg);
 }
 
-.play:focus {
+.play:hover {
   content: url(/assets/img/play-hover.svg);
+  background-color: #0066ff;
 }
+
+.surgeryTable tr:hover td {
+  background-color: #0066ff;
+  color: #fff;
+}
+
+.surgeryTable .selected td {
+  background-color: #0066ff;
+  color: #fff;
+}
+
+.dash-videos video {
+  height: 142px !important;
+  width: 255px !important;
+  background: black !important;
+  border-radius: 20px;
+}
+
 // .main-menu {
 //   box-shadow: 7px 6px 26px -1px rgba(0, 0, 0, 0.38);
 // }
