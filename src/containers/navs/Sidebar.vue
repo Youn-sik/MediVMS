@@ -22,14 +22,6 @@
                         :data-flag="item.id"
                         @click="goPage(item.to)"
                     >
-                        <!-- <router-link
-                            @click.native="
-                                changeSelectedParentHasNoSubmenu(item.id)
-                            "
-                            :to="item.to"
-                        >
-
-                        </router-link> -->
                         <span class="navicon">
                             <img
                                 class="icon"
@@ -39,49 +31,10 @@
                         <span class="navname">
                             {{ $t(item.label) }}
                         </span>
-
-                        <!-- <a
-                            v-if="item.newWindow"
-                            :href="item.to"
-                            rel="noopener noreferrer"
-                            target="_blank"
-                        >
-                            <i :class="item.icon" />
-                            {{ $t(item.label) }}
-                        </a>
-                        <a
-                            v-else-if="item.subs && item.subs.length > 0"
-                            @click.prevent="openSubMenu($event, item)"
-                            :href="`#${item.to}`"
-                        >
-                            <i :class="item.icon" />
-                            {{ $t(item.label) }}
-                        </a>
-                        <router-link
-                            v-else
-                            @click.native="
-                                changeSelectedParentHasNoSubmenu(item.id)
-                            "
-                            :to="item.to"
-                        >
-                            <i :class="item.icon" />
-                            {{ $t(item.label) }}
-                        </router-link> -->
                     </li>
                 </ul>
+                <div class="logo2"></div>
             </vue-perfect-scrollbar>
-            <!-- <div
-                class="hide-button"
-                @click.prevent.stop="
-                    changeSideMenuStatus({
-                        step: menuClickCount + 1,
-                        classNames: menuType,
-                        selectedMenuHasSubItems
-                    })
-                "
-            >
-                <img src="/assets/img/hide.svg" />
-            </div> -->
             <a
                 href="#"
                 :class="menuType + ' menu-button d-none d-md-block hide-button'"

@@ -35,99 +35,128 @@
                 </b-card>
             </b-colxx>
             <b-colxx xl="4" lg="12" class="mb-4">
-                <piaf-breadcrumb :heading="'정보'" />
-                <div class="separator mb-5"></div>
                 <b-card>
-                    <p>일정 정보</p>
-                    <b-table-simple>
-                        <b-tbody striped>
-                            <b-tr>
-                                <b-th rowspan="1" width="20%">수술실</b-th>
-                                <b-th rowspan="1" width="20%">일정명</b-th>
-                                <b-th rowspan="1" width="20%">일정 상태</b-th>
-                                <b-th rowspan="1" width="20%"></b-th>
-                            </b-tr>
-                            <b-tr>
-                                <b-td colspan="1">{{
-                                    currentSurgery.surgery_name
-                                }}</b-td>
-                                <b-td colspan="1">{{
-                                    currentSchedule.name
-                                }}</b-td>
-                                <b-td colspan="1"></b-td>
-                                <b-td colspan="1"></b-td>
-                            </b-tr>
-                        </b-tbody>
-                    </b-table-simple>
-                </b-card>
+                    <b-card-title>정보</b-card-title>
+                    <b-card>
+                        <p>일정</p>
+                        <b-card>
+                            <b-table-simple>
+                                <b-tbody striped>
+                                    <b-tr>
+                                        <b-th rowspan="1" width="20%"
+                                            >수술실</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >일정명</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >일정 상태</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"></b-th>
+                                    </b-tr>
+                                    <b-tr>
+                                        <b-td colspan="1">{{
+                                            currentSurgery.surgery_name
+                                        }}</b-td>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.name
+                                        }}</b-td>
+                                        <b-td colspan="1"></b-td>
+                                        <b-td colspan="1"></b-td>
+                                    </b-tr>
+                                </b-tbody>
+                            </b-table-simple>
+                        </b-card>
+                    </b-card>
 
-                <b-card class="mt-3">
-                    <p>환자 정보</p>
-                    <b-table-simple>
-                        <b-tbody striped>
-                            <b-tr>
-                                <b-th rowspan="1" width="20%">환자 코드</b-th>
-                                <b-th rowspan="1" width="20%">환자 명</b-th>
-                                <b-th rowspan="1" width="20%">생년월일</b-th>
-                                <b-th rowspan="1" width="20%"></b-th>
-                            </b-tr>
-                            <b-tr>
-                                <b-td colspan="1">{{
-                                    currentSchedule.patient_code
-                                }}</b-td>
-                                <b-td colspan="1">{{
-                                    currentSchedule.patient
-                                }}</b-td>
-                                <b-td colspan="1">{{
-                                    currentSchedule.patient_birthday
-                                }}</b-td>
-                                <b-td colspan="1"></b-td>
-                            </b-tr>
-                        </b-tbody>
-                    </b-table-simple>
-                </b-card>
+                    <b-card class="mt-3">
+                        <p>환자 정보</p>
+                        <b-card>
+                            <b-table-simple>
+                                <b-tbody striped>
+                                    <b-tr>
+                                        <b-th rowspan="1" width="20%"
+                                            >환자 코드</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >환자 명</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >생년월일</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"></b-th>
+                                    </b-tr>
+                                    <b-tr>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.patient_code
+                                        }}</b-td>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.patient
+                                        }}</b-td>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.patient_birthday
+                                        }}</b-td>
+                                        <b-td colspan="1"></b-td>
+                                    </b-tr>
+                                </b-tbody>
+                            </b-table-simple>
+                        </b-card>
+                    </b-card>
 
-                <b-card class="mt-3">
-                    <p>담당 의사 정보</p>
-                    <b-table-simple>
-                        <b-tbody striped>
-                            <b-tr>
-                                <b-th rowspan="1" width="20%">사번</b-th>
-                                <b-th rowspan="1" width="20%">이름</b-th>
-                                <b-th rowspan="1" width="20%">진료과</b-th>
-                                <b-th rowspan="1" width="20%">직급</b-th>
-                            </b-tr>
-                            <b-tr>
-                                <b-td colspan="1">{{
-                                    currentSchedule.employee_id
-                                }}</b-td>
-                                <b-td colspan="1">{{
-                                    currentSchedule.dname
-                                }}</b-td>
-                                <b-td colspan="1">{{
-                                    currentSchedule.department
-                                }}</b-td>
-                                <b-td colspan="1">{{
-                                    currentSchedule.rank
-                                }}</b-td>
-                            </b-tr>
-                        </b-tbody>
-                    </b-table-simple>
-                </b-card>
+                    <b-card class="mt-3">
+                        <p>담당 의사 정보</p>
+                        <b-card>
+                            <b-table-simple>
+                                <b-tbody striped>
+                                    <b-tr>
+                                        <b-th rowspan="1" width="20%"
+                                            >사번</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >이름</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >진료과</b-th
+                                        >
+                                        <b-th rowspan="1" width="20%"
+                                            >직급</b-th
+                                        >
+                                    </b-tr>
+                                    <b-tr>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.employee_id
+                                        }}</b-td>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.dname
+                                        }}</b-td>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.department
+                                        }}</b-td>
+                                        <b-td colspan="1">{{
+                                            currentSchedule.rank
+                                        }}</b-td>
+                                    </b-tr>
+                                </b-tbody>
+                            </b-table-simple>
+                        </b-card>
+                    </b-card>
 
-                <div class="mt-2" style="text-align:center;">
-                    <b-button
-                        v-if="schedules.length && !currentSchedule.is_record"
-                        @click="startSchedule(currentSchedule)"
-                        >시작</b-button
-                    >
-                    <b-button
-                        v-if="currentSchedule.is_record"
-                        variant="danger"
-                        @click="endSchedule(currentSchedule)"
-                        >종료</b-button
-                    >
-                </div>
+                    <div class="mt-2" style="text-align:center;">
+                        <b-button
+                            v-if="
+                                schedules.length && !currentSchedule.is_record
+                            "
+                            @click="startSchedule(currentSchedule)"
+                            >시작</b-button
+                        >
+                        <b-button
+                            v-if="currentSchedule.is_record"
+                            variant="danger"
+                            @click="endSchedule(currentSchedule)"
+                            >종료</b-button
+                        >
+                    </div>
+                </b-card>
             </b-colxx>
         </b-row>
     </div>

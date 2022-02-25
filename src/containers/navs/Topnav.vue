@@ -50,7 +50,9 @@
                     title="Dark Mode"
                 ></b-tooltip>
             </div> -->
-            <b-button @click="logout" class="mr-3">로그 아웃</b-button>
+            <a @click="logout" href="#" class="logout"
+                ><img src="/assets/img/logout.svg" />로그아웃</a
+            >
         </div>
     </nav>
 </template>

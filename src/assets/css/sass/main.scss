@@ -268,3 +268,27 @@ body {
 .sub-menu li a {
   color: #dfe0e2 !important;
 }
+
+.logo2 {
+  width: 150px;
+  height: 30.2px;
+  margin: 0 auto;
+  margin-top: 340px;
+  background: url(/assets/img/logo2.svg);
+}
+
+.logout {
+  width: 108px;
+  height: 24px;
+  margin-right: 1.041vw;
+  float: right;
+  font-family: "Noto Sans CJK KR";
+  font-size: 16px;
+  font-weight: 700;
+  text-align: right;
+  color: #009cdf;
+}
+
+.logout img {
+  padding-right: 20px;
+}
