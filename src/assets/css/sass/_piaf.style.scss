@@ -1023,6 +1023,7 @@ button {
 .btn-outline-primary {
   color: $theme-color-1;
   border-color: $theme-color-1;
+  font-weight: bold;
 
   &:hover {
     color: $foreground-color;
@@ -7969,12 +7970,14 @@ footer.page-footer {
     border-radius: 10px;
     color: $secondary-color;
     position: absolute;
-    width: 40px;
+    width: 60px;
     height: 38px;
     bottom: -8px;
     right: 0px;
     text-align: center;
     cursor: pointer;
+    padding-left: 25px;
+    margin-bottom: 5px;
 
     &:hover {
       color: $theme-color-1;
@@ -8037,7 +8040,8 @@ select:-webkit-autofill:focus {
 }
 
 .v-present .v-btn {
-  background-color: #272727 !important;
+  background-color: #f0f0f0 !important;
+  font-weight: bold !important;
 }
 
 .v-calendar .cyan {

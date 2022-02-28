@@ -180,6 +180,7 @@ body {
 .card {
   border: solid 1px #e7e7e7;
   box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%) !important;
+  border-radius: 30px !important;
 }
 
 .card-title {
@@ -292,3 +293,316 @@ body {
 .logout img {
   padding-right: 20px;
 }
+
+.btn-outline-primary{
+  color:#fff !important;
+  background-color: #172757 !important;
+}
+
+.theme--dark.v-calendar-daily {
+    background-color: #FFFFFF !important;
+    border-left: 1px solid #9e9e9e !important;
+    border-top: 1px solid #9e9e9e !important;
+}
+
+.theme--dark.v-calendar-daily .v-calendar-daily__intervals-body .v-calendar-daily__interval-text {
+    color: #000000 !important;
+}
+
+.theme--dark.v-btn {
+    color: #000 !important;
+    font-weight: bold !important;
+}
+
+.theme--dark.v-calendar-daily .v-calendar-daily_head-day {
+  border-right: 1px solid #9e9e9e !important;
+  border-bottom: 1px solid #9e9e9e !important;
+  color: #000 !important;
+  font-weight: bold !important;
+}
+
+.btn.dropdown-toggle.btn-outline-secondary {
+  border-radius: 30px !important;
+  height: 25px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 Im !important;
+  margin-left: 20px !important;
+}
+
+.search {
+  margin-top: 10px !important;
+}
+
+.search input {
+  height: 25px;
+  margin-left: 50px;
+  border-radius: 30px;
+  width: 200px;
+}
+
+.search-icon {
+  margin-bottom: 30px !important;
+}
+
+.btn.dropdown-toggle.btn-outline-secondary {
+  padding-bottom: 0;
+}
+
+.cal-btn{
+  display: flex;
+  margin: 0 auto;
+  width: 176px;
+  justify-content: space-between;
+}
+
+.v-calendar-daily_head-weekday {
+  color: black !important;
+}
+
+.theme--dark.v-btn.v-btn--has-bg {
+    background-color: #f0f0f0 !important;
+}
+
+.btn.ma-2.reserve.btn-outline-primary{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #0c0;
+  background-color: #fff !important;
+}
+
+.fn-12-b {
+  font-family: 'Noto Sans CJK KR';
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fc-cc {
+  color: #00CC00;
+}
+
+.fn-12-b.fc-cc img {
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+#surgeriesDropdown__BV_toggle_ {
+  margin-top: 6px;
+  margin-left: 30px;
+}
+
+.btn-primary {
+  background-color: #fff;
+  border-color: #b0b0b0;
+  color: #fff;
+}
+
+.btn.ma-2.day.btn-primary {
+  color: white;
+  background-color: #172757;
+}
+
+.btn.ma-2.week.btn-primary {
+  color: white;
+  background-color: #172757;
+}
+
+.btn.ma-2.month.btn-primary {
+  color: white;
+  background-color: #172757;
+}
+
+.btn.ma-2.day.btn-outline-primary {
+  color: initial !important;
+  background-color: #fff !important;
+  border-color: #b0b0b0;
+  font-weight: unset;
+}
+
+.btn.ma-2.week.btn-outline-primary {
+  color: initial !important;
+  background-color: #fff !important;
+  border-color: #b0b0b0;
+  font-weight: unset;
+}
+
+.btn.ma-2.month.btn-outline-primary {
+  color: initial !important;
+  background-color: #fff !important;
+  border-color: #b0b0b0;
+  font-weight: unset;
+}
+
+.theme--dark.v-calendar-weekly .v-calendar-weekly__day.v-outside {
+  background-color: #e8e8e8 !important;
+}
+
+.theme--dark.v-calendar-weekly .v-calendar-weekly__head-weekday.v-past {
+  color: black;
+  background-color: white;
+}
+
+.theme--dark.v-calendar-weekly .v-calendar-weekly__head-weekday {
+  border-right: 1px solid #9e9e9e;
+  color: black;
+  background-color: white;
+}
+
+.theme--dark.v-calendar-weekly .v-calendar-weekly__head-weekday.v-outside {
+  background-color: white;
+  color: black;
+}
+
+.theme--dark.v-calendar-weekly.v-calendar-weekly__head-weekday.v-outside {
+  background-color: #fff !important;
+}
+
+.v-calendar-weekly__day.v-past {
+  border-right: 1px solid #9e9e9e;
+  color: black;
+  background-color: white;
+}
+
+.v-calendar-weekly__day.v-past.v-outside {
+  border-right: 1px solid #9e9e9e;
+  color: black;
+  background-color: white;
+}
+
+.v-calendar-weekly__day.v-future.v-outside {
+  border-right: 1px solid #9e9e9e;
+  color: black;
+  background-color: white;
+}
+
+.btn.ma-2.year-month.btn-outline-primary{
+  border-left-width: 1px;
+  padding-left: 20px;
+  margin-bottom: 0px;
+  padding-bottom: 3px;
+  padding-top: 3px;
+  font-size: 16px;
+}
+
+.fn-12-r{font-family: 'Noto Sans CJK KR'; font-size: 12px; font-weight: 400;}
+.fn-12-b{font-family: 'Noto Sans CJK KR'; font-size: 12px; font-weight: 400;}
+
+.cal-tab{
+  display: inline-block;
+  margin-top: 7px;
+}
+
+.cal-tab ul{
+  display: flex;
+  width: 240px;
+  height: 30px;
+  margin-left:30px;
+  border-radius: 10px;
+  border: solid 1px #e7e7e7;
+  list-style:none;
+}
+
+.cal-tab ul li{
+  cursor: pointer;
+  width: 80px;
+  height: 30px;
+  padding: 5px 0 0 29px;
+  border-right: solid 1px #e7e7e7;
+}
+.cal-tab ul li:last-child{
+  border: 0;
+}
+
+.cal-tab ul .active{
+  background-color: #172757;
+  color: #fff;
+  border-radius: 10px;
+}
+
+.btn.ma-2.reserve.btn-outline-primary {
+  margin-right: 0px;
+}
+
+.btn.dropdown-toggle.btn-outline-secondary {
+  margin-left: 20px;
+}
+
+.dropdown.b-dropdown.btn-group {
+  margin-top: 5px;
+  width: 70px !important;
+}
+
+.v-calendar-weekly__head-weekday{
+  font-size: 15px !important;
+  padding-top: 9px;
+  padding-bottom: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.v-calendar-weekly__head-weekday.v-past {
+  background-color: white !important;
+  color: black !important;
+}
+
+.v-calendar-weekly__head-weekday.v-past.v-outside {
+  background-color: white !important;
+  color: black !important;
+}
+
+.v-calendar-weekly__head-weekday.v-present {
+  background-color: white !important;
+  color: black !important;
+}
+
+.v-calendar-weekly__head-weekday.v-future {
+  background-color: white !important;
+  color: black !important;
+}
+
+.v-calendar-weekly__head {
+  height: 40px;
+  border-bottom: 1px solid #9e9e9e;
+}
+
+.v-calendar-weekly__day.v-present {
+  background-color: white;
+  box-shadow: inset 0 2px 10px #888;
+}
+
+.btn.btn-secondary {
+  color:white;
+}
+
+.btn.btn-danger {
+  color:white;
+}
+
+.bv-no-focus-ring.col-form-label.pt-0 {
+  font-weight: bold;
+}
+
+.modal-header {
+  margin-top: 10px;
+  padding-bottom: 0px !important;
+  padding-top: 10px !important;
+}
+
+.modal-right .modal-header {
+  height: 50px;
+}
+
+.modal-body {
+  padding-bottom: 0px !important;
+  padding-top: 15px !important;
+}
+
+.modal-dialog .modal-content {
+  border-radius: 30px 0px 0px 30px;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
