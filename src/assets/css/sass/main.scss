@@ -268,6 +268,7 @@ body {
 
 .sub-menu li a {
   color: #dfe0e2 !important;
+  font-size: 16px !important;
 }
 
 .logo2 {
@@ -323,7 +324,7 @@ body {
 
 .btn.dropdown-toggle.btn-outline-secondary {
   border-radius: 30px !important;
-  height: 25px !important;
+  height: 30px !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   margin-left: 20px !important;
@@ -344,7 +345,7 @@ body {
 }
 
 .search-icon {
-  margin-bottom: 28px !important;
+   padding-top: 10px;
 }
 
 .cal-btn{
@@ -641,4 +642,117 @@ body {
 
 .v-card__text {
   background-color: white !important;
+}
+
+.router-link-exact-active.active span {
+  font-weight: bold !important;
+}
+
+.disable-text-selection {
+  border: solid 1px #e7e7e7;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+}
+
+.disable-text-selection h3 {
+  margin-top: 15px;
+  margin-left: 15px;
+  font-weight: bold;
+  font-size: 20px !important;
+}
+
+.vdp-datepicker.surgery-date-picker .input-group input.form-control {
+  border-radius: 10px;
+}
+
+.item-6-1-2 nav{
+  display: inline-flex;
+  height: 33px;
+  margin: 0 30px;
+  border-radius: 10px;
+  border: solid 1px #e7e7e7;
+}
+
+.item-6-1-2 nav a{
+  width: 80px;
+  height: 30px;
+  padding: 5px 0 0 27px;
+  border-right: solid 1px #e7e7e7;
+  font-size: 13px;
+  text-align: inherit;
+}
+
+.item-6-1-2 nav a:focus{
+  height: 29px;
+  font-weight: 700;
+  background-color: #172757;
+  color: #fff;
+  font-weight: 700;
+}
+
+.item-6-1-2 nav a:first-child:focus{
+  border-radius: 10px 0 0 10px;
+}
+
+.item-6-1-2 nav a:last-child:focus{
+  border-radius: 0 10px 10px 0;
+}
+
+.item-6-1-2 nav a:last-child{
+  border: 0;
+}
+
+div.custom-control.custom-control-inline.custom-radio label {
+  font-size: 16px;
+  padding-top: 1.7px;
+  margin-right: 10px;
+}
+
+.vuetable.ui.blue.selectable.celled.stackable.attached.table input[type="checkbox"]{
+  display: none;
+}
+
+.vuetable.ui.blue.selectable.celled.stackable.attached.table input[type="checkbox"]{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  background: url(/assets/img/check-off.svg) no-repeat;
+  cursor: pointer;
+}
+
+.vuetable.ui.blue.selectable.celled.stackable.attached.table input[type="checkbox"]:checked{
+  background: url(/assets/img/check-on.svg) no-repeat;
+}
+
+.vuetable.ui.blue.selectable.celled.stackable.attached.table tr th{
+  font-size: 16px;
+}
+
+.request:hover{
+  cursor: pointer;
+}
+
+.request-denined:hover{
+  cursor: not-allowed;
+}
+
+h5#__BVID__1299___BV_modal_title_.modal-title{
+  padding-bottom: 10px;
+}
+
+div#__BVID__1299___BV_modal_content_.modal-content{
+  border-radius: 30px !important;
+}
+
+.modal .modal-header{
+  border-bottom: none !important;
+}
+
+.modal .modal-footer{
+  border-top: none !important;
+}
+
+#__BVID__1299___BV_modal_body_ textarea.form-control#__BVID__1439{
+  height: 5em !important;
 }

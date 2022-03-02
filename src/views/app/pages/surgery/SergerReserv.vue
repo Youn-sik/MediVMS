@@ -281,7 +281,7 @@
                 <!-- </div> -->
                 <div style="width:80%; text-aligm:center; margin: 0 auto;">
                     <b-input-group class="mb-1">
-                        <b-input-group-prepend style="margin-top: 5px;">
+                        <b-input-group-prepend style="margin-top: 5px; height: 30px !important;">
                             <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
                                 <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
                             </b-dropdown>
@@ -298,7 +298,7 @@
                                 v-model="searchKeyword"
                                 style=""
                             />
-                            <span class="search-icon" @click="searchClick">
+                            <span class="search-icon" @click="searchClick" style="margin-bottom: 39px !important">
                                 <i class="simple-icon-magnifier"></i>
                             </span>
                         </div>

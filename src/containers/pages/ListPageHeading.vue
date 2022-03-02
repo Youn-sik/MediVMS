@@ -22,10 +22,11 @@
             <b-table-simple>
               <b-tbody striped>
                 <b-tr>
-                  <b-th rowspan="1">수술 기간</b-th>
+                  <b-th rowspan="1" style="color: #565656 !important; font-size: 16px !important;">수술 기간</b-th>
                   <b-td rowspan="1">
                     <b-row class="mb-0">
                       <b-colxx xxs="12">
+                        <img src="/assets/img/date.svg" style=""/>&nbsp;
                         <datepicker
                           :language="ko"
                           format="yyyy년 MMM dd일"
@@ -34,7 +35,8 @@
                           placeholder="날짜 선택"
                           @selected="selectStartData"
                           wrapper-class="surgery-date-picker"
-                        ></datepicker>&nbsp;&nbsp;~&nbsp;
+                        ></datepicker>&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;
+                        <img src="/assets/img/date.svg" style=""/>&nbsp;
                         <datepicker
                           :language="ko"
                           format="yyyy년 MMM dd일"
@@ -45,16 +47,27 @@
                           wrapper-class="surgery-date-picker"
                         ></datepicker>
 
+                        <span class="item-6-1-2">
+                            <nav>
+                                <a href="#" class="fn-12-r" @click="today">당일</a>
+                                <a href="#" class="fn-12-r" @click="aWeek">일주일</a>
+                                <a href="#" class="fn-12-r" @click="aMonth">1개월</a>
+                                <a href="#" class="fn-12-r" @click="twoMonth">2개월</a>
+                            </nav>
+                        </span>
+
+                        <!-- 
                         <b-button variant="primary" @click="today" class="ml-3 mr-3">당일</b-button>
                         <b-button variant="primary" @click="aWeek" class="mr-3">1주일</b-button>
                         <b-button variant="primary" @click="aMonth" class="mr-3">1개월</b-button>
                         <b-button variant="primary" @click="twoMonth" class="mr-3">2개월</b-button>
+                        -->
                       </b-colxx>
                     </b-row>
                   </b-td>
                 </b-tr>
                 <b-tr>
-                  <b-th rowspan="1">처리 상태</b-th>
+                  <b-th rowspan="1" style="color: #565656 !important; font-size: 16px !important;">처리 상태</b-th>
                   <b-td rowspan="1">
                     <b-form-group v-slot="{ ariaDescribedby }">
                       <b-form-radio-group
@@ -69,9 +82,9 @@
                   </b-td>
                 </b-tr>
                 <b-tr>
-                  <b-th rowspan="1">검색 구분</b-th>
+                  <b-th rowspan="1" style="color: #565656 !important; font-size: 16px !important;">검색 구분</b-th>
                   <b-td rowspan="1">
-                    <b-colxx xxs="12" class="pl-0">
+                    <b-colxx xxs="12" class="pl-0"  style="margin-bottom: 0px; bottom: 15px; right: 20px;">
                       <b-input-group class="mb-0">
                         <b-input-group-prepend>
                           <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
@@ -83,6 +96,7 @@
                           ref="searchContainer"
                           @mouseenter="isSearchOver=true"
                           @mouseleave="isSearchOver=false"
+                          style="bottom: 5px;"
                         >
                           <b-input
                             placeholder="검색"
@@ -102,7 +116,7 @@
           </div>
         </b-collapse>
       </div>
-      <div class="separator mb-5" />
+      <!-- <div class="separator mb-5" /> -->
     </b-colxx>
   </b-row>
 </template>

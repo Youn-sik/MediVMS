@@ -23,11 +23,11 @@
         </b-modal>
 
         <!-- 열람 요청 -->
-        <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청">
+        <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청" rows="5">
             <b-form-group label="요청 사유">
                 <b-form-textarea v-model="requestBrowseForm.reason" />
             </b-form-group>
-            <template #modal-footer="{ ok, cancel, hide }">
+            <template #modal-footer="{ ok, cancel, hide }" style="margin-right: 300px;">
                 <b-button variant="danger" @click="cancelSaveEvent">
                     취소
                 </b-button>
@@ -143,8 +143,9 @@
                 :changeSearchType="changeSearchType"
             ></list-page-heading>
         </b-colxx>
-        <b-colxx md="12">
-            <b-card>
+        <div style="display: block;">&nbsp;</div>
+        <b-colxx md="12" style="border: solid 1px #e7e7e7; border-radius: 20px; box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);">
+            <b-card style="border: none !important; box-shadow: none !important;">
                 <!-- this.$refs.vuetable.selectedTo 선택된 데이터 정보 -->
                 <b-dropdown
                     id="ddown1"
@@ -218,6 +219,17 @@
                         slot="browse_request"
                         scope="props"
                     >
+                    
+                    <span class="request" v-if="
+                                (props.rowData.browse_status === null ||
+                                    props.rowData.browse_status === undefined ||
+                                    props.rowData.browse_status === 'denied') &&
+                                    props.rowData.expiration === 0
+                            " @click="openBrowseRequestModal(props.rowData.id)">
+                        <img style="margin-left: 16px;" src="/assets/img/request.svg">
+                    </span>
+                    <span class="request-denined" v-else><img style="width: 40px; margin-left: 10px;" src="/assets/img/request-hover.svg"></span>
+                    <!--
                         <b-button
                             v-if="
                                 (props.rowData.browse_status === null ||
@@ -230,6 +242,7 @@
                             열람 요청
                         </b-button>
                         <b-button v-else disabled> 열람 요청 </b-button>
+                    -->
                     </template>
 
                     <template
