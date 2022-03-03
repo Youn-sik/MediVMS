@@ -3,12 +3,13 @@
         <b-row>
             <b-colxx xl="8" lg="12" class="mb-4">
                 <b-card>
-                    <b-card-title>
+                    <b-card-title style="margin-bottom: 20px;">
                         {{ currentSurgery.surgery_name }}
                         <b-dropdown
                             id="surgeriesDropdown"
                             :text="currentSurgery.surgery_name"
                             variant="outline-secondary"
+                            style="margin-top: 10px;"
                         >
                             <b-dropdown-item
                                 @click="changeSurgery(surgery, index)"
@@ -36,7 +37,7 @@
             </b-colxx>
             <b-colxx xl="4" lg="12" class="mb-4">
                 <b-card>
-                    <b-card-title>정보</b-card-title>
+                    <b-card-title style="margin-bottom: 15px;">정보</b-card-title>
                     <b-card>
                         <p>일정</p>
                         <b-card>

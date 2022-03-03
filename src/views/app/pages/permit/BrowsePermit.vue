@@ -9,7 +9,7 @@
             </b-form-group>
         <!-- <b-form-select v-model="form.status" :options="permitType" class="mb-2 mr-2" plain></b-form-select> -->
             <b-form-group label="승인 여부">
-                <vselect label="text" v-model="form.status" :options="permitType" dir="ltr" ></vselect>
+                <vselect label="text" v-model="form.status" :options="permitType" dir="ltr" class="vselect1"></vselect>
             </b-form-group>
             <!-- <template slot="option" slot-scope="option">
                             </template> -->
@@ -192,6 +192,9 @@ export default {
         ],
         sortType:"desc",
         sort:"id",
+        OpenIndicator: {
+            render: createElement => createElement('span', {class: {'toggle': true}}),
+        },
     }
   },
     methods: {

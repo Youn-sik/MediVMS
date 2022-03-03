@@ -24,7 +24,7 @@
 
         <!-- 열람 요청 -->
         <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청">
-            <b-form-group label="요청 사유">
+            <b-form-group label="요청 사유" style="margin-top: 20px;">
                 <b-form-textarea v-model="requestBrowseForm.reason" />
             </b-form-group>
             <template #modal-footer="{ ok, cancel, hide }" style="margin-right: 300px;">
@@ -456,11 +456,11 @@ export default {
 
             //열람 컬럼
             browseFields: [
-                {
-                    name: "__checkbox",
-                    titleClass: "center aligned",
-                    dataClass: "center aligned"
-                },
+                // {
+                //     name: "__checkbox",
+                //     titleClass: "center aligned",
+                //     dataClass: "center aligned"
+                // },
                 {
                     name: "date",
                     sortField: "date",
@@ -526,11 +526,11 @@ export default {
 
             //반출 컬럼
             takeoutFields: [
-                {
-                    name: "__checkbox",
-                    titleClass: "center aligned",
-                    dataClass: "center aligned"
-                },
+                // {
+                //     name: "__checkbox",
+                //     titleClass: "center aligned",
+                //     dataClass: "center aligned"
+                // },
                 {
                     name: "date",
                     sortField: "date",

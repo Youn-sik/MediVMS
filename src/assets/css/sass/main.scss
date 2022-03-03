@@ -1348,3 +1348,44 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
   font-size: 15px;
   color: #5A5A5A;
 }
+
+input[type="checkbox"]:checked {
+  background: #32e723;
+  border: none;
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 1px solid #999;
+  appearance: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+
+.vselect1 .vs__search::placeholder,
+.vselect1 .vs__dropdown-toggle,
+.vselect1 .vs__dropdown-menu {
+  background: #dfe5fb;
+  border: none;
+  color: #394066;
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
+
+.v-select .vs__open-indicator{
+  border-color: black !important;
+  border-width: 2px 2px 0 0 !important;
+  height: 8px !important;
+  width: 8px !important;
+  border-style: solid;
+  content: "";
+  display: inline-block;
+  vertical-align: text-top;
+  -webkit-transform: rotate(133deg);
+  transform: rotate(133deg);
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+}
