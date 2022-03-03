@@ -1,41 +1,43 @@
 <template>
     <div>
-        <b-row>
-            <b-colxx xxs="12">
-                <piaf-breadcrumb heading="설정"/>
-                <div class="separator mb-5"></div>
-                <b-card>
-                    <b-form-checkbox v-model="settings.watermark" name="check-button" switch>
-                        워터마크
-                    </b-form-checkbox>
-                    <b-form-checkbox v-model="settings.face" name="check-button" switch>
-                        얼굴
-                    </b-form-checkbox>
-                    <b-form-checkbox v-model="settings.human" name="check-button" switch>
-                        사람
-                    </b-form-checkbox>
-                    <b-form-checkbox v-model="settings.voice" name="check-button" switch>
-                        음성녹음
-                    </b-form-checkbox>
-                    <br/>
-                    <b-form-group label="워터마크 등록">
-                    <div style="width:40%">
-                        <b-form-file v-model="watermarkFile" id="file-small"></b-form-file>
-                    </div>
-                    </b-form-group>
-                    <div style="text-align:center">
-                        <b-button
-                            variant=""
-                            icon
-                            class="ma-2"
-                            @click="clickSave"
-                        >
-                            저장
-                        </b-button>
-                    </div>
-                </b-card>
-            </b-colxx>
-        </b-row>
+        <div class="custom-div-setting">
+            <b-row>
+                <b-colxx xxs="12">
+                    <piaf-breadcrumb heading="설정"/>
+                    <div class="separator mb-5"></div>
+                    <b-card>
+                        <b-form-checkbox v-model="settings.watermark" name="check-button" switch>
+                            워터마크
+                        </b-form-checkbox>
+                        <b-form-checkbox v-model="settings.face" name="check-button" switch>
+                            얼굴
+                        </b-form-checkbox>
+                        <b-form-checkbox v-model="settings.human" name="check-button" switch>
+                            사람
+                        </b-form-checkbox>
+                        <b-form-checkbox v-model="settings.voice" name="check-button" switch>
+                            음성녹음
+                        </b-form-checkbox>
+                        <br/>
+                        <b-form-group label="워터마크 등록">
+                        <div style="width:40%;">
+                            <b-form-file v-model="watermarkFile" id="file-small"></b-form-file>
+                        </div>
+                        </b-form-group>
+                        <div style="text-align:center">
+                            <b-button
+                                variant=""
+                                icon
+                                class="ma-2"
+                                @click="clickSave"
+                            >
+                                저장
+                            </b-button>
+                        </div>
+                    </b-card>
+                </b-colxx>
+            </b-row>
+        </div>
     </div>
 </template>
 

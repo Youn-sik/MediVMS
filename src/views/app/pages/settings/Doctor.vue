@@ -2,6 +2,7 @@
 <div>
   <!-- 의사 추가 모달 -->
   <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="addModal" size="lg" title="의사 추가">
+    <div class="custom-div-doctor-modal">
       <b-form-group
           id="input-group-1"
           label="이름:"
@@ -49,7 +50,7 @@
           required
           ></b-form-input>
       </b-form-group>
-
+    </div>
     <template #modal-footer="{ ok, cancel, hide }">
       <b-button variant="danger" @click="cancelAdd">
         취소
@@ -62,6 +63,7 @@
 
     <!-- 의사 수정 모달 -->
   <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="modModal" size="lg" title="의사 추가">
+    <div class="custom-div-doctor-modal"> 
       <b-form-group
           id="input-group-1"
           label="이름:"
@@ -109,7 +111,8 @@
           required
           ></b-form-input>
       </b-form-group>
-
+    </div>
+    
     <template #modal-footer="{ ok, cancel, hide }">
       <b-button variant="danger" @click="cancelAdd">
         취소
@@ -120,37 +123,57 @@
     </template>
   </b-modal>
 
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb :heading="'의사 목록'"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-      <b-card class="mb-4">
+  <div class="custom-div-doctor">
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb :heading="'의사 목록'"/>
+        <!-- <div class="separator mb-5"></div> -->
+      </b-colxx>
+    </b-row>
+    <b-row>
+      <!--
         <b-button variant="outline-secondary" class="mr-3" style="float:right" @click="deleteDoctor">삭제</b-button>
         <b-button variant="outline-secondary" class="mr-3" style="float:right" @click="openModModal">수정</b-button>
         <b-button variant="outline-secondary" class="mr-3" style="float:right" @click="()=>{addModal=true}">추가</b-button>
         <b-dropdown id="ddown1" :text="String(perPage)" class="mr-3" variant="outline-secondary" style="float:right">
             <b-dropdown-item @click="changePerPage(item)" v-for="(item,index) in perPageList" :key="index">{{item}}</b-dropdown-item>
         </b-dropdown>
-        <vuetable
-            ref="vuetable"
-            :api-mode="false"
-            :data="items"
-            :fields="vuetableItems.fields"
-            :per-page="perPage"
-            pagination-path
-            @vuetable:pagination-data="onPaginationData"
-          ></vuetable>
-          <vuetable-pagination-bootstrap
-            ref="pagination"
-            @vuetable-pagination:change-page="onChangePage"
-          ></vuetable-pagination-bootstrap>
-      </b-card>
-    </b-colxx>
-  </b-row>
+      -->
+
+      <div class="setting-table-header">
+          <a href="#" class="add-btn" @click="()=>{addModal=true}">
+              <div class="fn-12-b fc-cc"><img src="/assets/img/add.svg">추가</div>
+          </a>
+          <a href="#" class="edit-btn" @click="openModModal">
+              <div class="fn-12-b fc-17"><img src="/assets/img/edit2.svg">수정</div>
+          </a>
+          <a href="#" class="delete-btn" @click="deleteDoctor">
+              <div class="fn-12-b fc-f8"><img src="/assets/img/delete2.svg">삭제</div>
+          </a>
+          <b-dropdown id="ddown1" :text="String(perPage)" class="mr-3" variant="outline-secondary" style="float:right; bottom: 4px;">
+            <b-dropdown-item @click="changePerPage(item)" v-for="(item,index) in perPageList" :key="index">{{item}}</b-dropdown-item>
+          </b-dropdown>
+      </div> 
+
+      <b-colxx xxs="12">
+        <b-card class="mb-4">
+          <vuetable
+              ref="vuetable"
+              :api-mode="false"
+              :data="items"
+              :fields="vuetableItems.fields"
+              :per-page="perPage"
+              pagination-path
+              @vuetable:pagination-data="onPaginationData"
+            ></vuetable>
+            <vuetable-pagination-bootstrap
+              ref="pagination"
+              @vuetable-pagination:change-page="onChangePage"
+            ></vuetable-pagination-bootstrap>
+        </b-card>
+      </b-colxx>
+    </b-row>
+  </div>
   </div>
 </template>
 <script>

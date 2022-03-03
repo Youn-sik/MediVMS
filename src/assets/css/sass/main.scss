@@ -977,3 +977,374 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
 .custom-div-takeoutpermit-modal #vs4__combobox{
   border-radius: 10px !important;
 }
+
+.custom-div-setting{
+  width: 100%;
+  padding: 30px 30px 20px 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-setting div.row div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.custom-div-setting .card-body .custom-control.custom-switch label {
+  font-size: 15px;
+}
+
+.custom-div-setting .card-body fieldset legend.bv-no-focus-ring.col-form-label.pt-0{
+  font-size: 15px;
+}
+
+.custom-div-setting .card-body button{
+  font-weight: bold;
+}
+
+.custom-div-device{
+  width: 100%;
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-device div.row div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.custom-div-device .setting-table-header{
+  width: 71.35vw;
+  height: 30px;
+  display: flex;
+  margin: 0 auto;
+  margin-top: 10px;
+  justify-content: flex-end;
+  padding-right: 90px;
+}
+
+.custom-div-device .add-btn{
+  width: 4.166vw;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #0c0;
+  white-space: nowrap;
+}
+
+.custom-div-device .add-btn:hover{
+  background-color: #EFFFEF;
+}
+
+.custom-div-device .add-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-device .edit-btn{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #172757;
+  margin-left: 10px;
+}
+
+.custom-div-device .edit-btn img, .delete-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-device .edit-btn:hover{
+  background-color: #E8EEFF;
+}
+
+.custom-div-device .delete-btn{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #f80d38;
+  margin-left: 10px;
+  margin-right: 30px;
+}
+
+.custom-div-device .delete-btn:hover{
+  background-color: #FFF3F6;
+}
+
+.custom-div-device .edit-btn img, .delete-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.fn-12-r{font-size: 12px; font-weight: 400;}
+.fn-12-b{font-size: 12px; font-weight: 700;}
+.fc-cc{color: #00CC00;}
+.fc-17{color: #172757;}
+.fc-f8{color: #f80d38;}
+.fc-5a{color: #5A5A5A;} .fc-33{color: #333333;}
+
+.custom-div-device .browsers{
+  width: 5vw;
+  height: 30px;
+  padding: 5px 11px 6px 10px;
+  border-radius: 10px;
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-device #surgeriesDropdown{
+  bottom: 4px;
+  margin-left: 20px;
+  padding-top: 1px;
+}
+
+.custom-div-device .card.mb-4 .card-body table thead tr th div{
+  font-size: 17px;
+}
+
+.custom-div-device .card.mb-4 .card-body table thead tr th{
+  text-align: center;
+}
+
+.custom-div-device .card.mb-4 .card-body table tbody tr{
+  font-size: 15px;
+}
+
+.custom-div-device .card.mb-4 .card-body table tbody{
+  text-align: center;
+}
+
+.custom-div-device table thead{
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.custom-div-device-modal{
+  margin-top: 30px;
+}
+
+.custom-div-device-modal div.form-group label.d-block{
+  font-weight: bold;
+  font-size: 15px;
+  color: #5A5A5A;
+}
+
+.custom-div-surgery-manage{
+  width: 100%;
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-surgery-manage .setting-table-header{
+  width: 71.35vw;
+  height: 30px;
+  display: flex;
+  margin: 0 auto;
+  margin-top: 10px;
+  justify-content: flex-end;
+  padding-right: 90px;
+}
+
+.custom-div-surgery-manage div.row div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.custom-div-surgery-manage .add-btn{
+  width: 4.166vw;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #0c0;
+  white-space: nowrap;
+}
+
+.custom-div-surgery-manage .add-btn:hover{
+  background-color: #EFFFEF;
+}
+
+.custom-div-surgery-manage .add-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-surgery-manage .edit-btn{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #172757;
+  margin-left: 10px;
+}
+
+.custom-div-surgery-manage .edit-btn img, .delete-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-surgery-manage .edit-btn:hover{
+  background-color: #E8EEFF;
+}
+
+.custom-div-surgery-manage .delete-btn{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #f80d38;
+  margin-left: 10px;
+  margin-right: 30px;
+}
+
+.custom-div-surgery-manage .delete-btn:hover{
+  background-color: #FFF3F6;
+}
+
+.custom-div-surgery-manage .edit-btn img, .delete-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-surgery-manage .card.mb-4 .card-body table thead tr th div{
+  font-size: 17px;
+}
+
+.custom-div-surgery-manage .card.mb-4 .card-body table thead tr th{
+  text-align: center;
+}
+
+.custom-div-surgery-manage .card.mb-4 .card-body table tbody tr{
+  font-size: 15px;
+}
+
+.custom-div-surgery-manage .card.mb-4 .card-body table tbody{
+  text-align: center;
+}
+
+.custom-div-surgery-manage table thead{
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.custom-div-surgery-manager-modal{
+  margin-top: 30px;
+}
+
+.custom-div-surgery-manager-modal div.form-group label.d-block{
+  font-weight: bold;
+  font-size: 15px;
+  color: #5A5A5A;
+}
+
+.custom-div-doctor{
+  width: 100%;
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-doctor div.row div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.custom-div-doctor .add-btn{
+  width: 4.166vw;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #0c0;
+  white-space: nowrap;
+}
+
+.custom-div-doctor .add-btn:hover{
+  background-color: #EFFFEF;
+}
+
+.custom-div-doctor .add-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-doctor .edit-btn{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #172757;
+  margin-left: 10px;
+}
+
+.custom-div-doctor .edit-btn img, .delete-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-doctor .edit-btn:hover{
+  background-color: #E8EEFF;
+}
+
+.custom-div-doctor .delete-btn{
+  width: 80px;
+  height: 30px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: solid 1px #f80d38;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.custom-div-doctor .delete-btn:hover{
+  background-color: #FFF3F6;
+}
+
+.custom-div-doctor .edit-btn img, .delete-btn img{
+  padding-right: 10px;
+  vertical-align: -1px;
+}
+
+.custom-div-doctor .card.mb-4 .card-body table thead tr th div{
+  font-size: 17px;
+}
+
+.custom-div-doctor .card.mb-4 .card-body table thead tr th{
+  text-align: center;
+}
+
+.custom-div-doctor .card.mb-4 .card-body table tbody tr{
+  font-size: 15px;
+}
+
+.custom-div-doctor .card.mb-4 .card-body table tbody{
+  text-align: center;
+}
+
+.custom-div-doctor table thead{
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.custom-div-doctor .setting-table-header{
+  width: 71.35vw;
+  height: 30px;
+  display: flex;
+  margin: 0 auto;
+  margin-top: 10px;
+  justify-content: flex-end;
+  padding-right: 18px;
+  margin-bottom: 10px;
+}
+
+.custom-div-doctor-modal{
+  margin-top: 30px;
+}
+
+.custom-div-doctor-modal div.form-group label.d-block{
+  font-weight: bold;
+  font-size: 15px;
+  color: #5A5A5A;
+}

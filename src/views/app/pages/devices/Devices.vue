@@ -2,62 +2,63 @@
     <div v-if="surgeries.length">
         <!-- add -->
         <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="addModal" size="lg" title="단말기 추가">
-            <b-form-group
-                id="input-group-1"
-                label="단말기 이름:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-1"
-                v-model="form.device_name"
-                required
-                ></b-form-input>
-            </b-form-group>
+            <div class="custom-div-device-modal">
+                <b-form-group
+                    id="input-group-1"
+                    label="단말기 이름:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-1"
+                    v-model="form.device_name"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-            <b-form-group
-                id="input-group-1"
-                label="단말기 Live Url:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-2"
-                v-model="form.live_url"
-                required
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="단말기 Live Url:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-2"
+                    v-model="form.live_url"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-            <b-form-group
-                id="input-group-1"
-                label="시리얼 넘버:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-3"
-                v-model="form.serial_number"
-                required
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="시리얼 넘버:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-3"
+                    v-model="form.serial_number"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-            <b-form-group
-                id="input-group-1"
-                label="비고:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-5"
-                v-model="form.note"
-                required
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="비고:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-5"
+                    v-model="form.note"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-             <b-form-group
-                id="input-group-1"
-                label="단말기 위치:"
-                label-for="input-1"
-            >
-                <v-select v-model="selectedSurgery" :options="surgeries" label="surgery_name" value="surgery_id"/>
-             </b-form-group>
-
+                <b-form-group
+                    id="input-group-1"
+                    label="단말기 위치:"
+                    label-for="input-1"
+                >
+                    <v-select v-model="selectedSurgery" :options="surgeries" label="surgery_name" value="surgery_id"/>
+                </b-form-group>
+            </div>
           <template #modal-footer="{ ok, cancel, hide }">
             <b-button variant="danger" @click="cancelAdd">
               취소
@@ -70,62 +71,64 @@
 
         <!-- update -->
         <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="updateModal" size="lg" title="단말기 수정">
-            <b-form-group
-                id="input-group-1"
-                label="단말기 이름:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-1"
-                v-model="form.device_name"
-                required
-                ></b-form-input>
-            </b-form-group>
+            <div class="custom-div-device-modal">
+                <b-form-group
+                    id="input-group-1"
+                    label="단말기 이름:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-1"
+                    v-model="form.device_name"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-            <b-form-group
-                id="input-group-1"
-                label="단말기 Live Url:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-2"
-                v-model="form.live_url"
-                required
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="단말기 Live Url:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-2"
+                    v-model="form.live_url"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-            <b-form-group
-                id="input-group-1"
-                label="시리얼 넘버:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-3"
-                v-model="form.serial_number"
-                required
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="시리얼 넘버:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-3"
+                    v-model="form.serial_number"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
-            <b-form-group
-                id="input-group-1"
-                label="비고:"
-                label-for="input-1"
-            >
-                <b-form-input
-                id="input-5"
-                v-model="form.note"
-                required
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="비고:"
+                    label-for="input-1"
+                >
+                    <b-form-input
+                    id="input-5"
+                    v-model="form.note"
+                    required
+                    ></b-form-input>
+                </b-form-group>
 
 
-             <b-form-group
-                id="input-group-1"
-                label="단말기 위치:"
-                label-for="input-1"
-            >
-                <v-select v-model="selectedSurgery" :options="surgeries" label="surgery_name" value="surgery_id"/>
-             </b-form-group>
+                <b-form-group
+                    id="input-group-1"
+                    label="단말기 위치:"
+                    label-for="input-1"
+                >
+                    <v-select v-model="selectedSurgery" :options="surgeries" label="surgery_name" value="surgery_id"/>
+                </b-form-group>
+            </div>
 
           <template #modal-footer="{ ok, cancel, hide }">
             <b-button variant="danger" @click="cancelUpdate">
@@ -175,48 +178,74 @@
             </b-button>
           </template>
         </b-modal>
+        <div class="custom-div-device">
+            <b-row>
+                <b-colxx xxs="12">
+                <piaf-breadcrumb :heading="'단말기 목록'"/>
 
-        <b-row>
-            <b-colxx xxs="12">
-            <piaf-breadcrumb :heading="'단말기 목록'"/>
-            <div style="float:right;">
-                <b-button variant="outline-secondary" class="mr-3" @click="()=>{this.addModal=true}">추가</b-button>
+                <!--
+                <div style="float:right;">
+                    <b-button variant="outline-secondary" class="mr-3" @click="()=>{this.addModal=true}">추가</b-button>
 
-                <b-button variant="outline-secondary" class="mr-3" v-if="bootstrapTable.selected.length === 1" @click="clickUpdate">수정</b-button>
-                <b-button variant="outline-secondary" class="mr-3" v-else disabled @click="clickUpdate">수정</b-button>
+                    <b-button variant="outline-secondary" class="mr-3" v-if="bootstrapTable.selected.length === 1" @click="clickUpdate">수정</b-button>
+                    <b-button variant="outline-secondary" class="mr-3" v-else disabled @click="clickUpdate">수정</b-button>
 
-                <b-button variant="outline-secondary" class="mr-3" v-if="bootstrapTable.selected.length" @click="deleteDevice">삭제</b-button>
-                <b-button variant="outline-secondary" class="mr-3" v-else disabled @click="deleteDevice">삭제</b-button>
+                    <b-button variant="outline-secondary" class="mr-3" v-if="bootstrapTable.selected.length" @click="deleteDevice">삭제</b-button>
+                    <b-button variant="outline-secondary" class="mr-3" v-else disabled @click="deleteDevice">삭제</b-button>
 
 
-                <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
-                    <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
-                </b-dropdown>
-            </div>
-            <div class="separator mb-5"></div>
-            </b-colxx>
-        </b-row>
-        <b-row class="mb-5">
-            <b-colxx xxs="12">
-            <b-card class="mb-4">
-                <b-table
-                    ref="custom-table"
-                    class="vuetable"
-                    @row-selected="rowSelected"
-                    selectable
-                    :select-mode="bootstrapTable.selectMode"
-                    :current-page="currentPage"
-                    selectedVariant="primary"
-                    :fields="bootstrapTable.fields"
-                    :items="items"
-                >
-                <template slot="status" slot-scope="data">
-                    <b-badge class="mb-1" :variant="data.item.statusColor">{{ data.value }}</b-badge>
-                </template>
-                </b-table>
-            </b-card>
-            </b-colxx>
-        </b-row>
+                    <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
+                        <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
+                    </b-dropdown>
+                </div>
+                -->
+
+                <div class="setting-table-header">
+                    <a href="#" class="add-btn" @click="()=>{this.addModal=true}">
+                        <div class="fn-12-b fc-cc"><img src="/assets/img/add.svg">추가</div>
+                    </a>
+                    <a href="#" class="edit-btn" v-if="bootstrapTable.selected.length === 1" @click="clickUpdate" style="cursor: pointer">
+                        <div class="fn-12-b fc-17"><img src="/assets/img/edit2.svg">수정</div>
+                    </a>
+                    <a href="#" class="edit-btn" v-else disabled style="cursor: not-allowed">
+                        <div class="fn-12-b fc-17"><img src="/assets/img/edit2.svg">수정</div>
+                    </a>
+                    <a href="#" class="delete-btn" v-if="bootstrapTable.selected.length" @click="deleteDevice" style="cursor: pointer">
+                        <div class="fn-12-b fc-f8"><img src="/assets/img/delete2.svg">삭제</div>
+                    </a>
+                    <a href="#" class="delete-btn" v-else disabled style="cursor: not-allowed">
+                        <div class="fn-12-b fc-f8"><img src="/assets/img/delete2.svg">삭제</div>
+                    </a>
+                    <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary">
+                        <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
+                    </b-dropdown>
+                </div> 
+                <!-- <div class="separator mb-5"></div> -->
+                </b-colxx>
+            </b-row>
+            <b-row class="mb-5">
+                <b-colxx xxs="12">
+                <b-card class="mb-4">
+                    <b-table
+                        ref="custom-table"
+                        class="vuetable"
+                        @row-selected="rowSelected"
+                        selectable
+                        :select-mode="bootstrapTable.selectMode"
+                        :current-page="currentPage"
+                        selectedVariant="primary"
+                        :fields="bootstrapTable.fields"
+                        :items="items"
+                    >
+                    
+                    <template slot="status" slot-scope="data">
+                        <b-badge class="mb-1" :variant="data.item.statusColor">{{ data.value }}</b-badge>
+                    </template>
+                    </b-table>
+                </b-card>
+                </b-colxx>
+            </b-row>
+        </div>
     </div>
 </template>
 <script>
