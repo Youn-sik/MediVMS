@@ -599,7 +599,6 @@ body {
 
 .bv-no-focus-ring.col-form-label.pt-0 {
   font-weight: bold;
-  padding-top: 30px !important;
 }
 
 .modal-header {
@@ -884,4 +883,97 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
 
 .container-fluid .custom-div-history .card-body .vuetable.ui.blue.selectable.celled.stackable.attached.table .vuetable-body tr td{
   font-size: 17px;
+}
+
+.custom-todo-div {
+  width: 100%;
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-todo-div div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.card .card-body .vuetable.ui.blue.selectable.celled.stackable.attached.table tbody.vuetable-body {
+  text-align: center;
+}
+
+.card .card-body .vuetable.ui.blue.selectable.celled.stackable.attached.table thead tr th {
+  text-align: center;
+}
+
+.custom-todo-div .card-body table.table.b-table {
+  text-align: center;
+}
+
+.custom-todo-div .card-body table.table.b-table tbody {
+  font-size: 16px;
+}
+
+.custom-todo-modal-body-table{
+  text-align: center;
+  color: white;
+  padding-top: 0px !important;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+  margin-top: 20px;
+}
+
+.modal.fade.show .modal-dialog.modal-lg .modal-content .modal-footer button {
+  font-weight: bold;
+}
+
+.custom-browsePermit-div{
+  width: 100%;
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-browsePermit-div div.row div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.custom-browsePermit-div-modal-body fieldset.form-group legend.bv-no-focus-ring.col-form-label.pt-0 {
+  font-size: 16px !important;
+}
+
+.custom-browsePermit-div-modal-body fieldset.form-group textarea.form-control {
+  border-radius: 10px;
+}
+
+.custom-browsePermit-div-modal-body #vs1__combobox{
+  border-radius: 10px !important;
+}
+
+.custom-browsePermit-div-modal-body .bv-no-focus-ring.col-form-label.pt-0{
+  padding-top: 30px !important;
+}
+
+.custom-div-takeout{
+  width: 100%;
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-takeout div.row div span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.custom-div-takeoutpermit-modal fieldset textarea{
+  border-radius: 10px;
+}
+
+.custom-div-takeoutpermit-modal #vs4__combobox{
+  border-radius: 10px !important;
 }

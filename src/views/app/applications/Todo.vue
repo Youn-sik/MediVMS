@@ -1,54 +1,56 @@
 <template>
     <b-row>
-        <!-- 권한 승인 모달 -->
-        <b-modal v-model="authModal" @ok="saveAuth" title="권한 부여" size="lg">
-            <div style="text-align:center; color:white" v-if="selectedAccount">
-                <b-table-simple>
-                    <b-tbody striped>
-                        <b-tr>
-                            <b-td>대시보드</b-td>
-                            <b-td>수술실 모니터링</b-td>
-                            <b-td>수술실 예약</b-td>
-                            <b-td>데이터 열람</b-td>
-                            <b-td>열람 기록</b-td>
-                            <b-td>권한 관리</b-td>
-                            <b-td>설정</b-td>
-                        </b-tr>
-                        <b-tr>
-                            <b-td>
-                                <b-form-checkbox v-model="form.dashboard" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                            <b-td>
-                                <b-form-checkbox v-model="form.surgery" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                            <b-td>
-                                <b-form-checkbox v-model="form.schedule" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                            <b-td>
-                                <b-form-checkbox v-model="form.browse" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                            <b-td>
-                                <b-form-checkbox v-model="form.history" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                            <b-td>
-                                <b-form-checkbox v-model="form.admin" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                            <b-td>
-                                <b-form-checkbox v-model="form.setting" name="check-button" switch></b-form-checkbox>
-                            </b-td>
-                        </b-tr>
-                    </b-tbody>
-                </b-table-simple>
-            </div>
-            <template #modal-footer="{ ok, cancel, hide }">
-                <b-button variant="danger" @click="cancelSaveEvent">
-                    취소
-                </b-button>
-                <b-button @click="saveAuth">
-                    저장
-                </b-button>
-            </template>
-        </b-modal>
+        <div class="custom-todo-modal">
+            <!-- 권한 승인 모달 -->
+            <b-modal v-model="authModal" @ok="saveAuth" title="권한 부여" size="lg" class="custom-todo-modal">
+                <div class="custom-todo-modal-body-table" v-if="selectedAccount">
+                    <b-table-simple>
+                        <b-tbody>
+                            <b-tr>
+                                <b-td>대시보드</b-td>
+                                <b-td>수술실 모니터링</b-td>
+                                <b-td>수술실 예약</b-td>
+                                <b-td>데이터 열람</b-td>
+                                <b-td>열람 기록</b-td>
+                                <b-td>권한 관리</b-td>
+                                <b-td>설정</b-td>
+                            </b-tr>
+                            <b-tr>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.dashboard" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.surgery" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.schedule" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.browse" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.history" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.admin" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                                <b-td>
+                                    <b-form-checkbox v-model="form.setting" name="check-button" switch></b-form-checkbox>
+                                </b-td>
+                            </b-tr>
+                        </b-tbody>
+                    </b-table-simple>
+                </div>
+                <template #modal-footer="{ ok, cancel, hide }">
+                    <b-button variant="danger" @click="cancelSaveEvent">
+                        취소
+                    </b-button>
+                    <b-button @click="saveAuth">
+                        저장
+                    </b-button>
+                </template>
+            </b-modal>
+        </div>
 
         <!-- 권한 요청 모달 -->
         <b-modal v-model="authReqModal" @ok="reqAuth" title="권한 요청">
@@ -77,15 +79,15 @@
         <b-colxx xl="7" lg="6" md="12" class="mb-4">
             <!-- <profile-statuses></profile-statuses> -->
         </b-colxx>
-        <b-colxx xl="12" lg="12" md="12" class="mb-4" v-if="currentUser.authority <= 1">
-            <piaf-breadcrumb :heading="'권한 부여'" />
-            <div class="separator mb-5"></div>
-            <b-card class="mb-4">
+        <div class="custom-todo-div">
+            <b-colxx xl="12" lg="12" md="12" class="mb-4" v-if="currentUser.authority <= 1">
+                <piaf-breadcrumb :heading="'권한 부여'" />
+                <div class="separator mb-5"></div>
                 <b-card-title>
-                    <h3>검색 테이블</h3>
+                    <!-- <h3>검색 테이블</h3> -->
                     <b-input-group style="float:right;" class="mb-3">
                         <b-input-group-prepend>
-                        <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
+                        <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary" style="margin-top: 10px;">
                             <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
                         </b-dropdown>
                         </b-input-group-prepend>
@@ -106,30 +108,34 @@
                         </div>
                     </b-input-group>
                 </b-card-title>
-                <b-table-simple>
-                    <b-tbody striped>
-                        <b-tr>
-                            <b-th rowspan="1">ID</b-th>
-                            <b-th rowspan="1">이름</b-th>
-                            <b-th rowspan="1">부서</b-th>
-                            <b-th rowspan="1">사원 번호</b-th>
-                            <b-th rowspan="1">권한 부여</b-th>
-                        </b-tr>
-                        <b-tr v-for="(account,index) in this.filteredList" :key="index">
-                            <template v-if="currentUser.account !== account.account">
-                                <b-td rowspan="1" style="line-height:80px">{{account.account}}</b-td>
-                                <b-td rowspan="1" style="line-height:80px">{{account.name}}</b-td>
-                                <b-td rowspan="1" style="line-height:80px">{{account.department}}</b-td>
-                                <b-td rowspan="1" style="line-height:80px">{{account.employee_no}}</b-td>
-                                <b-td rowspan="1" style="line-height:80px">
-                                    <b-button variant="primary" @click="openAuthModal(account)" class="mr-3" size="sm">권한 부여</b-button>
-                                </b-td>
-                            </template>
-                        </b-tr>
-                    </b-tbody>
-                </b-table-simple>
-            </b-card>
-        </b-colxx>
+                <b-card class="mb-4">
+                    
+                    <b-table-simple>
+                        <b-tbody striped>
+                            <b-tr>
+                                <b-th rowspan="1">ID</b-th>
+                                <b-th rowspan="1">이름</b-th>
+                                <b-th rowspan="1">부서</b-th>
+                                <b-th rowspan="1">사원 번호</b-th>
+                                <b-th rowspan="1">권한 부여</b-th>
+                            </b-tr>
+                            <b-tr v-for="(account,index) in this.filteredList" :key="index">
+                                <template v-if="currentUser.account !== account.account">
+                                    <b-td rowspan="1" style="line-height:80px">{{account.account}}</b-td>
+                                    <b-td rowspan="1" style="line-height:80px">{{account.name}}</b-td>
+                                    <b-td rowspan="1" style="line-height:80px">{{account.department}}</b-td>
+                                    <b-td rowspan="1" style="line-height:80px">{{account.employee_no}}</b-td>
+                                    <b-td rowspan="1" style="line-height:80px">
+                                        <!-- <b-button variant="primary" @click="openAuthModal(account)" class="mr-3" size="sm">권한 부여</b-button> -->
+                                        <img @click="openAuthModal(account)" src="/assets/img/approval.svg" style="cursor: pointer">
+                                    </b-td>
+                                </template>
+                            </b-tr>
+                        </b-tbody>
+                    </b-table-simple>
+                </b-card>
+            </b-colxx>
+        </div>
         <!-- <b-colxx xl="12" lg="12" md="12" class="mb-4">
             <piaf-breadcrumb :heading="'내 정보'" />
             <div class="separator mb-5"></div>

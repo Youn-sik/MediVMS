@@ -3,63 +3,75 @@
 
     <!-- 열람 승인 -->
     <b-modal size="lg" v-if="currentTakeoutData" v-model="permitModal" title="열람 승인">
-        <b-form-group label="신청 사유">
-            <b-form-textarea v-model="currentTakeoutData.reason" disabled/>
-        </b-form-group>
-      <!-- <b-form-select v-model="form.status" :options="permitType" class="mb-2 mr-2" plain></b-form-select> -->
-        <b-form-group label="승인 여부">
-            <vselect label="text" v-model="form.status" :options="permitType" dir="ltr" ></vselect>
-        </b-form-group>
-          <!-- <template slot="option" slot-scope="option">
-                        </template> -->
-        <b-form-group label="사유">
-            <b-form-textarea v-model="form.reason"/>
-        </b-form-group>
-      <template #modal-footer="{ ok, cancel, hide }">
-          <b-button variant="danger" @click="cancel">
-              취소
-          </b-button>
-          <b-button @click="savePermit(form)">
-              저장
-          </b-button>
-      </template>
+        <div class="custom-browsePermit-div-modal-body">
+            <b-form-group label="신청 사유">
+                <b-form-textarea v-model="currentTakeoutData.reason" disabled/>
+            </b-form-group>
+        <!-- <b-form-select v-model="form.status" :options="permitType" class="mb-2 mr-2" plain></b-form-select> -->
+            <b-form-group label="승인 여부">
+                <vselect label="text" v-model="form.status" :options="permitType" dir="ltr" ></vselect>
+            </b-form-group>
+            <!-- <template slot="option" slot-scope="option">
+                            </template> -->
+            <b-form-group label="사유">
+                <b-form-textarea v-model="form.reason"/>
+            </b-form-group>
+
+        </div>
+        <template #modal-footer="{ ok, cancel, hide }">
+            <b-button variant="danger" @click="cancel">
+                취소
+            </b-button>
+            <b-button @click="savePermit(form)">
+                저장
+            </b-button>
+        </template>
     </b-modal>
 
-    <b-row>
-        <b-colxx xxs="12">
-        <piaf-breadcrumb heading="열람 신청 목록"/>
-        <div class="separator mb-5"></div>
-        </b-colxx>
-    </b-row>
-    <b-row>
-        <b-colxx xxs="12">
-        <b-card class="mb-4">
-            <vuetable
-                ref="vuetable"
-                :api-mode="false"
-                :data="items"
-                :fields="fields"
-                :data-manager="dataManager"
-                pagination-path
-                @vuetable:pagination-data="onPaginationData"
-            >
-                <template slot="status" scope="props">
-                    {{props.rowData.status === 'standby' ? '허가 대기중' :
-                    props.rowData.status === 'permitted' ? '허가' :
-                    props.rowData.status === 'denied' ? '거부' : "만료"}}
-                </template>
-                <template slot="browse" scope="props">
-                    <b-button v-if="props.rowData.status === 'standby'" @click="browsePermit(props.rowData)"> 열람 요청 </b-button>
-                    <b-button v-else disabled> 열람 요청 </b-button>
-                </template>
-            </vuetable>
-            <vuetable-pagination-bootstrap
-                ref="pagination"
-                @vuetable-pagination:change-page="onChangePage"
-            ></vuetable-pagination-bootstrap>
-        </b-card>
-        </b-colxx>
-    </b-row>
+    <div class="custom-browsePermit-div">
+
+        <b-row>
+            <b-colxx xxs="12">
+            <piaf-breadcrumb heading="열람 신청 목록"/>
+            <div class="separator mb-5"></div>
+            </b-colxx>
+        </b-row>
+        <b-row>
+            <b-colxx xxs="12">
+            <b-card class="mb-4">
+                <vuetable
+                    ref="vuetable"
+                    :api-mode="false"
+                    :data="items"
+                    :fields="fields"
+                    :data-manager="dataManager"
+                    pagination-path
+                    @vuetable:pagination-data="onPaginationData"
+                >
+                    <template slot="status" scope="props">
+                        {{props.rowData.status === 'standby' ? '허가 대기중' :
+                        props.rowData.status === 'permitted' ? '허가' :
+                        props.rowData.status === 'denied' ? '거부' : "만료"}}
+                    </template>
+                    <template slot="browse" scope="props">
+                        <!--
+                        <b-button v-if="props.rowData.status === 'standby'" @click="browsePermit(props.rowData)"> 열람 요청 </b-button>
+                        <b-button v-else disabled> 열람 요청 </b-button>
+                        -->
+                        <img v-if="props.rowData.status === 'standby'" @click="browsePermit(props.rowData)" src="/assets/img/approval.svg" style="cursor: pointer">
+                        <img v-else disabled src="/assets/img/approval-hover.svg" style="cursor: not-allowed; width: 40px;">
+                    </template>
+                </vuetable>
+                <vuetable-pagination-bootstrap
+                    ref="pagination"
+                    @vuetable-pagination:change-page="onChangePage"
+                ></vuetable-pagination-bootstrap>
+            </b-card>
+            </b-colxx>
+        </b-row>
+
+    </div>
+
     </div>
 </template>
 <script>

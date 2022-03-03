@@ -38,10 +38,12 @@
         </b-modal>
 
         <!-- 반출 요청 -->
-        <b-modal size="lg" v-model="requestTakeoutModal" title="열람 요청">
-            <b-form-group label="요청 사유">
-                <b-form-textarea v-model="requestTakeoutForm.reason" />
-            </b-form-group>
+        <b-modal size="lg" v-model="requestTakeoutModal" title="반출 요청">
+            <div style="margin-top: 20px;">
+                <b-form-group label="요청 사유">
+                    <b-form-textarea v-model="requestTakeoutForm.reason" />
+                </b-form-group>
+            </div>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelSaveEvent">
                     취소
@@ -164,11 +166,27 @@
                 :changeSearchType="changeSearchType"
             ></list-page-heading>
         </b-colxx>
-        <div style="display: block;">&nbsp;</div>
+        <div style="display: block; height: 80px;">&nbsp;</div>
+
+        <b-dropdown
+            id="ddown1"
+            :text="String(perPage)"
+            variant="outline-secondary"
+            style="margin-top: 40px; margin-left: 1430px;"
+        >
+            <b-dropdown-item
+                @click="changePerPage(item)"
+                v-for="(item, index) in perPageList"
+                :key="index"
+                >{{ item }}</b-dropdown-item
+            >
+        </b-dropdown>
+
         <b-colxx md="12" style="border: solid 1px #e7e7e7; border-radius: 20px; box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);">
             <b-card style="border: none !important; box-shadow: none !important;">
                 <!-- this.$refs.vuetable.selectedTo 선택된 데이터 정보 -->
-                <b-dropdown
+                <!-- 
+                    <b-dropdown
                     id="ddown1"
                     :text="String(perPage)"
                     variant="outline-secondary"
@@ -181,6 +199,7 @@
                         >{{ item }}</b-dropdown-item
                     >
                 </b-dropdown>
+                -->
                 <vuetable
                     ref="vuetable"
                     :api-mode="false"
