@@ -1,7 +1,7 @@
 <template>
     <div style="position : relative">
         <div
-            style="position : absolute; z-index:100; height:17px; width:100%; background:rgba(66, 63, 62, 0.6); color:white"
+            style="position : absolute; z-index:100; height:17px; width:100%; background:rgba(66, 63, 62, 0.6); color:white;"
         >
             {{ time }}
         </div>

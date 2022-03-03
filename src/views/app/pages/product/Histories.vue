@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="custom-div-history">
   <b-row>
     <b-colxx xxs="12">
       <piaf-breadcrumb :heading=" $route.name === 'browse' ? '열람 기록' :
@@ -9,10 +9,10 @@
   </b-row>
   <b-row>
     <b-colxx xxs="12">
-      <b-card class="mb-4">
-        <b-dropdown id="ddown1" :text="perPage" variant="outline-secondary" style="float:right">
+      <b-dropdown id="ddown1" :text="perPage" variant="outline-secondary" style="bottom: 15px; left: 1350px;">
             <b-dropdown-item @click="changePerPage(item)" v-for="(item,index) in perPageList" :key="index">{{item}}</b-dropdown-item>
-        </b-dropdown>
+      </b-dropdown>
+      <b-card class="mb-4">
         <vuetable
             ref="vuetable"
             :api-url="vuetableItems.apiUrl + `?type=${$route.name}`"

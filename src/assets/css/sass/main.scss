@@ -599,12 +599,13 @@ body {
 
 .bv-no-focus-ring.col-form-label.pt-0 {
   font-weight: bold;
+  padding-top: 30px !important;
 }
 
 .modal-header {
   margin-top: 10px;
   padding-bottom: 0px !important;
-  padding-top: 10px !important;
+  padding-top: 20px !important;
 }
 
 .modal-right .modal-header {
@@ -613,15 +614,19 @@ body {
 
 .modal-body {
   padding-bottom: 0px !important;
-  padding-top: 15px !important;
+  padding-top: 0px !important;
 }
 
 .modal-dialog .modal-content {
-  border-radius: 30px 0px 0px 30px;
+  border-radius: 30px 30px 30px 30px;
+  // padding-left: 20px !important;
+  // padding-right: 20px !important;
+  // padding-top: 20px !important;
 }
 
 .modal-title {
   font-weight: bold;
+  font-size: 20px;
 }
 
 .v-calendar-weekly__day.v-future {
@@ -646,6 +651,7 @@ body {
 
 .router-link-exact-active.active span {
   font-weight: bold !important;
+  font-size: 18px;
 }
 
 .disable-text-selection {
@@ -726,7 +732,11 @@ div.custom-control.custom-control-inline.custom-radio label {
 }
 
 .vuetable.ui.blue.selectable.celled.stackable.attached.table tr th{
-  font-size: 16px;
+  font-size: 18px;
+}
+
+.vuetable-slot.list-item-heading p{
+  font-size: 15px;
 }
 
 .request:hover{
@@ -741,10 +751,6 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
   padding-bottom: 10px;
 }
 
-div#__BVID__1299___BV_modal_content_.modal-content{
-  border-radius: 30px !important;
-}
-
 .modal .modal-header{
   border-bottom: none !important;
 }
@@ -753,6 +759,129 @@ div#__BVID__1299___BV_modal_content_.modal-content{
   border-top: none !important;
 }
 
-#__BVID__1299___BV_modal_body_ textarea.form-control#__BVID__1439{
-  height: 5em !important;
+.modal-dialog.modal-lg .modal-content .modal-footer {
+  padding-right: 310px;
+}
+
+.modal-dialog.modal-lg .modal-content .custom-modal-footer {
+  padding-right: 350px !important;
+}
+
+.modal-dialog.modal-lg .modal-content .modal-body .bv-no-focus-ring.col-form-label.pt-0 {
+  font-size: 15px !important;
+}
+
+.modal-dialog.modal-lg .modal-content .modal-body textarea{
+  height: 8em !important;
+}
+
+.data:hover{
+  cursor: pointer;
+}
+
+.data-denined:hover{
+  cursor: not-allowed;
+}
+
+// .modal-dialog.modal-lg div.modal-content{
+//   width: 1000px;
+//   height: 800px;
+// }
+
+// .modal-content .modal-body .table.b-table tbody{
+//   box-shadow: 0 0 0 1px #7e7e7e;
+//   border-radius: 10px;
+// }
+
+.modal.fade.show .modal-dialog.modal-lg .modal-content .modal-body .table.b-table tr th {
+  font-size: 16px;
+}
+
+.modal.fade.show .modal-dialog.modal-lg .modal-content .modal-body .table.b-table tr td {
+  font-size: 13px;
+}
+
+.modal-data-table_custom {
+  width: 35vw;
+  height: 100px;
+  margin: 0 auto;
+  margin-top: 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+  background-color: #fff;
+  margin-bottom: 30px;
+}
+
+.modal-data-table_custom .table.b-table {
+  margin-bottom: 0px;
+}
+
+// border: 1px solid black;
+.shaka-video-container #video.shaka-video {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px !important;
+}
+
+.shaka-video-container .shaka-controls-container .shaka-scrim-container {
+  border-radius: 20px;
+}
+
+.modal-content .modal-body .move-video-buttons.mt-5 {
+  margin-top: 0px !important;
+}
+
+.modal-data-table-page-camera-num{
+  width: 17.29vw;
+  height: 1.458vw;
+  margin: 43px 329px;
+  display: flex;
+}
+
+.modal-data-table-page-camera-num a{
+  margin-right: 10px;
+}
+
+.page-btn2{
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  padding-left: 9px;
+  border-radius: 100px;
+  background-color: #fff;
+}
+
+.page-btn2:hover{
+  background-color: #172757;
+  color: #fff;
+  font-weight: 700;
+}
+
+.page-btn2:focus-within{
+  background-color: #172757;
+  color: #fff;
+  font-weight: 700;
+}
+
+.fr-15-r{font-family: 'roboto'; font-size: 17px; font-weight: 400;}
+
+.custom-div-history{
+  padding: 30px 30px 0 30px;
+  border-radius: 20px;
+  box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);
+  border: solid 1px #e7e7e7;
+}
+
+.custom-div-history .row .col.col-12 span h1{
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.container-fluid .custom-div-history .card.mb-4 .card-body{
+  padding-top: 14px;
+}
+
+.container-fluid .custom-div-history .card-body .vuetable.ui.blue.selectable.celled.stackable.attached.table .vuetable-body tr td{
+  font-size: 17px;
 }

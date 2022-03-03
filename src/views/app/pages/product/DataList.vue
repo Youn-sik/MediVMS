@@ -23,15 +23,15 @@
         </b-modal>
 
         <!-- 열람 요청 -->
-        <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청" rows="5">
+        <b-modal size="lg" v-model="requestBrowseModal" title="열람 요청">
             <b-form-group label="요청 사유">
                 <b-form-textarea v-model="requestBrowseForm.reason" />
             </b-form-group>
             <template #modal-footer="{ ok, cancel, hide }" style="margin-right: 300px;">
-                <b-button variant="danger" @click="cancelSaveEvent">
+                <b-button variant="danger" @click="cancelSaveEvent" style="font-weight: bold;">
                     취소
                 </b-button>
-                <b-button @click="saveRequestBrowse">
+                <b-button @click="saveRequestBrowse" style="font-weight: bold;">
                     저장
                 </b-button>
             </template>
@@ -58,70 +58,91 @@
             size="lg"
             v-model="videoModal"
             title="데이터 열람"
+            class="cutom-need-modal"
         >
-            <b-table-simple>
-                <b-tbody striped>
-                    <b-tr>
-                        <b-th rowspan="1">일시</b-th>
-                        <b-th rowspan="1">수술실</b-th>
-                        <b-th rowspan="1">진료과</b-th>
-                        <b-th rowspan="1">주치의</b-th>
-                        <b-th rowspan="1">수술 내용</b-th>
-                        <b-th rowspan="1">환자 상태</b-th>
-                    </b-tr>
-                    <b-tr>
-                        <b-td rowspan="1">{{ videoData.date }}</b-td>
-                        <b-td rowspan="1">{{ videoData.sergery_name }}</b-td>
-                        <b-td rowspan="1">{{ videoData.department }}</b-td>
-                        <b-td rowspan="1">{{ videoData.doctor }}</b-td>
-                        <b-td rowspan="1">{{ videoData.surgery_desc }}</b-td>
-                        <b-td rowspan="1">{{ videoData.patient_status }}</b-td>
-                    </b-tr>
-                </b-tbody>
-            </b-table-simple>
-            <div style="width:744px; height:415px;" v-if="videoBool">
-                <SplitVideoPlayer
-                    v-if="videoData.split === 1"
-                    ref="videoPlayer"
-                    :isHistory="true"
-                    :recordStartDate="videoData.date"
-                    :manifest-url="videoLink"
-                ></SplitVideoPlayer>
-                <AssembleVideoPlayer
-                    v-else-if="videoData.split === 2"
-                    ref="videoPlayer"
-                    :isHistory="true"
-                    :recordStartDate="videoData.date"
-                    :manifest-url="videoLink"
-                ></AssembleVideoPlayer>
-                <VideoPlayer
-                    v-else
-                    :isHistory="true"
-                    :recordStartDate="videoData.date"
-                    :manifest-url="videoLink"
-                ></VideoPlayer>
-            </div>
-            <div class="move-video-buttons mt-5">
-                <b-button
-                    :disabled="currentVideo === 0"
-                    class="mb-1"
-                    @click="prevSurgery"
-                    variant="primary"
-                    ><</b-button
-                >
-                <h2 style="display:inline">
-                    <b-badge class="mb-1" pill variant="primary"
-                        >[ {{ currentVideo + 1 }}번 카메라 ]</b-badge
+            <div style="height: 630px !important;">
+                <div class="modal-data-table_custom">
+                    <b-table-simple>
+                        <!-- <b-tbody striped> -->
+                        <b-tbody>
+                            <b-tr>
+                                <b-th rowspan="1" style="font-size: 16px; padding-left: 20px;">일시</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">수술실</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">진료과</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">주치의</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">수술 내용</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">환자 상태</b-th>
+                            </b-tr>
+                            <b-tr>
+                                <b-td rowspan="1" style="font-size: 13px; padding-left: 20px; padding-right: 0px;">{{ videoData.date }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.sergery_name }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.department }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.doctor }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.surgery_desc }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.patient_status }}</b-td>
+                            </b-tr>
+                        </b-tbody>
+                    </b-table-simple>
+                </div>
+                <div style="width:744px; height:415px;" v-if="videoBool">
+                    <SplitVideoPlayer
+                        v-if="videoData.split === 1"
+                        ref="videoPlayer"
+                        :isHistory="true"
+                        :recordStartDate="videoData.date"
+                        :manifest-url="videoLink"
+                    ></SplitVideoPlayer>
+                    <AssembleVideoPlayer
+                        v-else-if="videoData.split === 2"
+                        ref="videoPlayer"
+                        :isHistory="true"
+                        :recordStartDate="videoData.date"
+                        :manifest-url="videoLink"
+                    ></AssembleVideoPlayer>
+                    <VideoPlayer
+                        v-else
+                        :isHistory="true"
+                        :recordStartDate="videoData.date"
+                        :manifest-url="videoLink"
+                    ></VideoPlayer>
+                </div>
+
+                <div class="modal-data-table-page-camera-num">
+                    <span>
+                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(0)">1</a>
+                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(1)">2</a>
+                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(2)">3</a>
+                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(3)">4</a>
+                    </span>
+                </div>
+
+                <!-- <div class="move-video-buttons mt-5">
+                    <b-button
+                        :disabled="currentVideo === 0"
+                        class="mb-1"
+                        @click="prevSurgery"
+                        variant="primary"
+                        ><</b-button
                     >
-                </h2>
-                <b-button
-                    :disabled="currentVideo === 3"
-                    @click="nextSurgery"
-                    class="mb-1"
-                    variant="primary"
-                    >></b-button
-                >
+                    <h2 style="display:inline">
+                        <b-badge class="mb-1" pill variant="primary"
+                            >[ {{ currentVideo + 1 }}번 카메라 ]</b-badge
+                        >
+                    </h2>
+                    <b-button
+                        :disabled="currentVideo === 3"
+                        @click="nextSurgery"
+                        class="mb-1"
+                        variant="primary"
+                        >></b-button
+                    >
+                </div> -->
             </div>
+            <template #modal-footer="{ ok, cancel, hide }">
+                <b-button @click="cancel" style="margin-right: 40px">
+                    확인
+                </b-button>
+            </template>
         </b-modal>
 
         <b-colxx md="12" class="disable-text-selection">
@@ -250,6 +271,15 @@
                         slot="browse"
                         scope="props"
                     >
+
+                    <span class="data" v-if="
+                                props.rowData.browse_status === 'permitted' &&
+                                props.rowData.expiration === 0
+                            " @click="openVideoModal(props.rowData)">
+                        <img style="margin-left: 4px;" src="/assets/img/data.svg">
+                    </span>
+                    <span class="data-denined" v-else><img style="width: 40px;" src="/assets/img/data-hover.svg"></span>
+                    <!--
                         <b-button
                             v-if="
                                 props.rowData.browse_status === 'permitted' &&
@@ -260,6 +290,7 @@
                             열람
                         </b-button>
                         <b-button v-else disabled> 열람 </b-button>
+                    -->
                     </template>
 
                     <template
@@ -267,6 +298,21 @@
                         slot="takeout_request"
                         scope="props"
                     >
+
+                    <span class="request" v-if="
+                                (props.rowData.takeout_status === null ||
+                                    props.rowData.takeout_status ===
+                                        undefined ||
+                                    props.rowData.takeout_status ===
+                                        'denied') &&
+                                    props.rowData.expiration === 0
+                            "
+                            @click="openTakeoutRequestModal(props.rowData.id)">
+                        <img style="margin-left: 16px;" src="/assets/img/request.svg">
+                    </span>
+                    <span class="request-denined" v-else><img style="width: 40px; margin-left: 10px;" src="/assets/img/request-hover.svg"></span>
+
+                    <!--
                         <b-button
                             v-if="
                                 (props.rowData.takeout_status === null ||
@@ -281,6 +327,7 @@
                             반출 요청
                         </b-button>
                         <b-button v-else disabled> 반출 요청 </b-button>
+                    -->
                     </template>
 
                     <template
@@ -288,6 +335,15 @@
                         slot="takeout"
                         scope="props"
                     >
+
+                    <span class="data" v-if="
+                               props.rowData.takeout_status === 'permitted' &&
+                                    props.rowData.expiration === 0
+                            " @click="clickTakeout(props.rowData)">
+                        <img style="margin-left: 4px;" src="/assets/img/data.svg">
+                    </span>
+                    <span class="data-denined" v-else><img style="width: 40px;" src="/assets/img/data-hover.svg"></span>
+                    <!--
                         <b-button
                             v-if="
                                 props.rowData.takeout_status === 'permitted' &&
@@ -298,6 +354,7 @@
                             반출
                         </b-button>
                         <b-button v-else disabled> 반출 </b-button>
+                    -->
                     </template>
                 </vuetable>
                 <vuetable-pagination-bootstrap
@@ -729,6 +786,44 @@ export default {
             this.videoModal = true;
 
             this.saveRecord(data);
+        },
+        selectSurgery(num) {
+            this.currentVideo = num;
+            this.videoBool = false;
+
+            if (this.videoData.split === 0) {
+                this.videoLink = `https://${base_url}:3000/stream/${
+                    this.devices[this.currentVideo]
+                }_${this.date}/${this.devices[this.currentVideo]}_${
+                    this.date
+                }.mpd`;
+            } else if (this.videoData.split === 1) {
+                this.videoLink = this.videoData.files[this.currentVideo];
+            } else if (this.videoData.split === 2) {
+                this.videoLink = [];
+
+                this.videoLink.push(
+                    `${this.devices[this.currentVideo]}_${this.date}/${
+                        this.devices[this.currentVideo]
+                    }_${this.date}.mpd`
+                );
+                this.timeList.push(this.videoData.date);
+
+                let list = [];
+                this.splitedList.forEach(e => {
+                    this.timeList.push(e.date);
+                    this.videoLink.push(
+                        `${this.devices[this.currentVideo]}_${e.video_link}/${
+                            this.devices[this.currentVideo]
+                        }_${e.video_link}.mpd`
+                    );
+                });
+
+                this.videoLink = this.videoLink.concat(list);
+            }
+            setTimeout(() => {
+                this.videoBool = true;
+            }, 0);
         },
         prevSurgery() {
             this.currentVideo--;
