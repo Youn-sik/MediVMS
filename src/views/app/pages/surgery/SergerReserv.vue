@@ -413,7 +413,7 @@
                                     v-if="$refs.calendar0"
                                     class="ma-2 year-month"
                                 > -->
-                                <div v-if="$refs.calendar0" class="cal-date fr-16-b fc-fff">
+                                <div v-if="$refs.calendar0" class="cal-date fr-16-b fc-fff" style="padding-top: 4px;">
                                 {{
                                 $refs.calendar0.title
 
@@ -707,6 +707,10 @@ export default {
 
             doctors:[],
             currentDoctor:[],
+
+            dragIsNotClick: false,
+            dragIsNotClickTmpTimeStart: null,
+            dragIsNotClickTmpTimeEnd: null,
         }
     },
     methods:{
@@ -722,6 +726,9 @@ export default {
         },
 
         startDrag ({ event, timed }) {
+            this.dragIsNotClickTmpTimeStart = event.start;
+            this.dragIsNotClickTmpTimeEnd = event.end;
+
             if (event && timed) {
                 this.dragEvent = event
                 this.dragTime = null
@@ -925,20 +932,32 @@ export default {
             this.addModal = true;
         },
         showEvent ({ nativeEvent, event }) {
-            const open = () => {
-            this.selectedEvent = event
-            this.selectedElement = nativeEvent.target
-            requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
-            }
 
-            if (this.selectedOpen) {
-            this.selectedOpen = false
-            requestAnimationFrame(() => requestAnimationFrame(() => open()))
-            } else {
-            open()
-            }
+            console.log(event.start);
+            console.log(event.end);
 
-            nativeEvent.stopPropagation()
+            console.log(this.dragIsNotClickTmpTimeStart);
+            console.log(this.dragIsNotClickTmpTimeEnd);
+
+            this.dragIsNotClick = false;
+            if(event.start == this.dragIsNotClickTmpTimeStart && event.end == this.dragIsNotClickTmpTimeEnd) this.dragIsNotClick = true;
+               
+            if(this.dragIsNotClick){
+                const open = () => {
+                this.selectedEvent = event
+                this.selectedElement = nativeEvent.target
+                requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+                }
+
+                if (this.selectedOpen) {
+                this.selectedOpen = false
+                requestAnimationFrame(() => requestAnimationFrame(() => open()))
+                } else {
+                open()
+                }
+
+                nativeEvent.stopPropagation()
+            }
         },
         showEventFromDay ({ nativeEvent, event }) {
             console.log(nativeEvent, event)
