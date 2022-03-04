@@ -1,7 +1,7 @@
 <template>
 <div>
   <!-- 의사 추가 모달 -->
-  <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="addModal" size="lg" title="의사 추가">
+  <b-modal :hide-header-close="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="addModal" size="lg" title="의사 추가">
     <div class="custom-div-doctor-modal">
       <b-form-group
           id="input-group-1"
@@ -62,7 +62,7 @@
   </b-modal>
 
     <!-- 의사 수정 모달 -->
-  <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="modModal" size="lg" title="의사 추가">
+  <b-modal :hide-header-close="true"  :no-close-on-esc="true" :no-enforce-focus="true" v-model="modModal" size="lg" title="의사 추가">
     <div class="custom-div-doctor-modal"> 
       <b-form-group
           id="input-group-1"

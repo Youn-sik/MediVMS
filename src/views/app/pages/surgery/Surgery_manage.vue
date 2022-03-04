@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- add -->
-        <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="addModal" size="lg" title="단말기 추가">
+        <b-modal :hide-header-close="true"  :no-close-on-esc="true" :no-enforce-focus="true" v-model="addModal" size="lg" title="단말기 추가">
             <div class="custom-div-surgery-manager-modal">
                 <b-form-group
                     id="input-group-1"
@@ -38,7 +38,7 @@
         </b-modal>
 
         <!-- update -->
-        <b-modal :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true" v-model="updateModal" size="lg" title="단말기 수정">
+        <b-modal :hide-header-close="true"  :no-close-on-esc="true" :no-enforce-focus="true" v-model="updateModal" size="lg" title="단말기 수정">
             <div class="custom-div-surgery-manager-modal">
                 <b-form-group
                     id="input-group-1"
