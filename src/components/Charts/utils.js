@@ -36,20 +36,21 @@ export const centerTextPlugin = {
       ? 0
       : activePercentage
 
-    if (chart.pointAvailable) {
-      activeLabel = chart.data.labels[chart.pointIndex]
-      activeValue =
-        chart.data.datasets[chart.pointDataIndex].data[chart.pointIndex]
+    // if (chart.pointAvailable) {
+    //   activeLabel = chart.data.labels[chart.pointIndex]
+    //   activeValue =
+    //     chart.data.datasets[chart.pointDataIndex].data[chart.pointIndex]
 
-      dataset = chart.data.datasets[chart.pointDataIndex]
-      meta = dataset._meta[Object.keys(dataset._meta)[0]]
-      total = meta.total
-      activePercentage = parseFloat(((activeValue / total) * 100).toFixed(1))
-      activePercentage = chart.legend.legendItems[chart.pointIndex].hidden
-        ? 0
-        : activePercentage
-    }
+    //   dataset = chart.data.datasets[chart.pointDataIndex]
+    //   meta = dataset._meta[Object.keys(dataset._meta)[0]]
+    //   total = meta.total
+    //   activePercentage = parseFloat(((activeValue / total) * 100).toFixed(1))
+    //   activePercentage = chart.legend.legendItems[chart.pointIndex].hidden
+    //     ? 0
+    //     : activePercentage
+    // }
 
+    //labels
     ctx.font = '30px Nunito, sans-serif'
     ctx.fillStyle = colors.primaryColor
     ctx.textBaseline = 'middle'
@@ -59,6 +60,7 @@ export const centerTextPlugin = {
     var textY = height / 2
     ctx.fillText(text, textX, textY)
 
+    //datasets.data
     ctx.font = '14px Nunito, sans-serif'
     ctx.textBaseline = 'middle'
 

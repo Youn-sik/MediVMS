@@ -267,6 +267,19 @@ export default {
             ]
         };
 
+        // this.deviceChartData = {
+        //     labels: ["A", "B", "C", "D", "E"],
+        // datasets: [
+        //   {
+        //     borderWidth: 5,
+        //     backgroundColor: ["#F48FB1", "#AAAAAA", "#D81B60", "#1E88E5", "#FDD835"],
+        //     hoverBackgroundColor: ["#F48FB1", "#AAAAAA", "#D81B60", "#1E88E5", "#FDD835"],
+        //     hoverBorderColor: ["#F48FB1", "#AAAAAA", "#D81B60", "#1E88E5", "#FDD835"],
+        //     data: [10, 90, 20, 70, 50],
+        //   }
+        // ],
+        // };
+
         this.surgeryChartData = {
             labels: ["수술중", "대기중"],
             datasets: [
