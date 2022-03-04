@@ -89,6 +89,101 @@
             </template>
         </b-modal>
 
+        <!-- DragAdd 모달 -->
+        <b-modal
+            v-model="DragaddModal"
+            id="modalright"
+            ref="modalright"
+            :title="'Drag수술 추가'"
+            modal-class="modal-right"
+            :hide-header-close="true" :no-close-on-esc="true" :no-enforce-focus="true"
+            @hide="dragcancelSaveEvent"
+        >
+            <div style="margin-top: 20px !important">
+            <b-form>
+                <b-form-group label="수술명">
+                    <b-form-input v-model="newEvent.name" />
+                </b-form-group>
+                <b-form-group label="수술 시작 시간">
+                    <datetime
+                    type="datetime"
+                    v-model="newEvent.start"
+                    placeholder="날짜를 선택해주세요"
+                    input-class="form-control"></datetime>
+                </b-form-group>
+                <b-form-group label="수술 종료 시간">
+                    <datetime
+                    type="datetime"
+                    v-model="newEvent.end"
+                    placeholder="날짜를 선택해주세요"
+                    input-class="form-control"></datetime>
+                </b-form-group>
+                <b-form-group label="환자명">
+                    <b-form-input v-model="newEvent.patient" />
+                </b-form-group>
+                <b-form-group label="환자 코드">
+                    <b-form-input v-model="newEvent.patient_code" />
+                </b-form-group>
+                <b-form-group label="생년 월일">
+                    <b-form-input v-model="newEvent.patient_birthday" />
+                </b-form-group>
+                <!-- <b-form-group label="담당의 명">
+                    <b-form-input v-model="newEvent.doctor" />
+                </b-form-group> -->
+                <b-form-group label="담당의 명">
+                    <vselect label="name" :options="doctors" v-model="newEvent.doctor" :reduce="doctor => doctor.id" dir="ltr" >
+                        <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <div :class="'color-sample ' + option.name" style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.name }}
+                            </div>
+                        </template>
+                    </vselect>
+                </b-form-group>
+                <b-form-group label="수술실">
+                    <vselect label="surgery_name" :options="surgerySelection" v-model="newEvent.surgery" dir="ltr" >
+                        <!-- <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <div style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.surgery_name }}
+                            </div>
+                        </template> -->
+                    </vselect>
+                </b-form-group>
+                <b-form-group label="색상">
+                    <vselect label="name" :options="colors" v-model="newEvent.color" dir="ltr" >
+                        <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                <!-- <img :src="option.owner.avatar_url" height="25" /> -->
+                                <div :class="'color-sample ' + option.name" style="display:inline-block; margin-right:5px;"></div>
+                                {{ option.name }}
+                            </div>
+                        </template>
+                    </vselect>
+                </b-form-group>
+                <b-form-group label="비고">
+                    <b-form-input v-model="newEvent.note" />
+                </b-form-group>
+                <!-- <b-form-checkbox
+                id="emergency"
+                v-model="newEvent.emergency"
+                name="emergency"
+                >
+                긴급 녹화&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다
+                </b-form-checkbox> -->
+            </b-form>
+            </div>
+            <template #modal-footer="{ ok, cancel, hide }">
+                <b-button variant="danger" @click="cancel" style = "font-weight: bold;">
+                    취소
+                </b-button>
+                <b-button @click="addSchedule" style = "font-weight: bold;">
+                    저장
+                </b-button>
+            </template>
+        </b-modal>
+
         <!-- Add 모달 -->
         <b-modal
             v-model="addModal"
@@ -96,7 +191,7 @@
             ref="modalright"
             :title="'수술 추가'"
             modal-class="modal-right"
-            :hide-header-close="true" :no-close-on-backdrop="true" :no-close-on-esc="true" :no-enforce-focus="true"
+            :hide-header-close="true" :no-close-on-esc="true" :no-enforce-focus="true"
         >
             <div style="margin-top: 20px !important">
             <b-form>
@@ -183,7 +278,7 @@
             </template>
         </b-modal>
 
-                <!-- Modify 모달 -->
+        <!-- Modify 모달 -->
         <b-modal
             v-model="modModal"
             id="modalright"
@@ -564,6 +659,7 @@ export default {
                 surgery:null,
                 emergency:false,
             },
+            DragaddModal:false,
             addModal:false,
             modModal:false,
             moreModal:false,
@@ -694,7 +790,7 @@ export default {
                     start:moment(this.createEvent.start).format('YYYY-MM-DDTHH:mm:ssZ'),
                     end:moment(this.createEvent.end).format('YYYY-MM-DDTHH:mm:ssZ'),
                 }
-                this.addModal = true
+                this.DragaddModal = true
             }
 
             this.dragTime = null
@@ -745,6 +841,29 @@ export default {
             this.getSchedule()
             this.$refs.calendar0.next()
         },
+        dragcancelSaveEvent() {
+            this.newEvent = {
+                color:'',
+                name:'',
+                surgery:null,
+                timed:true,
+                start:moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                end:moment().add(1,'hour').format('YYYY-MM-DDTHH:mm:ssZ'),
+                patient:'',
+                patient_code:'',
+                patient_birthday:'',
+                doctor:'',
+                emergency:false,
+            }
+
+            this.emergency = false;
+
+            this.DragaddModal = false;
+            this.addModal = false;
+            this.modModal = false;
+
+            this.events.pop()
+        },
         cancelSaveEvent() {
             this.newEvent = {
                 color:'',
@@ -762,10 +881,11 @@ export default {
 
             this.emergency = false;
 
+            this.DragaddModal = false;
             this.addModal = false;
             this.modModal = false;
 
-            this.events.pop()
+            // this.events.pop()
         },
         cancelModEvent() {
             this.newEvent = {
@@ -784,6 +904,7 @@ export default {
 
             this.emergency = false;
 
+            this.DragaddModal = false;
             this.addModal = false;
             this.modModal = false;
         },
@@ -946,7 +1067,7 @@ export default {
             }
 
             this.addModal = false;
-
+            this.DragaddModal = false;
             this.emergency = false;
 
             // let firstEvent = true
