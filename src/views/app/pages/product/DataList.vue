@@ -72,7 +72,7 @@
                                 <b-th rowspan="1" style="font-size: 16px;">수술실</b-th>
                                 <b-th rowspan="1" style="font-size: 16px;">진료과</b-th>
                                 <b-th rowspan="1" style="font-size: 16px;">주치의</b-th>
-                                <b-th rowspan="1" style="font-size: 16px;">수술 내용</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">환자명</b-th>
                                 <b-th rowspan="1" style="font-size: 16px;">환자 상태</b-th>
                             </b-tr>
                             <b-tr>
@@ -80,7 +80,7 @@
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.sergery_name }}</b-td>
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.department }}</b-td>
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.doctor }}</b-td>
-                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.surgery_desc }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.patient_name }}</b-td>
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.patient_status }}</b-td>
                             </b-tr>
                         </b-tbody>
@@ -490,9 +490,9 @@ export default {
                     dataClass: "list-item-heading"
                 },
                 {
-                    name: "surgery_desc",
-                    sortField: "surgery_desc",
-                    title: "수술 내용",
+                    name: "patient_name",
+                    sortField: "patient_name",
+                    title: "환자명",
                     titleClass: "",
                     dataClass: "list-item-heading"
                 },
@@ -560,9 +560,9 @@ export default {
                     dataClass: "list-item-heading"
                 },
                 {
-                    name: "surgery_desc",
-                    sortField: "surgery_desc",
-                    title: "수술 내용",
+                    name: "patient_name",
+                    sortField: "patient_name",
+                    title: "환자명",
                     titleClass: "",
                     dataClass: "list-item-heading"
                 },

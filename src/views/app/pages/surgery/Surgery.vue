@@ -289,9 +289,9 @@ export default {
             await api.saveRecord({
                 surgery_id: this.currentSurgery.surgery_id,
                 sergery_name: this.currentSurgery.surgery_name,
-                department: "임시 정보",
-                doctor: "임시 정보",
-                patient_name: "임시 정보",
+                department: this.currentSchedule.department,
+                doctor: this.currentSchedule.dname,
+                patient_name: this.currentSchedule.patient,
                 surgery_desc: "임시 정보",
                 patient_status: "수술 완료",
                 devices: this.currentSurgery.serial_numbers.join(","),
@@ -335,6 +335,7 @@ export default {
 
             if (this.schedules.length) {
                 this.currentSchedule = this.schedules[0];
+                console.log(this.currentSchedule);
             } else {
                 this.currentSchedule = {};
             }
