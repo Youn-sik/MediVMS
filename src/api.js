@@ -465,11 +465,7 @@ const api = {
 
     getDoctorName(params) {
         return new Promise((resolve, reject) => {
-            axios.post('/getDoctorName', {
-                data: {
-                    doctor_id: params.doctor_id
-                }
-            }).then(
+            axios.post('/getDoctorName', params).then(
                 res => {
                     resolve(res.data)
                 },
