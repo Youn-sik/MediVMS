@@ -111,10 +111,10 @@
 
                 <div class="modal-data-table-page-camera-num">
                     <span>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(0)">1</a>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(1)">2</a>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(2)">3</a>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(3)">4</a>
+                        <a style="padding-left: 5px; padding-right: 5px;"  href="#" class="page-btn2 fr-15-r" @click="selectSurgery(0)">1</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(1)">2</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(2)">3</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(3)">4</a>
                     </span>
                 </div>
 

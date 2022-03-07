@@ -1088,6 +1088,20 @@ app.delete("/doctor", (req, res) => {
     res.send({ result: true });
 });
 
+app.post("/getDoctorName", (req, res) => {
+    let doctor_id = req.body.doctor_id;
+    connection.query(
+        `SELECT *
+    FROM doctors
+    WHERE id = ${doctor_id};`,
+        function(err, rows, fields) {
+            if (err) throw err;
+
+            res.send(rows);
+        }
+    );
+});
+
 // 30일 지난 record 삭제
 cron.schedule(
     "0 4 * * *",
