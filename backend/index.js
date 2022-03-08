@@ -9,6 +9,7 @@ const http = require("http");
 const request = require("request");
 const fs = require("fs");
 const mqtt = require("mqtt");
+const exec = require('child_process').exec;
 app.use(express.urlencoded({ extended: true }));
 app.use(
     express.json({
@@ -46,12 +47,26 @@ var mqttClient = mqtt.connect("localhost", {
 });
 
 mqttClient.on("connect", test => {
+    let serverTime = moment().format("YYYY-MM-DD HH:mm:ss")
     console.log("MQTT connected.");
+    console.log(serverTime);
     mqttClient.subscribe(["/nvr/request/stblist"], (error, result) => {
         if (error) {
             console.log("MQTT subscribe error.");
+            console.log(serverTime);
         } else {
             console.log("MQTT subscribed.");
+            console.log(serverTime);
+
+            exec('touch /var/www/VMS/backend/mqttServerUp', (err, stdout, stderr) => {
+                if (err) {
+                console.error(`exec error: ${err}`);
+                return;
+                }
+            
+                console.log(`stdout: ${stdout}`);
+                console.log(`stderr: ${stderr}`);
+            });
         }
     });
 });

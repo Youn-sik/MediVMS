@@ -209,7 +209,7 @@ export default {
             await api.patchRequestTakeout({reason:this.form.reason, status:this.form.status.value, id:this.currentTakeoutData.id})
             this.permitModal = false;
 
-            this.getItems()
+            this.getItems();
         },
         takeoutPermit(data) {
             this.currentTakeoutData = data
