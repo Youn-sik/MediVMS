@@ -466,6 +466,18 @@ const api = {
         })
     },
 
+
+    getDoctorName(params) {
+        return new Promise((resolve, reject) => {
+            axios.post('/getDoctorName', params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    }
+
 }
 
 export default api

@@ -83,7 +83,7 @@
                                     {{ surgery.record_time }}
                                 </b-td>
                                 <b-td class="text-center">
-                                    {{ surgery.doctor }}
+                                    {{ surgery.doctor_name }}
                                 </b-td>
                                 <b-td class="text-center">
                                     {{ surgery.patient }}
@@ -223,8 +223,17 @@ export default {
                 searchType: this.currentSearchType,
                 search: ""
             });
-            this.todaySchedules = this.todaySchedules.concat(_temp);
 
+
+		if(_temp.length >= 1) {
+			let __temp = await api.getDoctorName({
+                   		doctor_id: _temp[0].doctor
+               		});
+			_temp[0].doctor_name = __temp[0].name;
+		}
+
+
+            this.todaySchedules = this.todaySchedules.concat(_temp);
             if (this.surgeries[i].record) this.activatedSurgeriesCount++;
         }
 
@@ -236,6 +245,7 @@ export default {
                 ) {
                     this.surgeries[j].patient = this.todaySchedules[i].patient;
                     this.surgeries[j].doctor = this.todaySchedules[i].doctor;
+		    this.surgeries[j].doctor_name = this.todaySchedules[i].doctor_name;
                 }
             }
             if (this.todaySchedules[i].is_record) this.recordingEvent++;

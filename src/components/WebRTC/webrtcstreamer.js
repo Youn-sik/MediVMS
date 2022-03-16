@@ -15,11 +15,11 @@ var WebRtcStreamer = function WebRtcStreamer (videoElement, srvurl) {
 	}
 	let ipport = window.location.href.split('/')[2]
 	let ip = ipport.split(":")[0]
-	let streamingIp = 'https://172.16.44.220:8443'
+	let streamingIp = 'https://172.16.44.163:8443'
 	if(ip === '211.204.122.90')
 		streamingIp = 'https://211.204.122.90:18443'
 	console.log(streamingIp)
-	this.srvurl           = 'https://172.16.44.220:8443';
+	this.srvurl           = 'https://172.16.44.163:8443';
 	this.pc               = null;
 
 	this.mediaConstraints = { offerToReceiveAudio: true, offerToReceiveVideo: true };

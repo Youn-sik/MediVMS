@@ -20,6 +20,7 @@ client.on('error',function (err) {
 cd .
 client.on('connect', function(test) {
     console.log('MQTT connected.')
+
     client.subscribe([
         '/record/start/+',
         '/record/stop/+'

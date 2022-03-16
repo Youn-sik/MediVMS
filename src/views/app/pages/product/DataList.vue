@@ -72,7 +72,7 @@
                                 <b-th rowspan="1" style="font-size: 16px;">수술실</b-th>
                                 <b-th rowspan="1" style="font-size: 16px;">진료과</b-th>
                                 <b-th rowspan="1" style="font-size: 16px;">주치의</b-th>
-                                <b-th rowspan="1" style="font-size: 16px;">수술 내용</b-th>
+                                <b-th rowspan="1" style="font-size: 16px;">환자명</b-th>
                                 <b-th rowspan="1" style="font-size: 16px;">환자 상태</b-th>
                             </b-tr>
                             <b-tr>
@@ -80,14 +80,14 @@
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.sergery_name }}</b-td>
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.department }}</b-td>
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.doctor }}</b-td>
-                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.surgery_desc }}</b-td>
+                                <b-td rowspan="1" style="font-size: 13px;">{{ videoData.patient_name }}</b-td>
                                 <b-td rowspan="1" style="font-size: 13px;">{{ videoData.patient_status }}</b-td>
                             </b-tr>
                         </b-tbody>
                     </b-table-simple>
                 </div>
                 <div style="width:744px; height:415px;" v-if="videoBool">
-                    <SplitVideoPlayer
+		   <SplitVideoPlayer
                         v-if="videoData.split === 1"
                         ref="videoPlayer"
                         :isHistory="true"
@@ -111,10 +111,10 @@
 
                 <div class="modal-data-table-page-camera-num">
                     <span>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(0)">1</a>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(1)">2</a>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(2)">3</a>
-                        <a href="#" class="page-btn2 fr-15-r" @click="selectSurgery(3)">4</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(0)">1</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(1)">2</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(2)">3</a>
+                        <a style="padding-left: 5px; padding-right: 5px;" href="#" class="page-btn2 fr-15-r" @click="selectSurgery(3)">4</a>
                     </span>
                 </div>
 
@@ -490,9 +490,9 @@ export default {
                     dataClass: "list-item-heading"
                 },
                 {
-                    name: "surgery_desc",
-                    sortField: "surgery_desc",
-                    title: "수술 내용",
+                    name: "patient_name",
+                    sortField: "patient_name",
+                    title: "환자명",
                     titleClass: "",
                     dataClass: "list-item-heading"
                 },
@@ -560,9 +560,9 @@ export default {
                     dataClass: "list-item-heading"
                 },
                 {
-                    name: "surgery_desc",
-                    sortField: "surgery_desc",
-                    title: "수술 내용",
+                    name: "patient_name",
+                    sortField: "patient_name",
+                    title: "환자명",
                     titleClass: "",
                     dataClass: "list-item-heading"
                 },

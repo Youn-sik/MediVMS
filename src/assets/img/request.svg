@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="29.919" viewBox="0 0 30 29.919">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.569" y1="0.776" x2="-2.27" y2="-14.098" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#286346"/>
+      <stop offset="0.51" stop-color="#5ae29e"/>
+      <stop offset="1" stop-color="#a2e8c5"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.725" y1="1.379" x2="-1.308" y2="-7.15" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="1.251" y1="1.973" x2="-0.55" y2="-1.705" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-4" x1="2.624" y1="4.881" x2="-0.726" y2="-1.991" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-5" x1="1.002" y1="1.632" x2="-0.71" y2="-2.175" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-6" x1="0.25" y1="0.949" x2="0.817" y2="-0.086" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-7" x1="0.806" y1="0.897" x2="0.46" y2="0.183" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="Layer_2" data-name="Layer 2" transform="translate(0 0.019)">
+    <g id="Layer_3" data-name="Layer 3">
+      <path id="패스_20686" data-name="패스 20686" d="M24.47,23.84a12.13,12.13,0,0,1-10.65,1.84c-3.4-1-4.58,2-3,3.65A15.22,15.22,0,0,0,15,29.9a15,15,0,0,0,11.05-4.84C26.78,24.19,25.74,22.91,24.47,23.84Z" fill-rule="evenodd" fill="url(#linear-gradient)"/>
+      <path id="패스_20687" data-name="패스 20687" d="M9.22,23.18a3.92,3.92,0,0,0,1.64,6.15c-1.62-1.61-.44-4.68,3-3.65h0a12.13,12.13,0,0,0,10.65-1.84c1.27-.93,2.31.35,1.58,1.22a14.83,14.83,0,0,0,2.34-3.37c1.8-5-14.95-.8-19.17,1.49" fill-rule="evenodd" fill="url(#linear-gradient-2)"/>
+      <path id="패스_20688" data-name="패스 20688" d="M14.77,9.55c4.7-1.84,9.33-3.18,10.7-5.31A15,15,0,0,0,0,15,14.85,14.85,0,0,0,4.68,25.8,8,8,0,0,1,3.1,20.05h0c.38-3.55,2.82-6,6-7.84M12.78,4.1C6.77,5.7,2,10.15,1.17,15.46,1,8.3,6.26,2.19,12.86,1.66,15.66,1.43,15.42,3.41,12.78,4.1Z" fill-rule="evenodd" fill="url(#linear-gradient-3)"/>
+      <path id="패스_20689" data-name="패스 20689" d="M1.17,15.46C2,10.15,6.77,5.7,12.78,4.1c2.64-.69,2.88-2.67.08-2.44C6.26,2.19,1,8.3,1.17,15.46Z" fill-rule="evenodd" fill="url(#linear-gradient-4)"/>
+      <path id="패스_20690" data-name="패스 20690" d="M30,15A14.91,14.91,0,0,0,25.47,4.24c-1.37,2.13-6,3.47-10.7,5.31C4.52,13.44,3.48,16.5,3.1,20.05A8,8,0,0,0,4.68,25.8a15,15,0,0,0,6.18,3.53,4,4,0,0,1-2.4-2.66h0a3.57,3.57,0,0,1,2.18-4.1c5.65-2.32,19.4-5.44,17.76-.84A14.79,14.79,0,0,0,30,15Z" fill-rule="evenodd" fill="url(#linear-gradient-5)"/>
+      <path id="패스_20691" data-name="패스 20691" d="M21.18,8.62,7.87,14.42a.85.85,0,0,0,0,1.53l2.7,1.39,8-5.59a.11.11,0,0,1,.17.09L12,18.27a.82.82,0,0,0-.26.61v3a.85.85,0,0,0,1.57.45l1.63-2.68,3.46,1.79a.85.85,0,0,0,1.21-.56L22.34,9.59a.84.84,0,0,0-1.16-.97Z" fill="url(#linear-gradient-6)"/>
+      <path id="패스_20692" data-name="패스 20692" d="M21.31,7.49,8,13.29a.84.84,0,0,0,0,1.53l2.7,1.39,8-5.59a.11.11,0,0,1,.17.09l-6.73,6.43a.83.83,0,0,0-.26.61v3a.84.84,0,0,0,1.56.44l1.64-2.67,3.46,1.78a.85.85,0,0,0,1.21-.55L22.48,8.47a.85.85,0,0,0-1.17-.98Z" fill="url(#linear-gradient-7)"/>
+      <path id="패스_20693" data-name="패스 20693" d="M21.31,7.94,8,13.74a.84.84,0,0,0,0,1.53l2.7,1.4,8-5.6a.11.11,0,0,1,.17.09l-6.73,6.43a.83.83,0,0,0-.26.61v3a.84.84,0,0,0,1.56.44L15.08,19l3.46,1.78a.85.85,0,0,0,1.21-.55L22.48,8.92a.85.85,0,0,0-1.17-.98Z" fill="#fff"/>
+    </g>
+  </g>
+</svg>

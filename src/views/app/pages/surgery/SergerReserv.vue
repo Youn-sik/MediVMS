@@ -94,7 +94,7 @@
             v-model="DragaddModal"
             id="modalright"
             ref="modalright"
-            :title="'Drag수술 추가'"
+            :title="'수술 추가'"
             modal-class="modal-right"
             :hide-header-close="true" :no-close-on-esc="true" :no-enforce-focus="true"
             @hide="dragcancelSaveEvent"
@@ -286,6 +286,7 @@
             :title="'수술 수정'"
             modal-class="modal-right"
         >
+	<div style="margin-top: 20px !important">
             <b-form>
                 <b-form-group label="수술명">
                     <b-form-input v-model="newEvent.name" />
@@ -360,6 +361,7 @@
                 ※ 체크시 시간과 관계없이 해당 스케줄을 최상위로 표시합니다 -->
                 <!-- </b-form-checkbox> -->
             </b-form>
+	</div>
             <template #modal-footer="{ ok, cancel, hide }">
                 <b-button variant="danger" @click="cancelModEvent">
                     취소
