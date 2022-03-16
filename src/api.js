@@ -454,10 +454,7 @@ const api = {
 
     deleteDoctors(params) {
         return new Promise((resolve, reject) => {
-            axios.delete('/doctor',{
-                data:{
-                    doctors : params.doctors
-                }}).then(
+            axios.delete('/doctor', params).then(
                 res => {
                     resolve(res.data)
                 },

@@ -181,7 +181,7 @@
                 >{{ item }}</b-dropdown-item
             >
         </b-dropdown>
-
+        
         <b-colxx md="12" style="border: solid 1px #e7e7e7; border-radius: 20px; box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);">
             <b-card style="border: none !important; box-shadow: none !important;">
                 <!-- this.$refs.vuetable.selectedTo 선택된 데이터 정보 -->
@@ -200,6 +200,7 @@
                     >
                 </b-dropdown>
                 -->
+                
                 <vuetable
                     ref="vuetable"
                     :api-mode="false"
@@ -395,7 +396,8 @@ import moment from "moment";
 import VideoPlayer from "../../../../components/Shaka/VideoPlayer.vue";
 import SplitVideoPlayer from "../../../../components/Shaka/SplitVideoPlayer.vue";
 import AssembleVideoPlayer from "../../../../components/Shaka/AssembleVideoPlayer.vue";
-import { base_url } from "../../../../server.json";
+import mqtt from "mqtt";
+import { base_url, mqtt_url } from "../../../../server.json";
 
 export default {
     components: {
@@ -745,8 +747,9 @@ export default {
 
             this.requestBrowseModal = false;
         },
-        //열람 요청 모달
+        //반출 요청 모달
         openTakeoutRequestModal(data) {
+            console.log(data)
             this.requestTakeoutForm = {
                 user_id: this.currentUser.id,
                 record_id: data,
@@ -757,15 +760,26 @@ export default {
 
             this.requestTakeoutModal = true;
         },
-        //열람 요청 저장
+        //반출 요청 저장
         async saveRequestTakeout() {
             await api.saveRequestTakeout(this.requestTakeoutForm);
 
             this.getRecords();
 
             this.requestTakeoutModal = false;
+
+            console.log(this.videoData);
+            this.mqttClient.publish(
+                `/encoding/request/`,
+                JSON.stringify({
+                    video_path: ``,
+                    watermark: "/var/www/VMS/backend/record/watermark.png",
+                    serial_numbers: startTime
+                })
+            );
         },
         async openVideoModal(data) {
+            console.log(data);
             this.videoBool = true;
             this.currentVideo = 0;
             this.videoData = data;
@@ -1178,7 +1192,45 @@ export default {
         this.loadItems();
 
         this.getRecords();
-    }
+
+        this.mqttClient = mqtt.connect(mqtt_url, {
+            protocol: "wss",
+            port: 8084,
+            keepalive: 0,
+            path: "/mqtt",
+            clientId:
+                "server_" +
+                Math.random()
+                    .toString(16)
+                    .substr(2, 8),
+            clean: true
+        });
+
+        this.mqttClient.on("error", function(err) {
+            console.log(err);
+        });
+
+        this.mqttClient.on("connect", test => {
+            console.log("MQTT connected.");
+            this.mqttClient.subscribe(["/encoding/request/+"], (error, result) => {
+                if (error) {
+                    console.log("MQTT subscribe error.");
+                } else {
+                    console.log("MQTT subscribed.");
+                }
+            });
+        });
+
+        this.mqttClient.on("message", (topic, message) => {
+            if (topic === "/encoding/request/result") {
+                let data = JSON.parse(message);
+                // 반출 작업 완료시 코드
+            }
+        });
+    },
+    destroyed() {
+        this.mqttClient.end(true);
+    },
 };
 </script>
 

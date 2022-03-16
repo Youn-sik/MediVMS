@@ -288,6 +288,7 @@
         >
 	<div style="margin-top: 20px !important">
             <b-form>
+                
                 <b-form-group label="수술명">
                     <b-form-input v-model="newEvent.name" />
                 </b-form-group>
