@@ -275,7 +275,7 @@ body {
   width: 150px;
   height: 30.2px;
   margin: 0 auto;
-  margin-top: 340px;
+  margin-top: 250px;
   background: url(/assets/img/logo2.svg);
 }
 
@@ -905,6 +905,7 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
 
 .card .card-body .vuetable.ui.blue.selectable.celled.stackable.attached.table thead tr th {
   text-align: center;
+  font-size: 15px;
 }
 
 .custom-todo-div .card-body table.table.b-table {
@@ -956,6 +957,13 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
 
 .custom-browsePermit-div-modal-body .bv-no-focus-ring.col-form-label.pt-0{
   padding-top: 30px !important;
+}
+
+.custom-browsePermit-div .card-body {
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 28px;
 }
 
 .custom-div-takeout{
@@ -1024,7 +1032,7 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
   margin: 0 auto;
   margin-top: 10px;
   justify-content: flex-end;
-  padding-right: 90px;
+  padding-right: 160px;
 }
 
 .custom-div-device .add-btn{
@@ -1148,7 +1156,7 @@ h5#__BVID__1299___BV_modal_title_.modal-title{
   margin: 0 auto;
   margin-top: 10px;
   justify-content: flex-end;
-  padding-right: 90px;
+  padding-right: 160px;
 }
 
 .custom-div-surgery-manage div.row div span h1{
@@ -1393,4 +1401,47 @@ input[type="checkbox"] {
 
 #app-container .container-fluid .card-body .card .card-body p {
   font-weight: bold;
+}
+main .container-fluid .row .mb-4.col-lg-12.col-xl-4 .card .card-body {
+  padding-top: 20px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-bottom: 10px !important;
+}
+
+main .container-fluid .row .disable-text-selection.col-md-12 div.mb-2.mt-2 {
+  margin-bottom: 0px !important;
+}
+
+main .container-fluid .row .disable-text-selection.col-md-12 div.mb-2.mt-2 .d-md-block.collapse table.table.b-table {
+  margin-bottom: 0px;
+}
+
+.container-fluid div.col-md-12 div.card div.card-body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+main .container-fluid .disable-text-selection.col-md-12 .mb-2.mt-2 div.d-md-block.collapse div.d-block.d-md-inline-block.pt-1 table.table.b-table tbody tr th {
+  padding-bottom: 0px;
+  padding-top: 10px;
+}
+
+main .container-fluid .disable-text-selection.col-md-12 .mb-2.mt-2 div.d-md-block.collapse div.d-block.d-md-inline-block.pt-1 table.table.b-table tbody tr td {
+  padding-bottom: 0px;
+  padding-top: 10px;
+}
+
+.container-fluid .custom-div-history div.col.col-12 {
+  padding-top: 0px;
+}
+
+.container-fluid .schedule .card .card-body {
+  padding-top: 14px;
+  padding-bottom: 5px;
+}
+
+.container-fluid .schedule .card .card-body .input-group.mb-1 {
+  height: 60px !important;
+  margin-bottom: 0px !important;
 }

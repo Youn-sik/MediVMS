@@ -374,13 +374,13 @@
         </b-modal>
 
     <b-row>
-        <b-colxx xl="12" lg="12" class="mb-4">
+        <b-colxx xl="12" lg="12" class="mb-4" style="margin-bottom: 0px !important;">
             <b-card>
                 <!-- <div style=""> -->
                     
                 <!-- </div> -->
                 <div style="width:80%; text-aligm:center; margin: 0 auto;">
-                    <b-input-group class="mb-1">
+                    <b-input-group class="mb-1" style="right: 20px;">
                         <b-input-group-prepend style="margin-top: 5px; height: 30px !important;">
                             <b-dropdown id="ddown1" :text="currentSearchType" variant="outline-secondary">
                                 <b-dropdown-item @click="changeSearchType(item)" v-for="(item,index) in searchItems" :key="index">{{item}}</b-dropdown-item>
@@ -403,7 +403,7 @@
                             </span>
                         </div>
 
-                        <div style="text-aligm:center;margin-left: 260px;">
+                        <div style="text-aligm:center;margin-left: 100px;">
                             <div class="cal-btn" style="width:260px; margin:0 auto; text-align:center; padding-top: 5px; padding-right: 30px">
                                 <div style="padding-left: 0px;">
                                     <a href="#">
@@ -449,7 +449,7 @@
                             >
                                 <div class="fn-12-b fc-cc"><img src="/assets/img/add.svg">예약</div>
                             </b-button>
-                            <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary" style="width:107px; top: 5px; left: 45px;">
+                            <b-dropdown id="surgeriesDropdown" :text="currentSurgery.surgery_name" variant="outline-secondary" style="width:107px; top: 3px; left: 40px;">
                                 <b-dropdown-item @click="changeSurgery(surgery,index)" v-for="(surgery,index) in surgeries" :key="index">{{ surgery.surgery_name }}</b-dropdown-item>
                             </b-dropdown>
                             

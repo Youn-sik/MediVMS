@@ -166,13 +166,13 @@
                 :changeSearchType="changeSearchType"
             ></list-page-heading>
         </b-colxx>
-        <div style="display: block; height: 80px;">&nbsp;</div>
+        <!-- <div style="display: block; height: 80px;">&nbsp;</div> -->
 
         <b-dropdown
             id="ddown1"
             :text="String(perPage)"
             variant="outline-secondary"
-            style="margin-top: 40px; margin-left: 1430px;"
+            style="margin-left: 1430px;"
         >
             <b-dropdown-item
                 @click="changePerPage(item)"
@@ -182,7 +182,7 @@
             >
         </b-dropdown>
         
-        <b-colxx md="12" style="border: solid 1px #e7e7e7; border-radius: 20px; box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%);">
+        <b-colxx md="12" style="border: solid 1px #e7e7e7; border-radius: 20px; box-shadow: 2px 2px 6px 0 rgb(223 224 226 / 38%); margin-bottom: 30px;">
             <b-card style="border: none !important; box-shadow: none !important;">
                 <!-- this.$refs.vuetable.selectedTo 선택된 데이터 정보 -->
                 <!-- 
