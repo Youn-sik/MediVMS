@@ -473,7 +473,29 @@ const api = {
                 error => reject(error)
             )
         })
-    }
+    },
+
+    getVideoSerial(params) {
+        return new Promise((resolve, reject) => {
+            axios.get(`/getVideoSerial?video_link=${params.video_link}`).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
+
+    patchRequestTakeoutWait(params) {
+        return new Promise((resolve, reject) => {
+            axios.patch('/takeout_access_wait',params).then(
+                res => {
+                    resolve(res.data)
+                },
+                error => reject(error)
+            )
+        })
+    },
 
 }
 

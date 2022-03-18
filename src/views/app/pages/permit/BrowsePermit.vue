@@ -78,8 +78,7 @@
 <script>
 import Vuetable from 'vuetable-2/src/components/Vuetable'
 import VuetablePaginationBootstrap from '../../../../components/Common/VuetablePaginationBootstrap'
-import mqtt from "mqtt";
-import {base_url, mqtt_url} from "../../../../server.json"
+import {base_url} from "../../../../server.json"
 import api from "../../../../api"
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
@@ -91,46 +90,7 @@ export default {
   },
   async mounted() {
       this.getItems()
-
-      this.mqttClient = mqtt.connect(mqtt_url, {
-            protocol: "wss",
-            port: 8084,
-            keepalive: 0,
-            path: "/mqtt",
-            clientId:
-                "server_" +
-                Math.random()
-                    .toString(16)
-                    .substr(2, 8),
-            clean: true
-        });
-
-        this.mqttClient.on("error", function(err) {
-            console.log(err);
-        });
-
-        this.mqttClient.on("connect", test => {
-            console.log("MQTT connected.");
-            this.mqttClient.subscribe(["/encoding/request/+"], (error, result) => {
-                if (error) {
-                    console.log("MQTT subscribe error.");
-                } else {
-                    console.log("MQTT subscribed.");
-                }
-            });
-        });
-
-        this.mqttClient.on("message", (topic, message) => {
-            if (topic === "/encoding/request/result") {
-                let data = JSON.parse(message);
-                // 반출 작업 완료시 코드
-            }
-        });
   },
-
-    destroyed() {
-        this.mqttClient.end(true);
-    },
   data () {
       return {
         items:[],

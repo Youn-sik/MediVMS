@@ -1118,6 +1118,35 @@ app.post("/getDoctorName", (req, res) => {
     );
 });
 
+app.get("/getVideoSerial", (req, res) => {
+    let video_link = req.query.video_link;
+    connection.query(
+        `SELECT *
+    FROM records
+    WHERE video_link = ${video_link};`,
+        function(err, rows, fields) {
+            if (err) throw err;
+
+            res.send(rows);
+        }
+    );
+});
+
+app.patch("/takeout_access_wait", (req, res) => {
+    connection.query(
+        `UPDATE takeout_access
+    SET
+    status = "${req.body.status}",
+    updated_at = "${moment().format("YYYY-MM-DD HH:mm:ss")}"
+    WHERE record_id = ${req.body.id}`,
+        function(err, rows, fields) {
+            if (err) throw err;
+
+            res.send(rows);
+        }
+    );
+});
+
 // 30일 지난 record 삭제
 cron.schedule(
     "0 4 * * *",

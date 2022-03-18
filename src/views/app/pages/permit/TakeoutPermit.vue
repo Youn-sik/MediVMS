@@ -48,6 +48,7 @@
                     <template slot="status" scope="props">
                         {{props.rowData.status === 'standby' ? '허가 대기중' :
                         props.rowData.status === 'permitted' ? '허가' :
+                        props.rowData.status == 'preparingTakeout' || 'waitingTakeout' ? '반출 준비' :
                         props.rowData.status === 'denied' ? '거부' : "권한 없음"}}
                     </template>
                     <template slot="takeout" scope="props">
@@ -72,7 +73,8 @@
 <script>
 import Vuetable from 'vuetable-2/src/components/Vuetable'
 import VuetablePaginationBootstrap from '../../../../components/Common/VuetablePaginationBootstrap'
-import {base_url} from "../../../../server.json"
+import mqtt from "mqtt";
+import {base_url, mqtt_url} from "../../../../server.json"
 import api from "../../../../api"
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
@@ -82,11 +84,62 @@ export default {
       'vuetable-pagination-bootstrap' : VuetablePaginationBootstrap,
       'vselect':vSelect
   },
-  mounted() {
-      this.getItems()
+  async mounted() {
+    // new Promise((resolve, reject)=> {
+        this.mqttClient = mqtt.connect(mqtt_url, {
+            protocol: "wss",
+            port: 8084,
+            keepalive: 0,
+            path: "/mqtt",
+            clientId:
+                "server_" +
+                Math.random()
+                    .toString(16)
+                    .substr(2, 8),
+            clean: true
+        });
+
+        this.mqttClient.on("connect", test => {
+            console.log("MQTT connected.");
+            this.mqttClient.subscribe(["/encoding/request/+"], (error, result) => {
+                if (error) {
+                    console.log("MQTT subscribe error.");
+                    // reject()
+                } else {
+                    console.log("MQTT subscribed.");
+                    // resolve();
+                }
+            });
+        });
+
+        // mqtt connect or mqtt connection error 이 발생하지 않으면 무한 대기이기 때문에 타임 아웃 걸어두고 엠큐티티 연결 안될 시, 반출 불가 알림 보이기
+        // setTimeout(()=> {reject();}, 30000)
+
+    // }).then(()=> {
+        this.mqttClient.on("error", function(err) {
+            console.log(err);
+        });
+
+        this.mqttClient.on("message", (topic, message) => {
+            if (topic === "/encoding/request/result") {
+                let data = JSON.parse(message);
+                // 반출 작업 완료시 코드
+            }
+        });
+    // }).catch(()=> {
+    //     alert("반출 서비스 사용이 불가합니다.\n서버 관리자에게 문의 해 주세요.");
+    // }).finally(()=> {
+        this.getItems();
+    // })
   },
+
+  destroyed() {
+        this.mqttClient.end(true);
+    },
+
   data () {
       return {
+        mqttClient: null,
         items:[],
         fields: [
             {
@@ -177,7 +230,7 @@ export default {
         },
         permitType:[
             {
-                value:"permitted",
+                value:"preparingTakeout",
                 text:"승인"
             },
             {
@@ -206,11 +259,23 @@ export default {
             }
         },
         async savePermit() {
-            await api.patchRequestTakeout({reason:this.form.reason, status:this.form.status.value, id:this.currentTakeoutData.id})
+            let temp = await api.patchRequestTakeout({reason:this.form.reason, status:this.form.status.value, id:this.currentTakeoutData.id});
             this.permitModal = false;
 
-            this.getItems()
+            await this.getItems();
+            this.sendTakeoutMqtt();
         },
+        // async savePermit() {
+        //     new Promise((resolve, reject)=> {
+        //         api.patchRequestTakeout({reason:this.form.reason, status:this.form.status.value, id:this.currentTakeoutData.id})
+        //         resolve();
+        //     }).then(()=> {
+        //         this.permitModal = false;
+
+        //         this.getItems();
+        //         this.sendTakeoutMqtt();
+        //     })
+        // },
         takeoutPermit(data) {
             this.currentTakeoutData = data
             this.form = {
@@ -234,7 +299,7 @@ export default {
                 sort:this.sort,
                 sortType:this.sortType
             })
-            this.items = temp
+            this.items = temp;
         },
         onPaginationData (paginationData) {
             console.log(paginationData)
@@ -261,6 +326,57 @@ export default {
                 // Optional
             }
             return apiParams
+        },
+        async sendTakeoutMqtt() {
+            let takeoutObject = this.items.data;
+            let vName_serial = [];
+            takeoutObject.forEach((element, index) => { // 반출 준비 상태의 값들을 가져온다.
+                if(element.status == "preparingTakeout") {
+                    let vName_serial_Obj = element;
+                    vName_serial.push(vName_serial_Obj);
+                }
+            });
+            if(vName_serial.length != 0) {
+                for(let i=0; i<vName_serial.length; i++) { // mqtt 전송을 위한 데이터를 가져온다.
+                    let _temp = await api.getVideoSerial({
+                        "video_link": vName_serial[i].video_link
+                    })
+                    let record_info = _temp;
+                    let record_takeout_id_after_mqtt = []; // 밑의 주석과 같은 이유로 같은 시간에 영상 녹화를 시작(종료)시 함께 처리하기 위해서
+
+                    record_info.forEach((element, index)=> { // mqtt 전송을 위한 데이터를 가져온다.(한번 더 for 문을 돌리는 이유는 같은 시간에 영상 녹화를 시작(종료)했을 때 함께 처리하기 위해서)
+                        console.log(element);
+                        record_takeout_id_after_mqtt.push(element.id);
+
+                        let video_path_arr = [];
+                        let devices = element.devices.split(",");
+
+                        for(let j=0; j<devices.length; j++) {
+                            let video_path = `${devices[j]}_${element.video_link}`;
+                            video_path_arr.push(video_path);
+                        }
+                        
+                        // mqtt로 pub 로직
+                        this.mqttClient.publish(
+                            '/encoding/request',
+                            JSON.stringify({
+                                "video_path" : video_path_arr,
+                                "watermark" : "/var/www/VMS/backend/record/watermark.png",
+                                "serial_numbers" : devices,
+                            })
+                        )
+                    });
+                    // 반출 준비에서 새로고침 시 mqtt 요청이 계속해서 중복 되어 전송될 수 있다. -> status를 한개 더 만들어서 여기서 update 되어야 한다.
+                    console.log(record_takeout_id_after_mqtt);
+                    record_takeout_id_after_mqtt.forEach((id, index)=> {
+                        new Promise((resolve, reject)=> {
+                            let __temp = api.patchRequestTakeoutWait({"status":"waitingTakeout", "id":id});
+                            resolve(__temp)
+                        })
+                    })
+                    
+                }
+            }
         }
     }
 }
