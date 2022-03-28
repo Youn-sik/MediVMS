@@ -284,6 +284,7 @@ export default {
                 dashboard:this.form.dashboard ? 1 : 0,
                 surgery:this.form.surgery ? 1 : 0,
                 schedule:this.form.schedule ? 1 : 0,
+                browse:this.form.browse ? 1: 0,
                 history:this.form.history ? 1 : 0,
                 admin:this.form.admin ? 1 : 0,
                 setting:this.form.setting ? 1 : 0,

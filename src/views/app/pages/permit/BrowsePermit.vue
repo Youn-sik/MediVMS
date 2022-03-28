@@ -224,6 +224,9 @@ export default {
         },
         browsePermit(data) {
             this.currentTakeoutData = data
+            if(this.currentTakeoutData.reason == "null") {
+                this.currentTakeoutData.reason = ""
+            }
             this.form = {
                 status:null,
                 reason:null,

@@ -486,9 +486,9 @@ const api = {
         })
     },
 
-    patchRequestTakeoutWait(params) {
+    patchRequestTakeoutChange(params) {
         return new Promise((resolve, reject) => {
-            axios.patch('/takeout_access_wait',params).then(
+            axios.patch('/takeout_access_change',params).then(
                 res => {
                     resolve(res.data)
                 },
@@ -497,6 +497,41 @@ const api = {
         })
     },
 
+    setTakeoutLink(params) {
+        return new Promise((resolve, reject)=> {
+            axios.patch('/setTakeoutLink', params).then(
+                res=> {
+                    resolve(res.data)
+                },
+                error=> reject(error)
+            )
+        })
+    },
+
+    takeoutCompression(params) {
+        return new Promise((resolve, reject)=> {
+            axios.post('/takeoutCompression', params).then(
+                res=> {
+                    return resolve(res.data)
+                },
+                error=> reject(error)
+            )
+        })
+    },
+
+    async takeoutDownload(params) {
+        return new Promise((resolve, reject)=> {
+            axios.post('/takeoutDownload', params).then(
+                res=> {
+                    console.log(res.data);
+                    let i=0;
+                    let tmp = axios.get('/download_takeout/'+res.data.fileName).then(()=> {i=1})
+                    if(i==1) return resolve(tmp)
+                },
+                error=> reject(error)
+            )
+        })
+    }
 }
 
 export default api

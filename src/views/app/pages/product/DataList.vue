@@ -360,7 +360,9 @@
                                props.rowData.takeout_status === 'permitted' &&
                                     props.rowData.expiration === 0
                             " @click="clickTakeout(props.rowData)">
-                        <img style="margin-left: 4px;" src="/assets/img/data.svg">
+                            <a :href="`https://${base_url}:3000/download_takeout/${props.rowData.takeout_link}.tar.gz`">
+                                <img style="margin-left: 4px;" src="/assets/img/data.svg">
+                            </a>
                     </span>
                     <span class="data-denined" v-else><img style="width: 40px;" src="/assets/img/data-hover.svg"></span>
                     <!--
@@ -418,6 +420,7 @@ export default {
     },
     data() {
         return {
+            base_url: base_url,
             loadingModal: false, //반출 로딩 모달
             isLoad: false,
             sort: {
@@ -706,11 +709,12 @@ export default {
         },
 
         //반출 버튼 클릭 이벤트
-        clickTakeout(data) {
-            if (data.takeout_link === null || data.takeout_link === "") {
-                // this.mqtt
-                this.loadingModal = true;
-            }
+        async clickTakeout(data) {
+            this.loadingModal = true;
+            // if(this.loadingModal == true) {
+            //     // 다운로드 로직
+            //     await api.takeoutDownload(data)
+            // }
             this.saveRecord(data);
         },
         //열람시 기록 저장

@@ -18,7 +18,6 @@ app.use(
 );
 
 var mysql = require("mysql");
-const { Console } = require("console");
 
 var connection = mysql.createPool({
     host: "localhost",
@@ -82,6 +81,11 @@ mqttClient.on("message", (topic, message) => {
 
 app.use(cors());
 app.use("/stream", express.static("/var/www/VMS/backend/record"));
+app.use("/download_takeout", express.static("/var/www/VMS/backend/export"));
+// 이 부분은 DB 작업 다 하고(DB 에서 id 값으로 참조해서 경로 줄 건지*, http body로 경로 줄 건지 정해야됨)
+// app.post("/download", (req, res)=> {
+//     let filePathArr = req.body.video_path
+// })
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
@@ -1132,7 +1136,7 @@ app.get("/getVideoSerial", (req, res) => {
     );
 });
 
-app.patch("/takeout_access_wait", (req, res) => {
+app.patch("/takeout_access_change", (req, res) => {
     connection.query(
         `UPDATE takeout_access
     SET
@@ -1146,6 +1150,117 @@ app.patch("/takeout_access_wait", (req, res) => {
         }
     );
 });
+
+app.patch("/setTakeoutLink", (req, res)=> {
+    connection.query(
+        `UPDATE records
+    SET
+    takeout_link = "${req.body.video_link}"
+    WHERE id = ${req.body.id}`,
+        function(err, rows, fields) {
+            if (err) throw err;
+
+            res.send(rows);
+        }
+    )
+});
+
+app.post("/takeoutCompression", (req, res)=> {
+    // 파일 이름 생성 및 파일 다운로드 로직 작성
+    let video_pathArrTmp = req.body.video_path
+    let video_pathArr = []
+    video_pathArrTmp.forEach((v, _)=> {
+        let videoDir = v.split("/")[5]
+        let videoPath = v.split("/")[6]
+        video_pathArr.push(videoDir+"/"+videoPath)
+    })
+    let video_pathCli = video_pathArr.join(" ")
+    let record_id = req.body.id
+
+    new Promise((resolve, reject)=> {
+        connection.query(
+            `SELECT *
+            FROM records
+            WHERE id = ${record_id}`, function(err, rows, fields) {
+                if(err) throw err;
+    
+                let query_result = rows[0]
+                resolve(query_result)
+            }
+        )
+    }).then((query_result)=> {
+        // let dateTmp0 = query_result.date.split(" ")
+        // let dateTmp1 = replaceAll(dateTmp0[0], "-", "")
+        // let dateTmp2 = replaceAll(dateTmp0[1], ":", "")
+        // let date = `${dateTmp1}-${dateTmp2}`
+        // let patient_name = query_result.patient_name
+        // let department = query_result.department
+        // let doctor = query_result.doctor
+        let compression_name = `${query_result.video_link}.tar.gz`
+        let exec_commnad = `tar zcvfP ${compression_name} ${video_pathCli}`
+
+        exec(`${exec_commnad}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(`exec error: ${err}`);
+            return;
+            }
+            console.log(`compression result message: ${stdout}`);
+            exec(`mv ${compression_name} export`, (err, stdout, stderr) => {
+                if (err) {
+                    console.error(`exec error: ${err}`);
+                return;
+                }
+                if(stdout == "") {
+                    res.send("complete")
+                }
+            });
+        });
+    })
+   
+
+    // function replaceAll(str, searchStr, replaceStr) {
+    //     return str.split(searchStr).join(replaceStr)
+    // }
+
+    // let deviceArr = req.body.devices.split(",")
+    // let takeout_link = req.body.takeout_link
+    // let patient_name = req.body.patient_name
+    // let department = req.body.department
+    // let doctor_name = req.body.doctor
+    // let dateTmp1 = req.body.date
+    // let dateTmp2 = replaceAll(dateTmp1, "-", "/")
+    // let date = replaceAll(dateTmp2, " ", "-")
+    
+    // let filePathArr = []
+    // let fileNameArr = []
+    // deviceArr.forEach((value, index)=> {
+    //     filePathArr.push(__dirname+"/export/"+value+"_"+takeout_link)
+    //     fileNameArr.push(date+"_"+patient_name+"_"+department+"_"+doctor_name+"_"+index)
+    // })
+    // console.log(filePathArr);
+    // console.log(fileNameArr);
+});
+
+app.post('/takeoutDownload', (req, res)=> {
+    function replaceAll(str, searchStr, replaceStr) {
+       return str.split(searchStr).join(replaceStr)
+   }
+    
+    let dateTmp1 = req.body.date
+    let dateTmp2 = replaceAll(dateTmp1, "-", "/")
+    let date = replaceAll(dateTmp2, " ", "-")
+    let patient_name = req.body.patient_name
+    let department = req.body.department
+    let doctor_name = req.body.doctor
+
+    let filePath = __dirname + "/export/" + req.body.takeout_link+".tar.gz"
+    let fileName = req.body.takeout_link+".tar.gz"
+    let getFileName = date+"_"+patient_name+"_"+department+"_"+doctor_name
+    // res.download(filePath,getFileName, err=> {
+    //     if(err) console.log(err)
+    // })
+    res.send({"filePath": filePath, "fileName": fileName, "getFileName": getFileName})
+})
 
 // 30일 지난 record 삭제
 cron.schedule(
