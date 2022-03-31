@@ -1317,8 +1317,8 @@ function takeoutCompression(video_path, id) {
             }
         )
     }).then((query_result)=> {
-        let compression_name = `${query_result.video_link}.tar.gz`
-        let exec_commnad = `cd export;tar zcvfP ${compression_name} ${video_pathCli}`
+        let compression_name = `${query_result.video_link}.zip`
+        let exec_commnad = `cd export;zip ${compression_name} -r ${video_pathCli}`
 
         exec(`${exec_commnad}`, (err, stdout, stderr) => {
             if (err) {

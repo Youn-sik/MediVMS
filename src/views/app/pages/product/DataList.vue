@@ -360,7 +360,7 @@
                                props.rowData.takeout_status === 'permitted' &&
                                     props.rowData.expiration === 0
                             " @click="clickTakeout(props.rowData)">
-                            <a :href="`https://${base_url}:3000/download_takeout/${props.rowData.takeout_link}.tar.gz`">
+                            <a :href="`https://${base_url}:3000/download_takeout/${props.rowData.takeout_link}.zip`">
                                 <img style="margin-left: 4px;" src="/assets/img/data.svg">
                             </a>
                     </span>
