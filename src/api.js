@@ -486,39 +486,6 @@ const api = {
         })
     },
 
-    patchRequestTakeoutChange(params) {
-        return new Promise((resolve, reject) => {
-            axios.patch('/takeout_access_change',params).then(
-                res => {
-                    resolve(res.data)
-                },
-                error => reject(error)
-            )
-        })
-    },
-
-    setTakeoutLink(params) {
-        return new Promise((resolve, reject)=> {
-            axios.patch('/setTakeoutLink', params).then(
-                res=> {
-                    resolve(res.data)
-                },
-                error=> reject(error)
-            )
-        })
-    },
-
-    takeoutCompression(params) {
-        return new Promise((resolve, reject)=> {
-            axios.post('/takeoutCompression', params).then(
-                res=> {
-                    return resolve(res.data)
-                },
-                error=> reject(error)
-            )
-        })
-    },
-
     async takeoutDownload(params) {
         return new Promise((resolve, reject)=> {
             axios.post('/takeoutDownload', params).then(

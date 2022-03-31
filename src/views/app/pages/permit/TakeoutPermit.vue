@@ -125,38 +125,6 @@ export default {
             console.log(topic);
             console.log("==========");
 
-            // 반출 작업 완료시 코드
-            if (topic === "/encoding/request/result") {
-                let data = JSON.parse(message);
-                console.log(data);
-                // DB takeout_access 테이블의 stauts=permitted으로 변경, records 테이블의  takeout_link 변경
-                let record_id = data.id;
-                let video_path = data.video_path
-                let video_link_tmp = data.video_path[0];
-                let video_link_arr = (video_link_tmp.toString()).split("/");
-                let video_name = video_link_arr[Number(video_link_arr.length) - 1];
-                let video_link = video_name.split("_")[1].split(".")[0];
-                Promise.all([
-                    new Promise(resolve=> {
-                        let temp1 = api.patchRequestTakeoutChange({"status":"permitted", "id":record_id})
-                        resolve(temp1)
-                    }),
-                    new Promise(resolve=> {
-                        let temp2 = api.setTakeoutLink({"id" : record_id, "video_link" : video_link})
-                        resolve(temp2)
-                    }),
-                    new Promise(resolve=> {
-                        let temp3 = api.takeoutCompression({"video_path": video_path, "id": record_id})
-                        resolve(temp3)
-                    })
-                ]).then((temp)=> {
-                    window.location.reload()
-                }).catch(e=> {
-                    console.error(e);
-                    alert("데이터베이스 에러 발생")
-                })
-                this.getItems(); 
-            }
         });
     // }).catch(()=> {
     //     alert("반출 서비스 사용이 불가합니다.\n서버 관리자에게 문의 해 주세요.");
@@ -403,15 +371,6 @@ export default {
                             })
                         )
                     });
-                    // 반출 준비에서 새로고침 시 mqtt 요청이 계속해서 중복 되어 전송될 수 있다. -> status를 한개 더 만들어서 여기서 update 되어야 한다.
-                    // console.log(record_takeout_id_after_mqtt);
-                    record_takeout_id_after_mqtt.forEach((id, index)=> {
-                        new Promise((resolve, reject)=> {
-                            let __temp = api.patchRequestTakeoutChange({"status":"waitingTakeout", "id":id});
-                            resolve(__temp)
-                        })
-                    })
-                    
                 }
             }
         }

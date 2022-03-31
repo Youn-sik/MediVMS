@@ -50,7 +50,11 @@ mqttClient.on("connect", test => {
     console.log("MQTT connected.");
     console.log(serverTime);
 
-    mqttClient.subscribe(["/nvr/request/stblist"], (error, result) => {
+    mqttClient.subscribe([
+        "/nvr/request/stblist",
+        "/encoding/request/+", 
+        "/encoding/request"
+    ], (error, result) => {
         if (error) {
             console.log("MQTT subscribe error.");
 	    console.log(serverTime);
@@ -72,12 +76,47 @@ mqttClient.on("connect", test => {
 });
 
 mqttClient.on("message", (topic, message) => {
-    connection.query(`SELECT * FROM devices`, function(err, rows, fields) {
-        if (err) throw err;
+    console.log(topic)
 
-        mqttClient.publish(`/nvr/request/stblist/result`, JSON.stringify(rows));
-    });
+    // 반출 작업 완료시 코드
+    if (topic === "/encoding/request/result") {
+        let data = JSON.parse(message);
+        // console.log(data);
+        // DB takeout_access 테이블의 stauts=permitted으로 변경, records 테이블의  takeout_link 변경
+        let record_id = data.id;
+        let video_path = data.video_path
+        let video_link_tmp = data.video_path[0];
+        let video_link_arr = (video_link_tmp.toString()).split("/");
+        let video_name = video_link_arr[Number(video_link_arr.length) - 1];
+        let video_link = video_name.split("_")[1].split(".")[0];
+        Promise.all([
+            new Promise(resolve=> {
+                let temp1 = patchRequestTakeoutChange("permitted", record_id)
+                resolve(temp1)
+            }),
+            new Promise(resolve=> {
+                let temp2 = setTakeoutLink(video_link, record_id)
+                resolve(temp2)
+            }),
+            new Promise(resolve=> {
+                let temp3 = takeoutCompression(video_path, record_id)
+                resolve(temp3)
+            })
+        ]).then((temp)=> {
+            console.log("compression file maked")
+        }).catch(e=> {
+            console.error(e);
+        })
+
+    } else {
+        connection.query(`SELECT * FROM devices`, function(err, rows, fields) {
+            if (err) throw err;
+
+            mqttClient.publish(`/nvr/request/stblist/result`, JSON.stringify(rows));
+        });
+    }
 });
+
 
 app.use(cors());
 app.use("/stream", express.static("/var/www/VMS/backend/record"));
@@ -1136,111 +1175,6 @@ app.get("/getVideoSerial", (req, res) => {
     );
 });
 
-app.patch("/takeout_access_change", (req, res) => {
-    connection.query(
-        `UPDATE takeout_access
-    SET
-    status = "${req.body.status}",
-    updated_at = "${moment().format("YYYY-MM-DD HH:mm:ss")}"
-    WHERE record_id = ${req.body.id}`,
-        function(err, rows, fields) {
-            if (err) throw err;
-
-            res.send(rows);
-        }
-    );
-});
-
-app.patch("/setTakeoutLink", (req, res)=> {
-    connection.query(
-        `UPDATE records
-    SET
-    takeout_link = "${req.body.video_link}"
-    WHERE id = ${req.body.id}`,
-        function(err, rows, fields) {
-            if (err) throw err;
-
-            res.send(rows);
-        }
-    )
-});
-
-app.post("/takeoutCompression", (req, res)=> {
-    // 파일 이름 생성 및 파일 다운로드 로직 작성
-    let video_pathArrTmp = req.body.video_path
-    let video_pathArr = []
-    video_pathArrTmp.forEach((v, _)=> {
-        let videoDir = v.split("/")[5]
-        let videoPath = v.split("/")[6]
-        video_pathArr.push(videoDir+"/"+videoPath)
-    })
-    let video_pathCli = video_pathArr.join(" ")
-    let record_id = req.body.id
-
-    new Promise((resolve, reject)=> {
-        connection.query(
-            `SELECT *
-            FROM records
-            WHERE id = ${record_id}`, function(err, rows, fields) {
-                if(err) throw err;
-    
-                let query_result = rows[0]
-                resolve(query_result)
-            }
-        )
-    }).then((query_result)=> {
-        // let dateTmp0 = query_result.date.split(" ")
-        // let dateTmp1 = replaceAll(dateTmp0[0], "-", "")
-        // let dateTmp2 = replaceAll(dateTmp0[1], ":", "")
-        // let date = `${dateTmp1}-${dateTmp2}`
-        // let patient_name = query_result.patient_name
-        // let department = query_result.department
-        // let doctor = query_result.doctor
-        let compression_name = `${query_result.video_link}.tar.gz`
-        let exec_commnad = `tar zcvfP ${compression_name} ${video_pathCli}`
-
-        exec(`${exec_commnad}`, (err, stdout, stderr) => {
-            if (err) {
-                console.error(`exec error: ${err}`);
-            return;
-            }
-            console.log(`compression result message: ${stdout}`);
-            exec(`mv ${compression_name} export`, (err, stdout, stderr) => {
-                if (err) {
-                    console.error(`exec error: ${err}`);
-                return;
-                }
-                if(stdout == "") {
-                    res.send("complete")
-                }
-            });
-        });
-    })
-   
-
-    // function replaceAll(str, searchStr, replaceStr) {
-    //     return str.split(searchStr).join(replaceStr)
-    // }
-
-    // let deviceArr = req.body.devices.split(",")
-    // let takeout_link = req.body.takeout_link
-    // let patient_name = req.body.patient_name
-    // let department = req.body.department
-    // let doctor_name = req.body.doctor
-    // let dateTmp1 = req.body.date
-    // let dateTmp2 = replaceAll(dateTmp1, "-", "/")
-    // let date = replaceAll(dateTmp2, " ", "-")
-    
-    // let filePathArr = []
-    // let fileNameArr = []
-    // deviceArr.forEach((value, index)=> {
-    //     filePathArr.push(__dirname+"/export/"+value+"_"+takeout_link)
-    //     fileNameArr.push(date+"_"+patient_name+"_"+department+"_"+doctor_name+"_"+index)
-    // })
-    // console.log(filePathArr);
-    // console.log(fileNameArr);
-});
-
 app.post('/takeoutDownload', (req, res)=> {
     function replaceAll(str, searchStr, replaceStr) {
        return str.split(searchStr).join(replaceStr)
@@ -1329,6 +1263,72 @@ function continueRecords() {
             });
         }
     );
+}
+
+function patchRequestTakeoutChange(status, id) {
+    connection.query(
+        `UPDATE takeout_access
+    SET
+    status = "${status}",
+    updated_at = "${moment().format("YYYY-MM-DD HH:mm:ss")}"
+    WHERE record_id = ${id}`,
+        function(err, rows, fields) {
+            if (err) throw err;
+
+            return rows;
+        }
+    );
+}
+
+function setTakeoutLink(video_link, id) {
+    connection.query(
+        `UPDATE records
+    SET
+    takeout_link = "${video_link}"
+    WHERE id = ${id}`,
+        function(err, rows, fields) {
+            if (err) throw err;
+
+            return rows;
+        }
+    )
+}
+
+// 파일 이름 생성 및 파일 다운로드 로직 작성
+function takeoutCompression(video_path, id) {
+    let video_pathArrTmp = video_path // /var/www/VMS/backend/export/{dir}/{mp4}
+    let video_pathArr = []
+    video_pathArrTmp.forEach((v, _)=> {
+        let videoPath = v.split("/")[6] //{dir}
+        video_pathArr.push(videoPath)
+    })
+    let video_pathCli = video_pathArr.join(" ")
+    let record_id = id
+
+    new Promise((resolve, reject)=> {
+        connection.query(
+            `SELECT *
+            FROM records
+            WHERE id = ${record_id}`, function(err, rows, fields) {
+                if(err) throw err;
+    
+                let query_result = rows[0]
+                resolve(query_result)
+            }
+        )
+    }).then((query_result)=> {
+        let compression_name = `${query_result.video_link}.tar.gz`
+        let exec_commnad = `cd export;tar zcvfP ${compression_name} ${video_pathCli}`
+
+        exec(`${exec_commnad}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(`exec error: ${err}`);
+            return;
+            }
+            console.log(`compression result message: ${stdout}`);
+            return "complete";
+        });
+    })
 }
 
 continueRecords();
