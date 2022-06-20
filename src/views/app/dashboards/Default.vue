@@ -80,7 +80,10 @@
                                     }}
                                 </b-td>
                                 <b-td class="text-center">
-                                    {{ surgery.record_time }}
+                                    {{ surgery.record === 1
+                                        ? surgery.record_time
+                                        : ""
+                                    }}
                                 </b-td>
                                 <b-td class="text-center">
                                     {{ surgery.doctor_name }}
@@ -224,13 +227,13 @@ export default {
                 search: ""
             });
 
-
-		if(_temp.length >= 1) {
-			let __temp = await api.getDoctorName({
-                   		doctor_id: _temp[0].doctor
-               		});
-			_temp[0].doctor_name = __temp[0].name;
-		}
+            if(_temp.length >= 1) {
+                let __temp = await api.getDoctorName({
+                            doctor_id: _temp[0].doctor
+                        });
+                _temp[0].doctor_name = __temp[0].name;
+                // this.surgeries[i].doctor_name = __temp[0].name;
+            }
 
 
             this.todaySchedules = this.todaySchedules.concat(_temp);
@@ -248,6 +251,7 @@ export default {
 		    this.surgeries[j].doctor_name = this.todaySchedules[i].doctor_name;
                 }
             }
+            
             if (this.todaySchedules[i].is_record) this.recordingEvent++;
             else this.standardEvent++;
         }
@@ -270,8 +274,8 @@ export default {
                     backgroundColor: ["#00cc00", "#172757"],
                     borderWidth: 2,
                     data: [
-                        this.activatedDevicesCount,
-                        this.devices.length - this.activatedDevicesCount
+                        this.activatedDevicesCount, //On 단말(activatedDevicesCount = nvr에 등록 된 단말) : on/off 구분 X
+                        this.devices.length - this.activatedDevicesCount //Off 단말(devices = 서버 DB에 등록 된 단말) : on/off 구분 X
                     ]
                 }
             ]
@@ -298,7 +302,7 @@ export default {
                     borderColor: ["#0066ff", "#172757"],
                     backgroundColor: ["#0066ff", "#172757"],
                     borderWidth: 2,
-                    data: [this.activatedSurgeriesCount, this.surgeries.length]
+                    data: [this.activatedSurgeriesCount, this.surgeries.length - this.activatedSurgeriesCount]
                 }
             ]
         };

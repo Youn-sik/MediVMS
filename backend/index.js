@@ -81,7 +81,7 @@ mqttClient.on("message", (topic, message) => {
     // 반출 작업 완료시 코드
     if (topic === "/encoding/request/result") {
         let data = JSON.parse(message);
-        // console.log(data);
+        console.log(data);
         // DB takeout_access 테이블의 stauts=permitted으로 변경, records 테이블의  takeout_link 변경
         let record_id = data.id;
         let video_path = data.video_path
